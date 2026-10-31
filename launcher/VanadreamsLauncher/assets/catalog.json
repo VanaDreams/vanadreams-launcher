@@ -2146,7 +2146,7 @@
       "install": "copy-to-addons",
       "load": "/addon load rematracker",
       "docs": "https://github.com/VanaDreams/vanadreams-player-addons/tree/main/addons/rematracker",
-      "description": "Tracks REMA and Magian trials, with a victory sound and dancing moogle when a stage is complete. Open it with /rt help.",
+      "description": "Shared by player DL. Tracks REMA and Magian trials, with a victory sound and dancing moogle when a stage is complete. Open it with /rt help.",
       "category": "VanaDreams"
     },
     {
