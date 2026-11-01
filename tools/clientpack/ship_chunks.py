@@ -18,6 +18,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -26,7 +27,8 @@ from datetime import datetime, timezone
 
 BUCKET = "vanadreams-client"
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "client", "chunks")
-WRANGLER = ["npx", "--yes", "wrangler@4"]
+# On Windows npx is npx.cmd, which subprocess cannot start by its bare name.
+WRANGLER = [shutil.which("npx") or "npx", "--yes", "wrangler@4"]
 
 
 def sha256(path):
@@ -80,7 +82,7 @@ def ship_version(ver, folder, tmp, dry_run):
         path = os.path.join(folder, name)
         side = {}
         if os.path.exists(path + ".json"):
-            with open(path + ".json", encoding="utf-8") as f:
+            with open(path + ".json", encoding="utf-8-sig") as f:  # Windows PowerShell writes a BOM
                 side = json.load(f)
         entry = chunk_entry(path, side.get("dest"))
         if side.get("sha256") and side["sha256"].lower() != entry["sha256"]:
