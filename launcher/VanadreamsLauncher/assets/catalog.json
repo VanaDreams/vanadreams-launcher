@@ -727,7 +727,7 @@
         "path": "grampsshop",
         "branch": "main"
       },
-      "version": "0.1.15",
+      "version": "0.1.16",
       "install": "copy-to-addons",
       "load": "/addon load grampsshop",
       "docs": "https://github.com/VanaDreams/grampsshop/tree/main/grampsshop",
