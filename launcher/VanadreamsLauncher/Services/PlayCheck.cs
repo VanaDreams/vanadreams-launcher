@@ -203,7 +203,7 @@ namespace Vanadreams.Services
         /// The loader runs as administrator, so this only uses what any process may see of another:
         /// its id by name and its windows' class.
         /// </summary>
-        public static async Task<LaunchOutcome> WatchAsync(string processName, HashSet<int> before, TimeSpan toStart, TimeSpan toOpen)
+        public static async Task<LaunchOutcome> WatchAsync(string processName, HashSet<int> before, TimeSpan toStart, TimeSpan toOpen, Action<HashSet<int>> onTick = null)
         {
             if (string.IsNullOrWhiteSpace(processName)) return LaunchOutcome.StillWaiting;
             var started = DateTime.UtcNow;
@@ -223,7 +223,9 @@ namespace Vanadreams.Services
                 var alive = RunningIds(processName);
                 alive.IntersectWith(mine);
                 if (alive.Count == 0) return LaunchOutcome.ClosedEarly;
-                await Task.Delay(1500).ConfigureAwait(false);
+                // the loader's window is read on each look, so its last words are kept when it closes (it waits 2 s after "Closing...")
+                if (onTick != null) { try { onTick(alive); } catch (Exception ex) { Log.Warn("launch watch look: " + ex.Message); } }
+                await Task.Delay(1000).ConfigureAwait(false);
             }
             return LaunchOutcome.StillWaiting;
         }
@@ -310,11 +312,12 @@ namespace Vanadreams.Services
                    "Press Ctrl+C on this box to copy it and post it in the Vanadreams Discord bug channel, so it can be looked at.";
         }
 
-        /// <summary>When nothing else explains it: the loader's own console said why before it closed.</summary>
+        /// <summary>When the loader's window could not be read and nothing else explains it.</summary>
         public const string ClosedNoCause =
-            "The loader closed before the game opened, and nothing on this PC says why.\n\n" +
-            "The loader's own window prints the reason just before it closes, most often a wrong password or an account that is already logged in. " +
-            "Press Play again and watch that window; if it closes too fast to read, take a screenshot and post it in the Vanadreams Discord bug channel.";
+            "The loader closed before the game opened, and its window could not be read from here.\n\n" +
+            "If its last line was \"Closing...\" with no red error above it, the login worked and the game itself quit as it started: " +
+            "close other copies of FFXI, turn on Low spec on the Graphics page, or Repair the game from Install game. " +
+            "If a red line was above it, that line is the reason. Send bug report on the Setup page gathers what a helper needs.";
 
         public const string NoGameSentence =
             "No complete copy of FINAL FANTASY XI was found on this PC: FFXi.dll, FFXiMain.dll or PlayOnline's polcore.dll is missing " +

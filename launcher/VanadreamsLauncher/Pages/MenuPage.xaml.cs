@@ -432,7 +432,7 @@ namespace Vanadreams.Pages
                 if (!_profile.AutoClose) LoadProfile();
                 // the launcher waits to close until the game is open, so it can still say why if it never opens
                 var autoClose = _profile.AutoClose;
-                var opened = await WatchLaunch(state, _profile, loaderName, before, launchedAt);
+                var opened = await WatchLaunch(state, _profile, loaderName, before, launchedAt, root, lang);
                 GiveOtherGameBack(state, root, previousRoot, loaderName, before, lang);
                 // with the window switcher on, "close" means the tray: the switcher has to keep running for the game
                 if (autoClose && opened && !_win.HideToTray()) Application.Current.Shutdown();
@@ -515,16 +515,30 @@ namespace Vanadreams.Pages
         }
 
         /// <summary>
-        /// Watch the loader after Play. True once the game's window opens. When the loader closes first, say why:
-        /// a file taken, a crash Windows recorded, the server out of reach, or else what the loader's own window said.
+        /// Watch the loader after Play. True once the game's window opens. While it runs, the loader's own window is read,
+        /// so its last words survive it closing. When it closes first, say why: a file taken, a crash Windows recorded,
+        /// the loader's own error line, the game quitting as it started (with what this PC shows about the game), or the
+        /// server out of reach. Every early close leaves last-launch.txt beside the log for the bug report.
         /// </summary>
-        private async System.Threading.Tasks.Task<bool> WatchLaunch(AppState state, Profile profile, string loaderName, HashSet<int> before, DateTime launchedAt)
+        private async System.Threading.Tasks.Task<bool> WatchLaunch(AppState state, Profile profile, string loaderName, HashSet<int> before, DateTime launchedAt, string root, int lang)
         {
             LaunchOutcome outcome;
-            try { outcome = await PlayCheck.WatchAsync(loaderName, before, TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(15)); }
+            var watch = new LoaderWatch();
+            try { outcome = await PlayCheck.WatchAsync(loaderName, before, TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(15), ids => watch.Look(ids)); }
             catch (Exception ex) { Log.Warn("launch watch: " + ex.Message); return true; }
             Log.Info("launch " + profile.Name + ": " + outcome);
             if (outcome == LaunchOutcome.GameOpened || outcome == LaunchOutcome.StillWaiting) return true;
+
+            List<string> loaderErrors;
+            var stop = LaunchDiagnosis.Classify(watch.LastText, out loaderErrors);
+            var ashita = state.HasAshita ? state.AshitaRoot : null;
+            List<LaunchDiagnosis.Finding> findings;
+            try { findings = await System.Threading.Tasks.Task.Run(() => LaunchDiagnosis.Gather(root, ashita, lang, loaderName)); }
+            catch (Exception ex) { findings = new List<LaunchDiagnosis.Finding>(); Log.Warn("launch checks: " + ex.Message); }
+            var record = LaunchDiagnosis.Record(DateTime.Now, profile.Name, outcome, stop, watch.LastText, watch.Problem, findings);
+            Log.Warn("launch closed early\n" + record);
+            try { File.WriteAllText(LaunchDiagnosis.LastLaunchPath(LauncherSettings.DataFolder), record); }
+            catch (Exception ex) { Log.Warn("last-launch.txt not written: " + ex.Message); }
 
             var missing = state.HasAshita ? PlayCheck.Missing(state.AshitaRoot, profile.BootFile) : new List<string>();
             if (missing.Count > 0) { Log.Warn("after play, missing: " + string.Join("; ", missing)); ExplainMissing(state, missing); return false; }
@@ -534,6 +548,13 @@ namespace Vanadreams.Pages
             {
                 Log.Warn("crash after play: " + crash.App + " in " + crash.Module + " " + crash.ModuleVersion);
                 MessageBox.Show(PlayCheck.CrashSentence(crash), "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            // the loader said why, or got as far as starting the game: that is the answer, the port check below cannot add to it
+            if (stop == LoaderStop.LoaderError || stop == LoaderStop.GameQuit)
+            {
+                MessageBox.Show(LaunchDiagnosis.Sentence(stop, loaderErrors, findings, watch.LastText), "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
@@ -548,8 +569,10 @@ namespace Vanadreams.Pages
                 catch (Exception ex) { Log.Warn("port check after play: " + ex.Message); }
             }
 
-            MessageBox.Show(outcome == LaunchOutcome.NeverStarted ? PlayCheck.NeverStartedNoCause : PlayCheck.ClosedNoCause,
-                "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
+            var said = outcome == LaunchOutcome.NeverStarted ? PlayCheck.NeverStartedNoCause
+                     : stop == LoaderStop.Unknown ? PlayCheck.ClosedNoCause
+                     : LaunchDiagnosis.Sentence(stop, loaderErrors, findings, watch.LastText);
+            MessageBox.Show(said, "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
             return false;
         }
     }

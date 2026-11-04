@@ -40,7 +40,7 @@ namespace Vanadreams.Services
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "Vanadreams-bugreport-" + when.ToString("yyyy-MM-dd") + ".zip");
 
         /// <summary>Writes the zip and returns the names of the files it holds.</summary>
-        public static List<string> Build(string zipPath, string dataFolder, string ashitaRoot, string windowsDumps, string launcherVersion, DateTime when)
+        public static List<string> Build(string zipPath, string dataFolder, string ashitaRoot, string windowsDumps, string launcherVersion, DateTime when, string checks = null)
         {
             var names = new List<string>();
             var notes = new StringBuilder();
@@ -56,6 +56,15 @@ namespace Vanadreams.Services
                 // the launcher
                 AddTail(zip, Path.Combine(dataFolder ?? "", "launcher.log"), "launcher/launcher.log", names, notes);
                 AddText(zip, Path.Combine(dataFolder ?? "", "settings.json"), "launcher/settings.json", names, notes, strip: true);
+                // what the loader's window said on the last launch that closed early, and what the PC showed then
+                AddText(zip, LaunchDiagnosis.LastLaunchPath(dataFolder), "launcher/last-launch.txt", names, notes, strip: true);
+                // the same checks made now: which game Windows starts, its files, wrappers, firewall, antivirus, Windows' error events
+                if (!string.IsNullOrWhiteSpace(checks))
+                {
+                    var c = zip.CreateEntry("checks.txt");
+                    using (var w = new StreamWriter(c.Open(), new UTF8Encoding(false))) w.Write(StripPasswords(checks));
+                    names.Add("checks.txt");
+                }
 
                 if (!string.IsNullOrWhiteSpace(ashitaRoot) && Directory.Exists(ashitaRoot))
                 {
