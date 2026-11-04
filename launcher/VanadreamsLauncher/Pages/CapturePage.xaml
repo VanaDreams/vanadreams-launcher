@@ -42,7 +42,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <TextBlock Grid.Row="2" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,6,0,0" Text="Snapshots come from the charcapture addon: load it on the character you want to bring and type /capture. Files live in config\charcapture. Two steps: Send to Vanadreams uploads it, then Try import now asks for the import. Create a Vanadreams character with the same name first and keep it logged out."/>
+                <TextBlock Grid.Row="2" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,6,0,0" Text="Snapshots come from the charcapture addon: load it on the character you want to bring and type /capture. Files live in config\charcapture. Two steps: Send to Vanadreams uploads it, then Try import now asks for the import. You must first MAKE a Vanadreams character with exactly the same name (the import overwrites it) and keep it logged out."/>
             </Grid>
         </Border>
         <Border Grid.Column="2" Style="{StaticResource Box}">
@@ -53,7 +53,7 @@
                     <StackPanel>
                         <TextBlock x:Name="SelName" Style="{StaticResource Display40}" FontSize="29" Text="—" TextWrapping="Wrap"/>
                         <TextBlock x:Name="SelMeta" Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,10"/>
-                        <TextBlock x:Name="SelUser" Style="{StaticResource Mono}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                        <TextBlock x:Name="SelUser" Style="{StaticResource Mono}" TextWrapping="Wrap" Margin="0,0,0,10"/><TextBlock Foreground="{StaticResource Bad}" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,12" Text="FIRST, MAKE A CHARACTER on Vanadreams with exactly the same name as this one, then log it out. The import overwrites that character. If it does not exist, nothing is imported."/>
                         <TextBlock x:Name="Result" TextWrapping="Wrap"/>
                     </StackPanel>
                 </ScrollViewer>
@@ -65,7 +65,7 @@
                         <Button Style="{StaticResource GhostButton}" Content="Open snapshot folder" Click="Folder_Click" Margin="0,0,0,7"/>
                     </WrapPanel>
                     <local:CrewGuide Who="moogle" BubbleWidth="140"
-                                     Tip="Kupo! Type&#160;/&#x2060;capture in game, send it here, then press Try&#160;import&#160;now."/>
+                                     Tip="Kupo! Make a character with the same name on Vanadreams first. Then type&#160;/&#x2060;capture in game, send it here, and press Try&#160;import&#160;now."/>
                 </StackPanel>
             </Grid>
         </Border>
