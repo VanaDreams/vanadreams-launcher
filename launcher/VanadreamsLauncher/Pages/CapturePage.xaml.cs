@@ -55,7 +55,7 @@ namespace Vanadreams.Pages
         private void Show(CaptureRow row)
         {
             Result.Text = "";
-            if (row == null) { SelName.Text = "Nothing to send"; SelMeta.Text = "Take a snapshot in game first."; SelUser.Text = ""; SendButton.IsEnabled = false; return; }
+            if (row == null) { SelName.Text = "Nothing to send"; SelMeta.Text = "Take a snapshot in game first."; SelUser.Text = ""; SendButton.IsEnabled = false; ImportButton.IsEnabled = false; StatusButton.IsEnabled = false; return; }
             var s = row.Summary;
             SelName.Text = s.Name;
             SelMeta.Text = $"Captured on {s.CapturedOn}, {s.CapturedAt}. {s.Bytes / 1024} KB.";
@@ -63,6 +63,8 @@ namespace Vanadreams.Pages
             SelUser.Text = string.IsNullOrEmpty(user) ? "No Vanadreams login remembered: set one on the Profiles page, it's what the snapshot is filed under." : "Files under Vanadreams login " + user + ".";
             SelUser.Foreground = (Brush)FindResource(string.IsNullOrEmpty(user) ? "Warn" : "Cream");
             SendButton.IsEnabled = !string.IsNullOrEmpty(user);
+            ImportButton.IsEnabled = !string.IsNullOrEmpty(user);
+            StatusButton.IsEnabled = !string.IsNullOrEmpty(user);
         }
 
         private string CurrentUser()
@@ -91,6 +93,34 @@ namespace Vanadreams.Pages
             Result.Foreground = (Brush)FindResource(r.Ok ? "Ok" : "Bad");
             Log.Info("capture send " + row.Summary.Name + ": " + r.Message);
             SendButton.IsEnabled = true;
+        }
+
+        private async void Import_Click(object sender, RoutedEventArgs e)
+        {
+            var row = Current;
+            if (row == null) return;
+            ImportButton.IsEnabled = false;
+            Result.Text = "Asking…"; Result.Foreground = (Brush)FindResource("Mist");
+            var uploader = new CaptureUploader { Url = App.State.Settings.CaptureUrl };
+            var r = await uploader.RequestImportAsync(row.Summary.Name, CurrentUser());
+            Result.Text = r.Message;
+            Result.Foreground = (Brush)FindResource(r.Ok ? "Ok" : "Bad");
+            Log.Info("import request " + row.Summary.Name + ": " + r.Message);
+            ImportButton.IsEnabled = true;
+        }
+
+        private async void Status_Click(object sender, RoutedEventArgs e)
+        {
+            var row = Current;
+            if (row == null) return;
+            StatusButton.IsEnabled = false;
+            Result.Text = "Checking…"; Result.Foreground = (Brush)FindResource("Mist");
+            var uploader = new CaptureUploader { Url = App.State.Settings.CaptureUrl };
+            var r = await uploader.StatusAsync(row.Summary.Name, CurrentUser());
+            Result.Text = r.Message;
+            Result.Foreground = (Brush)FindResource(r.Ok ? "Ok" : (r.State == "refused" || r.State == "failed" ? "Bad" : "Mist"));
+            Log.Info("import status " + row.Summary.Name + ": " + r.State + " " + r.Message);
+            StatusButton.IsEnabled = true;
         }
 
         private void Folder_Click(object sender, RoutedEventArgs e)

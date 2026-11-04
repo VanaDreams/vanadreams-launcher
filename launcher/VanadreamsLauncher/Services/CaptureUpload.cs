@@ -48,6 +48,7 @@ namespace Vanadreams.Services
         public bool Ok { get; set; }
         public string Reference { get; set; }
         public string Message { get; set; }
+        public string State { get; set; }
     }
 
     /// <summary>Sends a snapshot to the site's capture route. Nothing is sent without the button.</summary>
@@ -56,6 +57,58 @@ namespace Vanadreams.Services
         private readonly HttpClient _http;
         public string Url { get; set; } = "https://vanadreams.org/api/public/vanadreams/capture";
         public CaptureUploader(HttpClient http = null) { _http = http ?? Http.Shared; }
+
+        /// <summary>A sibling route on the site: the capture route's address with its last part swapped.</summary>
+        public string RouteUrl(string route)
+        {
+            var i = Url.LastIndexOf('/');
+            return (i > 0 ? Url.Substring(0, i) : Url) + "/" + route;
+        }
+
+        private static bool IsCharacterName(string name)
+        {
+            if (string.IsNullOrEmpty(name) || name.Length < 3 || name.Length > 15) return false;
+            foreach (var c in name) if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))) return false;
+            return true;
+        }
+
+        /// <summary>"Try import now": asks the server to import the character's last sent capture. Nothing is imported by sending alone.</summary>
+        public async Task<UploadResult> RequestImportAsync(string name, string username)
+        {
+            if (string.IsNullOrWhiteSpace(username)) return new UploadResult { Ok = false, Message = "Remember your Vanadreams login on the Profiles page first." };
+            if (!IsCharacterName(name)) return new UploadResult { Ok = false, Message = "That is not a character name." };
+            using (var req = new HttpRequestMessage(HttpMethod.Post, RouteUrl("import")))
+            {
+                req.Headers.Add("X-Vanadreams-User", username);
+                req.Content = new StringContent("{\"name\":\"" + name + "\"}", Encoding.UTF8, "application/json");
+                try
+                {
+                    using (var resp = await _http.SendAsync(req).ConfigureAwait(false))
+                    {
+                        var text = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        return InterpretImport((int)resp.StatusCode, text);
+                    }
+                }
+                catch (Exception ex) { return new UploadResult { Ok = false, Message = "Couldn't reach the site: " + ex.Message }; }
+            }
+        }
+
+        /// <summary>What happened to the last import tried for this character.</summary>
+        public async Task<UploadResult> StatusAsync(string name, string username)
+        {
+            if (string.IsNullOrWhiteSpace(username)) return new UploadResult { Ok = false, Message = "Remember your Vanadreams login on the Profiles page first." };
+            if (!IsCharacterName(name)) return new UploadResult { Ok = false, Message = "That is not a character name." };
+            var url = RouteUrl("import-status") + "?login=" + Uri.EscapeDataString(username.Trim().ToLowerInvariant()) + "&name=" + name;
+            try
+            {
+                using (var resp = await _http.GetAsync(url).ConfigureAwait(false))
+                {
+                    var text = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    return InterpretStatus((int)resp.StatusCode, text);
+                }
+            }
+            catch (Exception ex) { return new UploadResult { Ok = false, Message = "Couldn't reach the site: " + ex.Message }; }
+        }
 
         public async Task<UploadResult> SendAsync(string snapshotPath, string username)
         {
@@ -79,6 +132,31 @@ namespace Vanadreams.Services
                     return new UploadResult { Ok = false, Message = "Couldn't reach vanadreams.org: " + ex.Message };
                 }
             }
+        }
+
+        public static UploadResult InterpretImport(int status, string text)
+        {
+            var d = Json.ParseObject(text);
+            if (status >= 200 && status < 300 && d != null && Json.Bool(d, "ok"))
+                return new UploadResult { Ok = true, State = Json.Str(d, "state", "requested"), Message = Json.Str(d, "message", "Asked for. Imports run once a day at 12:00 noon Mountain Time.") };
+            if (status == 429) return new UploadResult { Ok = false, Message = "Too many tries this hour. Try again later." };
+            var reason = d != null ? (Json.Str(d, "error") ?? Json.Str(d, "message")) : null;
+            if (status == 404 && string.IsNullOrEmpty(reason)) return new UploadResult { Ok = false, Message = "The site has no import route yet." };
+            return new UploadResult { Ok = false, Message = string.IsNullOrEmpty(reason) ? "The site refused it (" + status + ")." : reason };
+        }
+
+        public static UploadResult InterpretStatus(int status, string text)
+        {
+            var d = Json.ParseObject(text);
+            if (status >= 200 && status < 300 && d != null && Json.Bool(d, "ok"))
+            {
+                var state = Json.Str(d, "state", "none");
+                var message = Json.Str(d, "message", "");
+                if (string.IsNullOrEmpty(message)) message = state == "none" ? "No import has been tried yet." : state;
+                return new UploadResult { Ok = state == "done", State = state, Message = message };
+            }
+            var reason = d != null ? (Json.Str(d, "error") ?? Json.Str(d, "message")) : null;
+            return new UploadResult { Ok = false, Message = string.IsNullOrEmpty(reason) ? "The site could not say (" + status + ")." : reason };
         }
 
         public static UploadResult Interpret(int status, string text)

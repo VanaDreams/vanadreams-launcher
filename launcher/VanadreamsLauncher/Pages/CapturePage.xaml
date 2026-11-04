@@ -42,7 +42,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <TextBlock Grid.Row="2" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,6,0,0" Text="Snapshots come from the charcapture addon: load it on the character you want to bring and type /capture. Files live in config\charcapture."/>
+                <TextBlock Grid.Row="2" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,6,0,0" Text="Snapshots come from the charcapture addon: load it on the character you want to bring and type /capture. Files live in config\charcapture. Two steps: Send to Vanadreams uploads it, then Try import now asks for the import. Create a Vanadreams character with the same name first and keep it logged out."/>
             </Grid>
         </Border>
         <Border Grid.Column="2" Style="{StaticResource Box}">
@@ -60,10 +60,12 @@
                 <StackPanel Grid.Row="2" Margin="0,8,0,0">
                     <WrapPanel>
                         <Button x:Name="SendButton" Style="{StaticResource GoldButton}" Content="Send to Vanadreams" Click="Send_Click" Margin="0,0,7,7"/>
+                        <Button x:Name="ImportButton" Style="{StaticResource GoldButton}" Content="Try import now" Click="Import_Click" Margin="0,0,7,7"/>
+                        <Button x:Name="StatusButton" Style="{StaticResource GhostButton}" Content="Check result" Click="Status_Click" Margin="0,0,7,7"/>
                         <Button Style="{StaticResource GhostButton}" Content="Open snapshot folder" Click="Folder_Click" Margin="0,0,0,7"/>
                     </WrapPanel>
                     <local:CrewGuide Who="moogle" BubbleWidth="140"
-                                     Tip="Kupo! Type&#160;/&#x2060;capture in game, then send it here."/>
+                                     Tip="Kupo! Type&#160;/&#x2060;capture in game, send it here, then press Try&#160;import&#160;now."/>
                 </StackPanel>
             </Grid>
         </Border>
