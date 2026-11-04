@@ -10,7 +10,7 @@
 
 addon.name    = 'charcapture';
 addon.author  = 'Vanadreams';
-addon.version = '0.1.9';
+addon.version = '0.1.10';
 addon.desc    = 'Captures a character snapshot for porting to Vanadreams.';
 addon.link    = 'https://github.com/VanaDreams/vanadreams-launcher';
 
@@ -29,7 +29,7 @@ end
 -- and go into the next snapshot.
 --   0x08C: u16 count at 0x04, then count entries of { u16 merit id, u8 next cost, u8 upgrades }
 --   0x08D: 64 entries of { u16 index:5 | job:11, u16 next:10 | level:6 } from 0x04
-local seen = T{ chocobo = nil, chocobo_at = nil, merits = T{}, merits_at = nil, job_points = T{}, job_points_at = nil, logs = T{}, logs_at = nil, currencies = T{}, currencies1_at = nil, currencies2_at = nil, skills_by_job = T{}, skills_due = nil };
+local seen = T{ chocobo = nil, chocobo_at = nil, merits = T{}, merits_at = nil, job_points = T{}, job_points_at = nil, logs = T{}, logs_at = nil, currencies = T{}, currencies1_at = nil, currencies2_at = nil, skills_by_job = T{}, skills_due = nil, automaton = nil, automaton_at = nil };
 
 -- Quest and mission logs arrive as 0x056 packets when you zone: a 32-byte block at 0x04 and a
 -- 'port' at 0x24 saying which log it is (current or completed quests per area, completed
@@ -227,6 +227,26 @@ local STORAGE_NAME = {
     [14] = 'Mog Wardrobe 6', [15] = 'Mog Wardrobe 7', [16] = 'Mog Wardrobe 8',
 };
 
+-- The automaton comes in the 0x044 extended-job packet for PUP, sent at login and on every change to or from
+-- Puppetmaster (main or sub). Layout from the server's own copy of it (0x044_extended_job_pup): job at 0x04,
+-- head 0x08, frame 0x09, 12 attachments from 0x0A, unlocked heads and frames (u32 each) at 0x18 and 0x1C,
+-- 8 u32 of unlocked attachments at 0x38, the name (16 bytes) at 0x58. Nothing else tells the client's memory
+-- managers about it, so a character that never was Puppetmaster this session has no automaton in the snapshot.
+local PUP_JOB = 18;
+
+local function read_automaton(data)
+    if #data < 0x68 then return; end
+    if struct.unpack('<B', data, 0x05) ~= PUP_JOB then return; end
+    local a = T{ head = struct.unpack('<B', data, 0x09), frame = struct.unpack('<B', data, 0x0A), attachments = T{}, unlocked_attachments = T{} };
+    for i = 0, 11 do a.attachments:append((struct.unpack('<B', data, 0x0B + i))); end
+    a.unlocked_heads = struct.unpack('<I', data, 0x19);
+    a.unlocked_frames = struct.unpack('<I', data, 0x1D);
+    for i = 0, 7 do a.unlocked_attachments:append((struct.unpack('<I', data, 0x39 + i * 4))); end
+    a.name = (data:sub(0x59, 0x68):gsub('%z.*', ''));
+    seen.automaton = a;
+    seen.automaton_at = os.time();
+end
+
 -- The game only shows the skills of the job you are on (packet 0x062, sent again on every job change), so
 -- each job pair seen this session keeps its own reading. Change jobs in your Mog House before /capture and
 -- every job's skills come along; anything never seen is filled in at its cap on import.
@@ -341,6 +361,10 @@ local function capture()
         quest_mission_packets = seen.logs_at and seen.logs or nil,
         currencies = (seen.currencies1_at or seen.currencies2_at) and seen.currencies or nil,
         personal_chocobo = seen.chocobo_at and T{ properties = seen.chocobo } or nil,
+        automaton = seen.automaton_at and seen.automaton or nil,
+        -- the exemplar bar: the game keeps one job as the Mastery job, and only its points are in memory
+        mastery = T{ job = safe(function() return player:GetMasteryJob(); end, 0), level = safe(function() return player:GetMasteryJobLevel(); end, 0),
+                     exp = safe(function() return player:GetMasteryExp(); end, 0), needed = safe(function() return player:GetMasteryExpNeeded(); end, 0) },
         not_captured = T{ 'fame (the game never sends the number)', 'linkshells', 'mog house layout' },
     };
     if not seen.merits_at then snap.not_captured:append('merit upgrades (open the Merit Points menu, then /capture again)'); end
@@ -348,6 +372,7 @@ local function capture()
     if not seen.logs_at then snap.not_captured:append('quests and missions (zone once with charcapture loaded, then /capture again)'); end
     if not seen.currencies1_at then snap.not_captured:append('currencies, first tab (open Profile > Currencies, then /capture again)'); end
     if not seen.currencies2_at then snap.not_captured:append('currencies, second tab (open the Currencies 2 tab of the same menu, then /capture again)'); end
+    if not seen.automaton_at and safe(function() return player:GetJobLevel(PUP_JOB); end, 0) > 1 then snap.not_captured:append('your automaton (switch to Puppetmaster once, main or sub, then /capture again)'); end
     if not seen.chocobo_at then snap.not_captured:append('your own chocobo (call it with the Chocobo Whistle and ride it, then /capture again; skip this if you have none)'); end
 
     -- jobs
@@ -466,6 +491,7 @@ ashita.events.register('packet_in', 'charcapture_packet_in', function (e)
     elseif e.id == 0x056 then pcall(read_log, e.data);
     elseif e.id == 0x067 then pcall(read_chocobo_sync, e.data);
     elseif e.id == 0x00D then pcall(read_chocobo_update, e.data);
+    elseif e.id == 0x044 then pcall(read_automaton, e.data);
     elseif e.id == 0x062 then seen.skills_due = os.clock() + 2; end   -- read once the client has applied it
 end);
 
