@@ -270,7 +270,7 @@ profile.HandleDefault = function()
         wear('PetDT');
     end
     -- the pet under half its HP: its damage taken set, whatever the toggle (GetAwayCoxn's include does this)
-    if (pet ~= nil) and (vg.Low('PetDT', pet.HPP)) then wear('PetDT'); end   -- on under 50%, off at 75%
+    if (pet ~= nil) and (pet.HPP < 50) then wear('PetDT'); end
     -- you fighting and the pet not: send it in (GetAwayCoxn's BST.lua), at most every 3 seconds
     if (state.fight) and (pet ~= nil) and (player.Status == 'Engaged') and (pet.Status ~= 'Engaged') and (os.clock() - state.lastFight > 3) then
         state.lastFight = os.clock();

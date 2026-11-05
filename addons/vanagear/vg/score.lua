@@ -221,22 +221,6 @@ score.Build = function(mode, pieces, who, slots, petTypes, withSub)
     end
 
     local choice, used, totals, ranks = {}, {}, {}, {};
-
-    -- A piece can take other slots as well as its own (a Tunic takes the head: the server's rslot), so
-    -- nothing can be worn there with it. The slots already filled that clash with putting c in slot:
-    local function blocks(piece, slot)
-        return bit.band(piece.Server.rslot or 0, vdata.SlotBit[slot]) ~= 0;
-    end
-    local function clashes(c, slot)
-        local list = {};
-        for t, held in pairs(choice) do
-            if (t ~= slot) and (blocks(held.piece, slot) or blocks(c.piece, t)) then
-                list[#list + 1] = t;
-            end
-        end
-        return list;
-    end
-
     local function rounds()
     for round = 1, 8 do
         local changed = false;
@@ -250,13 +234,9 @@ score.Build = function(mode, pieces, who, slots, petTypes, withSub)
             local ranked = {};
             for _, c in ipairs(cands[slot]) do
                 if (not used[c.piece]) then
-                    -- worth what it adds less what it pushes out of the slots it clashes with
-                    local out = clashes(c, slot);
-                    for _, t in ipairs(out) do apply(totals, choice[t].v, -1); end
                     apply(totals, c.v, 1);
-                    ranked[#ranked + 1] = { c = c, gain = total(mode, totals) - base, out = out };
+                    ranked[#ranked + 1] = { c = c, gain = total(mode, totals) - base };
                     apply(totals, c.v, -1);
-                    for _, t in ipairs(out) do apply(totals, choice[t].v, 1); end
                 end
             end
             -- best gain first; on a tie the piece already held stays, so the rounds settle
@@ -268,12 +248,6 @@ score.Build = function(mode, pieces, who, slots, petTypes, withSub)
             ranks[slot] = ranked;
             local best = (ranked[1] ~= nil) and (ranked[1].gain > 1e-9) and ranked[1].c or nil;
             if (best ~= nil) then
-                for _, t in ipairs(ranked[1].out) do
-                    apply(totals, choice[t].v, -1);
-                    used[choice[t].piece] = nil;
-                    choice[t] = nil;
-                    changed = true;
-                end
                 apply(totals, best.v, 1);
                 used[best.piece] = true;
             end
@@ -309,14 +283,9 @@ score.Build = function(mode, pieces, who, slots, petTypes, withSub)
                     local c = choice[slot];
                     if (trial[slot] == nil) and (c ~= nil) and (not taken[c.piece]) then trial[slot] = c; taken[c.piece] = true; end
                 end
-                local t, fits = {}, true;
-                for slot, c in pairs(trial) do
-                    apply(t, c.v, 1);
-                    for other, d in pairs(trial) do
-                        if (other ~= slot) and blocks(d.piece, slot) then fits = false; end
-                    end
-                end
-                if (fits) and (total(mode, t) > total(mode, totals) + 1e-9) then
+                local t = {};
+                for _, c in pairs(trial) do apply(t, c.v, 1); end
+                if (total(mode, t) > total(mode, totals) + 1e-9) then
                     choice, used, totals, improved = trial, taken, t, true;
                 end
             end
