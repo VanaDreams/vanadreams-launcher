@@ -40,11 +40,17 @@ local function wear(name)
     return false;
 end
 
--- the sets that go on at low HP or MP come off only at a further line (vg\latch.lua), for templates too
-local latch = require('vg.latch');
-include.Latch = latch.Latch;
-include.Low = latch.Low;
-local low = latch.Low;
+-- Profiles written from the 0.2.4 BST and BLM templates call these. They read as the plain line the
+-- templates use again: under `on` when on < off, over `on` otherwise.
+include.Latch = function(key, value, on, off)
+    value = value or 0;
+    if (on < off) then return value < on; end
+    return value > on;
+end
+local lines = { Idle_Regen = 60, Idle_Refresh = 70, Dt = 40, PetDT = 50 };
+include.Low = function(name, value)
+    return (value or 0) < lines[name];
+end
 
 include.Default = function()
     local t = gVana.Toggles;
@@ -56,9 +62,9 @@ include.Default = function()
         local idle = t.Idle or 'auto';
         local auto = {};
         if (idle == 'regen') then wear('Idle_Regen');
-        elseif (idle == 'auto') and (low('Idle_Regen', player.HPP)) and (wear('Idle_Regen')) then auto[#auto + 1] = 'Idle_Regen'; end
+        elseif (idle == 'auto') and (player.HPP < 60) and (wear('Idle_Regen')) then auto[#auto + 1] = 'Idle_Regen'; end
         if (idle == 'refresh') then wear('Idle_Refresh');
-        elseif (idle == 'auto') and (player.MaxMP > 0) and (low('Idle_Refresh', player.MPP)) and (wear('Idle_Refresh')) then auto[#auto + 1] = 'Idle_Refresh'; end
+        elseif (idle == 'auto') and (player.MaxMP > 0) and (player.MPP < 70) and (wear('Idle_Refresh')) then auto[#auto + 1] = 'Idle_Refresh'; end
         if (idle == 'speed') then wear('Movement');
         elseif (player.IsMoving) and (not t.Kite) and (wear('Movement')) then auto[#auto + 1] = 'Movement'; end
         if (#auto > 0) then gVanaStock.HoldOwn('Idle', auto); end
@@ -71,9 +77,8 @@ include.Default = function()
     if (t.TH) and (player.Status == 'Engaged') then wear('TH'); end
     -- /vg dt: all (Dt), pdt (Dt_Physical) or mdt (Dt_Magic); under 40% HP, Dt by itself
     if (t.DT == 'pdt') then wear('Dt_Physical'); elseif (t.DT == 'mdt') then wear('Dt_Magic'); end
-    local lowHp = low('Dt', player.HPP);
-    if ((t.DT) and (t.DT ~= 'pdt') and (t.DT ~= 'mdt')) or (lowHp) then wear('Dt'); end
-    if (pet ~= nil) and (low('PetDT', pet.HPP or 100)) then wear('PetDT'); end
+    if ((t.DT) and (t.DT ~= 'pdt') and (t.DT ~= 'mdt')) or (player.HPP < 40) then wear('Dt'); end
+    if (pet ~= nil) and ((pet.HPP or 100) < 50) then wear('PetDT'); end
 
     -- ailments, last: what you wear for them beats everything above
     if (gData.GetBuffCount('Sleep') > 0) then wear('Sleeping'); end

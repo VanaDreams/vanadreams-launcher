@@ -1,12 +1,9 @@
-r"""Off-game test: gear stops swapping while the player stands still.
+r"""Off-game test: nothing is sent to a slot another piece takes.
 
     python addons/vanagear/tests/standing_still.py
 
-1. Idle_Regen goes on under 60% HP. Its pieces carry less HP than the Idle set's, so wearing it lowers
-   the max HP and lifts the share back over 60%: it came off, the max rose, the share fell, it went on
-   again, every pass. Now it holds until 90% (vg\latch.lua).
-2. A cloak takes the head (the server's rslot). A set with a head piece and a Twilight Cloak, or a head
-   piece asked for while the cloak stays worn, sent the head every pass. Now nothing goes to a taken slot.
+A cloak takes the head (the server's rslot). A set with a head piece and a Twilight Cloak, or a head
+piece asked for while the cloak stays worn, sent the head every pass. Now nothing goes to a taken slot.
 """
 from pathlib import Path
 
@@ -24,32 +21,7 @@ function T(t) setmetatable(t, { __index = { append = function(self, v) self[#sel
 chat = setmetatable({}, { __index = function() return function(...) return table.concat({...}, ' ') end end })
 local out = {}
 
--- 1. the latch: 550 HP, the Idle set gives 1000 max, Idle_Regen gives 800
-local latch = require('vg.latch')
-local hp, regenOn, flips = 550, false, 0
-for pass = 1, 20 do
-    local max = regenOn and 800 or 1000
-    local now = latch.Low('Idle_Regen', math.floor(hp * 100 / max))
-    if (now ~= regenOn) then flips = flips + 1 end
-    regenOn = now
-end
-out[#out + 1] = 'regen flips=' .. flips .. ' on=' .. tostring(regenOn)
--- healed to 90% in the Regen set: it comes off, and back in Idle (72%) it stays off
-hp = 720
-local off1 = latch.Low('Idle_Regen', 90)
-local off2 = latch.Low('Idle_Regen', math.floor(hp * 100 / 1000))
-out[#out + 1] = 'regen healed=' .. tostring(off1) .. ',' .. tostring(off2)
--- the old single line, for the record: it flips on every pass
-local old, oldOn, oldFlips = nil, false, 0
-for pass = 1, 20 do
-    local max = oldOn and 800 or 1000
-    local now = (math.floor(550 * 100 / max) < 60)
-    if (now ~= oldOn) then oldFlips = oldFlips + 1 end
-    oldOn = now
-end
-out[#out + 1] = 'old flips=' .. oldFlips
-
--- 2. the cloak: inventory 1 Nyame Helm, 2 Twilight Cloak
+-- the cloak: inventory 1 Nyame Helm, 2 Twilight Cloak
 local items = { [1] = { Id = 23761, Index = 1, Count = 1, Flags = 0, Extra = '' },
                 [2] = { Id = 11363, Index = 2, Count = 1, Flags = 0, Extra = '' } }
 local res = { [23761] = { Name = { 'Nyame Helm' }, Flags = 0x800, Level = 99, Jobs = 0xFFFFFE, Slots = 16 },
@@ -104,7 +76,6 @@ out[#out + 1] = 'no cloak=' .. wear({ [5] = 'Nyame Helm' })
 return table.concat(out, '\n')
 """, str(ADDON), INSTALL)
 print(result)
-want = ['regen flips=1 on=true', 'regen healed=false,false', 'old flips=20',
-        'both=5<2', 'under cloak=\n', 'no cloak=4<1']
+want = ['both=5<2', 'under cloak=\n', 'no cloak=4<1']
 ok = all(w in result + '\n' for w in want)
 print('PASS' if ok else 'FAIL')
