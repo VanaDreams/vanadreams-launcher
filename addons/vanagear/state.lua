@@ -56,12 +56,7 @@ state.Init = function()
         state.Disabled[i] = false;
         state.Encumbrance[i] = false;
     end
-
-    -- vanagear: the settings exist from load. LuAshitacast made them when it loaded the profile, at once;
-    -- vanagear loads the profile after the zone wait, and a spell cast inside that wait read a nil gSettings,
-    -- left the action half made and blocked every spell after it until a relog (#bug-tickets "vanagear error").
-    state.ResetSettings();
-
+    
     -- vanagear: a profile's require and gFunc.LoadFile look in vanagear's profiles folder, never luashitacast's
     local configPath = string.format('%sconfig\\addons\\vanagear\\profiles\\?.lua;', AshitaCore:GetInstallPath());
     package.path = configPath .. package.path;
