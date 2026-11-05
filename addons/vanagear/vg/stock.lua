@@ -136,9 +136,10 @@ stock.HandleDefault = function()
         local idle = t.Idle or 'auto';
         local auto = {};   -- the overlays that went on by themselves, not by a toggle
         if (idle == 'regen') then wear('Idle_Regen');
-        elseif (idle == 'auto') and (player.HPP < 60) and (wear('Idle_Regen')) then auto[#auto + 1] = 'Idle_Regen'; end
+        -- on at one line, off at a further one, so the set's own max HP / MP never flips it (vg\latch.lua)
+        elseif (idle == 'auto') and (require('vg.latch').Low('Idle_Regen', player.HPP)) and (wear('Idle_Regen')) then auto[#auto + 1] = 'Idle_Regen'; end
         if (idle == 'refresh') then wear('Idle_Refresh');
-        elseif (idle == 'auto') and (player.MaxMP > 0) and (player.MPP < 70) and (wear('Idle_Refresh')) then auto[#auto + 1] = 'Idle_Refresh'; end
+        elseif (idle == 'auto') and (player.MaxMP > 0) and (require('vg.latch').Low('Idle_Refresh', player.MPP)) and (wear('Idle_Refresh')) then auto[#auto + 1] = 'Idle_Refresh'; end
         if (idle == 'speed') then wear('Movement');
         elseif (player.IsMoving) and (not t.Kite) and (wear('Movement')) then auto[#auto + 1] = 'Movement'; end
         if (#auto > 0) then holdOwn('Idle', auto); end

@@ -194,6 +194,7 @@ packethandlers.HandleActionPacket = function(packet, resend)
         return;
     else
         gState.Inject(0x1A, gState.PlayerAction.Packet);
+        gState.PlayerAction.Sent = true;   -- vanagear: SafeAction knows the action went out
     end
 
     if (gState.PlayerAction.Type == 'Spell') then
@@ -233,6 +234,37 @@ packethandlers.HandleItemPacket = function(packet, resend)
     end
     
     gState.Inject(0x37, gState.PlayerAction.Packet);
+    gState.PlayerAction.Sent = true;   -- vanagear: SafeAction knows the item went out
+end
+
+-- vanagear: the action and item packets are held back while the precast gear goes on, then sent again.
+-- Anything that throws in between used to eat the spell, and leave a half-made action that threw on every
+-- packet after it, so nothing could be cast until a relog. Now a throw sends the packet on as the player
+-- sent it, with the gear left as it is, and the action is cleared.
+local handledCategories = T{0x03, 0x07, 0x09, 0x10};
+
+local function SafeAction(id, packet, resend)
+    if (id == 0x1A) and (not handledCategories:contains(struct.unpack('H', packet, 0x0A + 0x01))) then
+        return;   -- not one vanagear holds back
+    end
+    local handler = (id == 0x1A) and gPacketHandlers.HandleActionPacket or gPacketHandlers.HandleItemPacket;
+    gState.PlayerAction = nil;
+    if (gVanaGuard('action', handler, packet, resend)) then
+        return;
+    end
+    local action = gState.PlayerAction;
+    gState.PlayerAction = nil;
+    gState.DelayedEquip = {};
+    if (action == nil) or (action.Sent ~= true) then
+        gState.Inject(id, packet:totable());
+    end
+end
+
+-- vanagear: with no profile loaded yet (the zone wait at login) or inside the zone wait, nothing swaps,
+-- so the action is not held back at all: it goes to the server as the player sent it.
+local chunkPass = false;   -- PassActions for the chunk being sent, so every packet in it is handled alike
+local function PassActions()
+    return (gProfile == nil) or (gVanaCore.Holding());
 end
 
 --Check for duplicate packets..   
@@ -247,15 +279,19 @@ local function CheckDuplicate(chunk, offset, size)
 end
 
 packethandlers.HandleOutgoingChunk = function(e)
+    local pass = PassActions();
+    chunkPass = pass;
+
     --Clear expired actions.
     local time = os.clock();
-    if (gState.PlayerAction ~= nil) and (gState.PlayerAction.Completion < time) then
+    -- vanagear: an action with no completion time (one that threw while being made) has ended too
+    if (gState.PlayerAction ~= nil) and ((gState.PlayerAction.Completion or 0) < time) then
         if (gSettings.Debug) then
             print(chat.header('vanagear') .. chat.message('Action ending due to timeout.'));
         end
         gState.PlayerAction = nil;
     end
-    if (gState.PetAction ~= nil) and (gState.PetAction.Completion < time) then
+    if (gState.PetAction ~= nil) and ((gState.PetAction.Completion or 0) < time) then
         if (gSettings.Debug) then
             print(chat.header('vanagear') .. chat.message('Pet action ending due to timeout.'));
         end
@@ -270,21 +306,15 @@ packethandlers.HandleOutgoingChunk = function(e)
     while (offset < e.chunk_size) do
         local id    = ashita.bits.unpack_be(e.chunk_data_raw, offset, 0, 9);
         local size  = ashita.bits.unpack_be(e.chunk_data_raw, offset, 9, 7) * 4;
-        if (id == 0x1A) then
-            local isResend = CheckDuplicate(e.chunk_data_raw, offset, size);
-            local sequencer = (AshitaCore:GetPluginManager():Get('Sequencer') ~= nil);
-            if (not isResend) or (sequencer) then
-                gPacketHandlers.HandleActionPacket(struct.unpack('c' .. size, e.chunk_data, offset + 1), isResend);
-            end
-        elseif (id == 0x15) then
+        if (id == 0x15) then
             gVanaCore.Moved();
             newPositionX = struct.unpack('f', e.chunk_data, offset + 0x04 + 1);
             newPositionY = struct.unpack('f', e.chunk_data, offset + 0x0C + 1);
-        elseif (id == 0x37) then
+        elseif ((id == 0x1A) or (id == 0x37)) and (not pass) then
             local isResend = CheckDuplicate(e.chunk_data_raw, offset, size);
             local sequencer = (AshitaCore:GetPluginManager():Get('Sequencer') ~= nil);
             if (not isResend) or (sequencer) then
-                gPacketHandlers.HandleItemPacket(struct.unpack('c' .. size, e.chunk_data, offset + 1), isResend);
+                SafeAction(id, struct.unpack('c' .. size, e.chunk_data, offset + 1), isResend);
             end
         end
         offset = offset + size;
@@ -331,7 +361,6 @@ packethandlers.HandleIncomingPacket = function(e)
     end
 end
 
-local handledCategories = T{0x03, 0x07, 0x09, 0x10};
 packethandlers.HandleOutgoingPacket = function(e)
     --Handle packets that are being injected by anything else in real time.
     if (e.injected == true) then
@@ -346,15 +375,15 @@ packethandlers.HandleOutgoingPacket = function(e)
             end
             gVanaCore.SawInjectedEquip(slots);
         end
-        if (gState.Injecting == false) then
+        if (gState.Injecting == false) and (not PassActions()) then
             if (e.id == 0x1A) then
                 local category = struct.unpack('H', e.data, 0x0A + 0x01);
                 if handledCategories:contains(category) then
-                    gPacketHandlers.HandleActionPacket(struct.unpack('c' .. e.size, e.data, 1));
+                    SafeAction(0x1A, struct.unpack('c' .. e.size, e.data, 1));
                     e.blocked = true;
                 end
             elseif (e.id == 0x37) then
-                gPacketHandlers.HandleItemPacket(struct.unpack('c' .. e.size, e.data, 1));
+                SafeAction(0x37, struct.unpack('c' .. e.size, e.data, 1));
                 e.blocked = true;
             end
         end
@@ -363,7 +392,13 @@ packethandlers.HandleOutgoingPacket = function(e)
 
     --If we're in a new outgoing chunk, handle idle / action stuff.
     if (ffi.C.memcmp(e.data_raw, e.chunk_data_raw, e.size) == 0) then
-        gPacketHandlers.HandleOutgoingChunk(e);
+        -- vanagear: guarded on its own, so a throw in the idle swap never skips the block below
+        gVanaGuard('outgoing chunk', gPacketHandlers.HandleOutgoingChunk, e);
+    end
+
+    -- vanagear: actions not held back this chunk (no profile yet, or the zone wait) go out as sent
+    if (chunkPass) and ((e.id == 0x1A) or (e.id == 0x37)) then
+        return;
     end
 
     --Block all action packets that LAC triggers on.

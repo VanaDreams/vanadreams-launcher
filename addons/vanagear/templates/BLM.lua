@@ -243,7 +243,8 @@ profile.HandleDefault = function()
     -- Mana Wall, while it is up
     if (gData.GetBuffCount('Mana Wall') > 0) then wear('ManaWall'); end
     -- with /vg fwd death and over half your MP: the Death set stays on, so the MP it adds is not lost
-    if (state.death) and (player.MPP > 50) then wear('Death'); end
+    -- on over 50%, off under 35%: the MP the set adds lowers the share, so one line would flip it every pass
+    if (state.death) and (vg.Latch('Death', player.MPP, 50, 35)) then wear('Death'); end
 
     -- yours:
 end

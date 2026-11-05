@@ -259,6 +259,9 @@ def main(server):
     for r in rows(sql / 'item_equipment.sql', 'item_equipment'):
         item_id, name, level, ilevel, jobs, mid, shield, script, slot, rslot, rlook, su = r[:12]
         items[item_id] = {'name': name, 'level': level, 'jobs': jobs, 'slot': slot}
+        if rslot:
+            # the slots the piece also takes (a Tunic takes the head): nothing else can be worn there
+            items[item_id]['rslot'] = rslot
         if ilevel:
             items[item_id]['ilvl'] = ilevel
         if su:

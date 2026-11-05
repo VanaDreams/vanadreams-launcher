@@ -24,6 +24,7 @@ local res = { [23761] = { Name = { 'Nyame Helm' }, Flags = 0x800, Level = 99, Jo
               [23515] = { Name = { 'Sanctity Necklace' }, Flags = 0x800, Level = 99, Jobs = 0xFFFFFE, Slots = 512 } }
 local sent = {}
 AshitaCore = {
+    GetInstallPath = function() return '' end,
     GetMemoryManager = function() return {
         GetInventory = function() return {
             GetContainerItem = function(_, c, i) if c == 0 then return items[i] or { Id = 0, Count = 0, Index = i } end return { Id = 0, Count = 0 } end,
@@ -31,7 +32,7 @@ AshitaCore = {
         } end,
         GetPlayer = function() return {
             GetMainJob = function() return 9 end, GetJobLevel = function() return 99 end, GetMainJobLevel = function() return 99 end,
-            GetSubJob = function() return 19 end,
+            GetSubJob = function() return 19 end, GetSubJobLevel = function() return 49 end,
         } end,
     } end,
     GetResourceManager = function() return { GetItemById = function(_, id) return res[id] end } end,
