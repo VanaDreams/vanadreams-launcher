@@ -24,13 +24,14 @@ local res = { [23761] = { Name = { 'Nyame Helm' }, Flags = 0x800, Level = 99, Jo
               [16000] = { Name = { 'Aymur' }, Flags = 0x800, Level = 99, Jobs = 0xFFFFFE, Slots = 1 } }
 local sent = {}
 AshitaCore = {
+    GetInstallPath = function() return '' end,
     GetMemoryManager = function() return {
         GetInventory = function() return {
             GetContainerItem = function(_, c, i) if c == 0 then return items[i] or { Id = 0, Count = 0, Index = i } end return { Id = 0, Count = 0 } end,
             GetEquippedItem = function() return { Index = 0 } end,
         } end,
         GetPlayer = function() return {
-            GetMainJob = function() return 9 end, GetSubJob = function() return 0 end, GetJobLevel = function() return 99 end, GetMainJobLevel = function() return 99 end,
+            GetMainJob = function() return 9 end, GetSubJob = function() return 0 end, GetSubJobLevel = function() return 0 end, GetJobLevel = function() return 99 end, GetMainJobLevel = function() return 99 end,
         } end,
     } end,
     GetResourceManager = function() return { GetItemById = function(_, id) return res[id] end } end,

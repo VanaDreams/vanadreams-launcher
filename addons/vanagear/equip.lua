@@ -16,6 +16,11 @@ local japanese = (AshitaCore:GetConfigurationManager():GetInt32('boot', 'ashita.
 local UpdateJobLevel = function()    
     CurrentJob = AshitaCore:GetMemoryManager():GetPlayer():GetMainJob();
     CurrentSubJob = AshitaCore:GetMemoryManager():GetPlayer():GetSubJob(); -- vanagear
+    -- vanagear: a support job turned off where it is restricted lends no gear (the server's canWearJobGear);
+    -- counting it sent a piece the server refused, again on every pass
+    if (AshitaCore:GetMemoryManager():GetPlayer():GetSubJobLevel() == 0) then
+        CurrentSubJob = 0;
+    end
     CurrentLevel = AshitaCore:GetMemoryManager():GetPlayer():GetJobLevel(CurrentJob);
     if (gSettings.AllowSyncEquip == false) then
         CurrentLevel = AshitaCore:GetMemoryManager():GetPlayer():GetMainJobLevel();
@@ -574,6 +579,36 @@ local EquipSet = function(set, style)
     if (gVana ~= nil) then
         gVana.LastMissing = missing;
         gVana.LastEquipAt = os.clock();
+    end
+
+    -- vanagear: a piece that takes other slots as well as its own (a Tunic or a cloak takes the head: the
+    -- server's rslot) leaves nothing to put there. Your own sets mixed with the built ones, or an overlay
+    -- over a base set, asked for a head under a Tunic: the server refused it or took the Tunic off, and the
+    -- next pass asked again, so the gear swapped standing still. What the set puts on, or what stays worn
+    -- in a slot it leaves alone, decides which slots are taken; nothing is sent to those.
+    local items = require('vg.data').Items();
+    local taken = 0;
+    for slot = 1, 16 do
+        local e = set[slot];
+        local id = nil;
+        if (e ~= nil) and (e.Index ~= nil) and (e.Index > 0) then
+            local item = inventoryManager:GetContainerItem(e.Container, e.Index);
+            id = (item ~= nil) and item.Id or nil;
+        elseif (e == nil) or (e.Index == nil) then
+            local current = GetCurrentEquip(slot);
+            id = (current.Item ~= nil) and current.Item.Id or nil;
+        end
+        local server = (id ~= nil) and items[id] or nil;
+        if (server ~= nil) and (server.rslot ~= nil) then
+            taken = bit.bor(taken, server.rslot);
+        end
+    end
+    if (taken ~= 0) then
+        for slot = 1, 16 do
+            if (set[slot] ~= nil) and (set[slot].Index ~= 0) and (bit.band(taken, bit.lshift(1, slot - 1)) ~= 0) then
+                set[slot] = nil;
+            end
+        end
     end
 
     --Prepare table of equip packets.
