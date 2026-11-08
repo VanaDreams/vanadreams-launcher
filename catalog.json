@@ -2166,6 +2166,24 @@
       "docs": "https://github.com/VanaDreams/vanadreams-launcher/tree/main/addons/vanacam",
       "description": "Camera controls in game: close/adventure/far presets, normal and combat distance sliders, close zoom in tight spaces, and automatic screen-aspect matching for widescreen displays. Type /vc ui.",
       "category": "VanaDreams"
+    },
+    {
+      "id": "nolock",
+      "name": "nolock",
+      "kind": "addon",
+      "maintainer": "WinterSolstice8 (upstream)",
+      "source": {
+        "type": "repo-folder",
+        "repo": "VanaDreams/vanadreams-player-addons",
+        "path": "addons/nolock",
+        "branch": "main"
+      },
+      "version": "1.0.0",
+      "install": "copy-to-addons",
+      "load": "/addon load nolock",
+      "docs": "https://github.com/VanaDreams/vanadreams-player-addons/tree/main/addons/nolock",
+      "description": "Engage or disengage while spells or enemy moves would normally lock the animation. Does not let you move during animations. Original Ashita v4 addon by WinterSolstice8, with atom0s's patch, supplied unchanged under GPLv3. May briefly show cosmetic weapon/hand misalignment.",
+      "category": "Combat & targeting"
     }
   ]
 }
