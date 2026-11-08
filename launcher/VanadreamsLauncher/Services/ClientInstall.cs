@@ -10,6 +10,18 @@ using Microsoft.Win32;
 
 namespace Vanadreams.Services
 {
+    public sealed class ChunkRequirement
+    {
+        public string Name { get; set; }
+        public string Sha256 { get; set; }
+    }
+
+    public sealed class ChunkFile
+    {
+        public string Path { get; set; }
+        public string Sha256 { get; set; }
+    }
+
     public sealed class ClientChunk
     {
         public string Name { get; set; }
@@ -20,6 +32,9 @@ namespace Vanadreams.Services
         public string Dest { get; set; }
         public bool ToAshita => ClientInstall.IsAshitaDest(Dest);
         public long Unpacked { get; set; }
+        public bool Required { get; set; }
+        public List<ChunkRequirement> Requires { get; set; } = new List<ChunkRequirement>();
+        public List<ChunkFile> Verify { get; set; } = new List<ChunkFile>();
     }
 
     public sealed class ClientManifest
@@ -48,9 +63,15 @@ namespace Vanadreams.Services
                     Sha256 = Json.Str(c, "sha256"),
                     Dest = Json.Str(c, "dest", ClientInstall.GameFolderName),
                     Unpacked = Json.Long(c, "unpacked"),
+                    Required = Json.Bool(c, "required"),
+                    Requires = Json.List(c.ContainsKey("requires") ? c["requires"] : null).Select(x => new ChunkRequirement
+                    { Name = Json.Str(Json.Obj(x), "name"), Sha256 = Json.Str(Json.Obj(x), "sha256") }).ToList(),
+                    Verify = Json.List(c.ContainsKey("verify") ? c["verify"] : null).Select(x => new ChunkFile
+                    { Path = Json.Str(Json.Obj(x), "path"), Sha256 = Json.Str(Json.Obj(x), "sha256") }).ToList(),
                 });
             }
             if (string.IsNullOrEmpty(m.Version) || m.Chunks.Count == 0) throw new InvalidDataException("The game's download list is empty.");
+            m.Chunks = ClientInstall.Ordered(m);
             return m;
         }
     }
@@ -139,22 +160,127 @@ namespace Vanadreams.Services
             return done;
         }
 
-        /// <summary>What is still to do: a zip counts as done only with the same name and hash.</summary>
-        public static List<ClientChunk> Remaining(ClientManifest m, HashSet<string> done) =>
-            m.Chunks.Where(c => !done.Contains(c.Name + " " + c.Sha256)).ToList();
+        private static bool HashIsValid(string hash) => hash != null && hash.Length == 64 && hash.All(Uri.IsHexDigit);
 
-        /// <summary>
-        /// The new or changed zips for a copy this launcher installed from this version: the update the launcher offers
-        /// at start. Empty when the record holds nothing for this version (not installed here, or an older version, which
-        /// the version check deals with as a fresh install), and Ashita chunks wait until there is an Ashita folder.
-        /// 11 Oct 2026: the modern look's zips were appended to 30260904_1, and nothing told an installed player they were there.
-        /// </summary>
+        private static bool RelativePath(string path) => !string.IsNullOrWhiteSpace(path) &&
+            !path.StartsWith("/") && !path.StartsWith("\\") && !path.Contains(":") &&
+            !path.Split('/', '\\').Any(p => p == ".." || p == "." || p.Length == 0);
+
+        /// <summary>Stable dependency order. A missing or changed prerequisite must never silently patch a DLL
+        /// built against a different baseline. Existing manifests without dependencies keep their order.</summary>
+        public static List<ClientChunk> Ordered(ClientManifest m)
+        {
+            var byName = new Dictionary<string, ClientChunk>(StringComparer.OrdinalIgnoreCase);
+            foreach (var c in m.Chunks)
+            {
+                if (!RelativePath(c.Name) || c.Name.Contains("/") || c.Name.Contains("\\") || byName.ContainsKey(c.Name))
+                    throw new InvalidDataException("The game's download list contains an invalid or duplicate pack name.");
+                byName.Add(c.Name, c);
+                if (c.Required && c.Verify.Count == 0)
+                    throw new InvalidDataException(c.Name + " is required but has no installed-file checks.");
+                var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var f in c.Verify)
+                    if (!RelativePath(f.Path) || !HashIsValid(f.Sha256) || !paths.Add(f.Path.Replace('\\', '/')))
+                        throw new InvalidDataException("Invalid file check in " + c.Name + ".");
+            }
+            var ordered = new List<ClientChunk>();
+            var active = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            Action<ClientChunk> visit = null;
+            visit = c =>
+            {
+                if (seen.Contains(c.Name)) return;
+                if (!active.Add(c.Name)) throw new InvalidDataException("The game's packs have a dependency cycle.");
+                foreach (var need in c.Requires)
+                {
+                    ClientChunk prerequisite;
+                    if (need.Name == null || !HashIsValid(need.Sha256) || !byName.TryGetValue(need.Name, out prerequisite) ||
+                        !string.Equals(need.Sha256, prerequisite.Sha256, StringComparison.OrdinalIgnoreCase) || c.ToAshita != prerequisite.ToAshita)
+                        throw new InvalidDataException(c.Name + " needs a different or missing prerequisite pack: " + need.Name);
+                    visit(prerequisite);
+                }
+                active.Remove(c.Name);
+                seen.Add(c.Name);
+                ordered.Add(c);
+            };
+            foreach (var c in m.Chunks) visit(c);
+            return ordered;
+        }
+
+        /// <summary>Check the installed bytes, not just the download receipt. Critical packs opt in through verify.</summary>
+        public static bool FilesMatch(ClientChunk c, string root, string ashitaRoot = null)
+        {
+            var dest = DestFolder(c, root, ashitaRoot);
+            if (dest == null) return c.Verify.Count == 0;
+            foreach (var f in c.Verify)
+            {
+                if (!RelativePath(f.Path) || !HashIsValid(f.Sha256)) throw new InvalidDataException("Invalid file check in " + c.Name);
+                var path = Path.Combine(dest, f.Path.Replace('/', Path.DirectorySeparatorChar));
+                try
+                {
+                    if (!File.Exists(path) || !string.Equals(Sha256Of(path), f.Sha256, StringComparison.OrdinalIgnoreCase)) return false;
+                }
+                catch (IOException) { return false; }
+                catch (UnauthorizedAccessException) { return false; }
+            }
+            return true;
+        }
+
+        /// <summary>Reinstall dependents after any prerequisite is replayed, even if their receipts still match.</summary>
+        public static List<ClientChunk> Remaining(ClientManifest m, HashSet<string> done, string root = null, string ashitaRoot = null)
+        {
+            var todo = new List<ClientChunk>();
+            var replay = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var touched = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var c in Ordered(m))
+                if (!done.Contains(c.Name + " " + c.Sha256) || c.Requires.Any(r => replay.Contains(r.Name)) ||
+                    (c.Verify.Count > 0 && touched.Contains(c.Dest ?? GameFolderName)) ||
+                    (root != null && !FilesMatch(c, root, ashitaRoot)))
+                { todo.Add(c); replay.Add(c.Name); touched.Add(c.Dest ?? GameFolderName); }
+            return todo;
+        }
+
+        private static HashSet<string> RequiredNames(ClientManifest m)
+        {
+            var required = new HashSet<string>(m.Chunks.Where(c => c.Required).Select(c => c.Name), StringComparer.OrdinalIgnoreCase);
+            foreach (var c in Ordered(m).AsEnumerable().Reverse())
+                if (required.Contains(c.Name)) foreach (var r in c.Requires) required.Add(r.Name);
+            return required;
+        }
+
+        /// <summary>Managed installs get all pending packs. An imported, exact-version copy gets only required
+        /// packs and their prerequisites; recording those packs must not make it look like a partial full install.</summary>
         public static List<ClientChunk> Updates(ClientManifest m, string root, string ashitaRoot)
         {
             var mine = Done(root, m.Version);
-            if (mine.Count == 0) return new List<ClientChunk>();
+            var required = RequiredNames(m);
+            var managed = mine.Contains("@managed -") || mine.Any(line => !required.Contains(line.Split(' ')[0]));
+            // Preserve support for changed hashes in pre-metadata manifests.
+            if (required.Count == 0) managed = mine.Count > 0;
+            if (!managed && (required.Count == 0 || ClientVersion.ReadInstalled(GameFolder(root)) != m.Version))
+                return new List<ClientChunk>();
             var hasAshita = !string.IsNullOrWhiteSpace(ashitaRoot) && Directory.Exists(ashitaRoot);
-            return Remaining(m, Done(root, m.Version, ashitaRoot)).Where(c => !c.ToAshita || hasAshita).ToList();
+            var eligible = managed ? m : new ClientManifest { Version = m.Version,
+                Chunks = m.Chunks.Where(c => required.Contains(c.Name)).ToList() };
+            return Remaining(eligible, Done(root, m.Version, ashitaRoot), root, ashitaRoot)
+                .Where(c => !c.ToAshita || hasAshita).ToList();
+        }
+
+        /// <summary>Invalidate the complete pending plan before overwriting any file. If extraction or the process
+        /// stops halfway, receipts for previously installed dependent packs cannot hide the unfinished repair.</summary>
+        private static void Invalidate(ClientManifest m, IEnumerable<ClientChunk> todo, string root, string ashitaRoot)
+        {
+            foreach (var group in todo.GroupBy(c => RecordPath(RecordFolder(c, root, ashitaRoot)), StringComparer.OrdinalIgnoreCase))
+            {
+                if (!File.Exists(group.Key)) continue;
+                var names = new HashSet<string>(group.Select(c => c.Name), StringComparer.OrdinalIgnoreCase);
+                var lines = File.ReadAllLines(group.Key).Where(line =>
+                {
+                    var fields = line.Split(' ');
+                    return fields.Length < 3 || fields[0] != m.Version || !names.Contains(fields[1]);
+                }).ToArray();
+                File.WriteAllLines(group.Key, lines);
+            }
         }
 
         public static string Sha256Of(string path)
@@ -167,11 +293,22 @@ namespace Vanadreams.Services
         /// <summary>Unpacks every zip still to do. Ashita chunks are left for later when no Ashita folder is set; the
         /// start-up check offers them once there is one. Low spec is put back on the effects after they unpack.</summary>
         public static async Task InstallFilesAsync(Downloader downloader, ClientManifest m, string root, string downloads,
-            IProgress<InstallProgress> progress, CancellationToken ct, string ashitaRoot = null, bool lowSpec = false)
+            IProgress<InstallProgress> progress, CancellationToken ct, string ashitaRoot = null, bool lowSpec = false, bool updatesOnly = false)
         {
             Directory.CreateDirectory(root);
             var hasAshita = !string.IsNullOrWhiteSpace(ashitaRoot) && Directory.Exists(ashitaRoot);
-            var todo = Remaining(m, Done(root, m.Version, ashitaRoot)).Where(c => !c.ToAshita || hasAshita).ToList();
+            var todo = updatesOnly ? Updates(m, root, ashitaRoot) :
+                Remaining(m, Done(root, m.Version, ashitaRoot), root, ashitaRoot).Where(c => !c.ToAshita || hasAshita).ToList();
+            // Keep the managed/full-install distinction even when interruption removes every pending receipt.
+            var required = RequiredNames(m);
+            var wasManaged = !updatesOnly || Done(root, m.Version).Any(line => !required.Contains(line.Split(' ')[0]));
+            if (wasManaged)
+            {
+                var record = RecordPath(root);
+                Directory.CreateDirectory(Path.GetDirectoryName(record));
+                if (!Done(root, m.Version).Contains("@managed -")) File.AppendAllText(record, m.Version + " @managed -" + Environment.NewLine);
+            }
+            Invalidate(m, todo, root, ashitaRoot);
             var touchedAshita = false;
             var total = m.TotalSize;
             var before = total - todo.Sum(c => c.Size);
@@ -193,6 +330,8 @@ namespace Vanadreams.Services
                 }
                 var dest = DestFolder(c, root, ashitaRoot);
                 await Task.Run(() => Downloader.ExtractZipOverwrite(zip, dest), ct).ConfigureAwait(false);
+                if (!FilesMatch(c, root, ashitaRoot))
+                    throw new IOException(c.Name + " unpacked, but its required files could not be verified. Press Patch again.");
                 var record = RecordPath(RecordFolder(c, root, ashitaRoot));
                 Directory.CreateDirectory(Path.GetDirectoryName(record));
                 File.AppendAllText(record, $"{m.Version} {c.Name} {c.Sha256}{Environment.NewLine}");
@@ -200,6 +339,9 @@ namespace Vanadreams.Services
                 before += c.Size;
                 touchedAshita |= c.ToAshita;
             }
+            foreach (var c in m.Chunks.Where(c => c.Verify.Count > 0 && (!c.ToAshita || hasAshita)))
+                if (!FilesMatch(c, root, ashitaRoot))
+                    throw new IOException(c.Name + " was changed by another pack. Press Patch again before playing.");
             if (touchedAshita) Effects.Apply(ashitaRoot, lowSpec);
             foreach (var d in m.CreateDirs) Directory.CreateDirectory(Path.Combine(GameFolder(root), d));
             foreach (var d in m.ViewerCreateDirs) Directory.CreateDirectory(Path.Combine(ViewerFolder(root), d.Replace('/', '\\')));

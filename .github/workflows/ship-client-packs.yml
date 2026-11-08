@@ -31,6 +31,8 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+      - name: Test pack planning (offline)
+        run: python3 -m unittest discover -s tools/clientpack -p 'test_*.py' -v
       - name: Ship
         run: python3 tools/clientpack/ship_chunks.py ${{ inputs.dry_run && '--dry-run' || '' }}
       - name: Check the public copy

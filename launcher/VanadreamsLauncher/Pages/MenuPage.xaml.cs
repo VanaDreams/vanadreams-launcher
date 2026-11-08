@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -71,7 +72,7 @@ namespace Vanadreams.Pages
                 ShowPatch();
                 return;
             }
-            PlayButton.IsEnabled = true;
+            PlayButton.IsEnabled = _patching == null && !_checkingPlay;
             UserBox.IsEnabled = PassBox.IsEnabled = RememberBox.IsEnabled = true;
             ProfileLine.Text = "Profile: " + _profile.Name;
             if (!string.Equals(_loginFor, _profile.Id, StringComparison.OrdinalIgnoreCase))
@@ -94,7 +95,7 @@ namespace Vanadreams.Pages
         /// <summary>Play or Patch on the button, and the line and bar under the news.</summary>
         private void ShowPatch()
         {
-            if (_patching != null) return;   // the patch keeps its own words until it ends
+            if (_patching != null || _checkingPlay) return;   // the operation keeps its own words until it ends
             var pending = App.State.PendingClientUpdate;
             if (PatchFirst)
             {
@@ -127,7 +128,7 @@ namespace Vanadreams.Pages
 
         public bool CanLeave()
         {
-            if (_patching == null) return true;
+            if (_patching == null && !_checkingPlay) return true;
             PatchText.Text = "Patch in progress, please wait.";
             return false;
         }
@@ -200,11 +201,41 @@ namespace Vanadreams.Pages
         }
 
         /// <summary>Patch while an update waits; Play once there is none.</summary>
-        private void Play_Click(object sender, RoutedEventArgs e)
+        private bool _checkingPlay;
+
+        private async void Play_Click(object sender, RoutedEventArgs e)
         {
-            if (_profile == null || _patching != null) return;
-            if (PatchFirst) { Patch(); return; }
-            Play();
+            if (_profile == null || _patching != null || _checkingPlay) return;
+            _checkingPlay = true;
+            PlayButton.IsEnabled = false;
+            try
+            {
+                if (_profile.IsVanadreams)
+                {
+                    PlayButton.Content = "Checking patches...";
+                    await App.State.RefreshStatusAsync();
+                    await App.State.CheckClientUpdateAsync(requireSuccess: true);
+                    if (App.State.PatchNeeded) _patchedNow = false;
+                }
+                if (PatchFirst) { Patch(); return; }
+                await Play();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("patch check before play", ex);
+                PatchPanel.Visibility = Visibility.Visible;
+                PatchText.Text = "Could not verify the required game files. " + ex.Message;
+                PatchText.Foreground = (Brush)FindResource("Bad");
+            }
+            finally
+            {
+                _checkingPlay = false;
+                if (_patching == null)
+                {
+                    PlayButton.IsEnabled = _profile != null;
+                    PlayButton.Content = PatchFirst ? "Patch" : "Play";
+                }
+            }
         }
 
         /// <summary>The Vanadreams Discord's permanent invite, the same one vanadreams.org carries.</summary>
@@ -306,7 +337,7 @@ namespace Vanadreams.Pages
             return false;
         }
 
-        private async void Play()
+        private async Task Play()
         {
             if (_profile == null) return;
             var state = App.State;
@@ -371,6 +402,11 @@ namespace Vanadreams.Pages
             var lang = _profile.Command.Lang;
             var reg = GameRegistration.Read(lang);
             var root = GameRootFor(_profile, reg);
+            if (_profile.IsVanadreams)
+            {
+                await state.CheckClientUpdateAsync(requireSuccess: true, selectedRoot: root);
+                if (state.PatchNeeded) { Patch(); return; }
+            }
             var previousRoot = GameRegistration.CurrentRoot(reg);
             if (root != null && !EnsureGameIsRegistered(root, reg, lang)) return;
             // 12 Oct 2026: Mogsy's loader logged in and closed, because neither pol.exe nor FFXiMain.dll was where

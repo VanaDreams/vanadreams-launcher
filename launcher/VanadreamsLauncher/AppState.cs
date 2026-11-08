@@ -218,7 +218,8 @@ namespace Vanadreams
         /// </summary>
         public async Task<string> PatchClientAsync(IProgress<InstallProgress> progress, System.Threading.CancellationToken ct)
         {
-            var root = GameInstallTarget;
+            var root = PendingClientUpdate?.Root ?? GameInstallTarget;
+            var patchesOnly = PendingClientUpdate != null;
             var version = Version.ExpectedIsPublished ? Version.Expected : Status.ClientVer;
             var m = PendingClientUpdate?.Manifest;
             if (m == null || (!string.IsNullOrEmpty(version) && m.Version != version))
@@ -245,14 +246,14 @@ namespace Vanadreams
                     return null;
                 }
             }
-            var todo = ClientInstall.Remaining(m, ClientInstall.Done(root, m.Version, ashita));
+            var todo = patchesOnly ? ClientInstall.Updates(m, root, ashita) : ClientInstall.Remaining(m, ClientInstall.Done(root, m.Version, ashita), root, ashita);
             var updateOnly = todo.Count < m.Chunks.Count && ClientInstall.IsRegistered(root);
             var needed = todo.Sum(c => c.Size + c.Unpacked);
             var drive = new DriveInfo(Path.GetPathRoot(root));
             if (drive.AvailableFreeSpace < needed)
                 throw new IOException(drive.Name + " has " + (drive.AvailableFreeSpace / 1073741824.0).ToString("0.0") + " GB free and the patch needs " +
                                       (needed / 1073741824.0).ToString("0.0") + " GB. Free some space, or pick another folder on Install game.");
-            await ClientInstall.InstallFilesAsync(Downloader, m, root, Settings.DownloadsFolder, progress, ct, ashita, Settings.LowSpec);
+            await ClientInstall.InstallFilesAsync(Downloader, m, root, Settings.DownloadsFolder, progress, ct, ashita, Settings.LowSpec, patchesOnly);
             Settings.GameInstallRoot = root;
             Settings.Save();
             XIPivotBundle.Ensure(ashita);
@@ -266,24 +267,40 @@ namespace Vanadreams
             return said;
         }
 
-        public async Task CheckClientUpdateAsync()
+        public async Task CheckClientUpdateAsync(bool requireSuccess = false, string selectedRoot = null)
         {
-            var root = Settings.GameInstallRoot;
             var version = Status.ClientVer;
-            if (string.IsNullOrEmpty(version)) { PendingClientUpdate = null; Notify(); return; }
+            var root = selectedRoot ?? VanadreamsGameRoot();
+            // A removed FFXiMain.dll makes HasGame false, but that is precisely a pack repair's job.
+            // Fall back to a known exact-version folder instead of silently skipping its missing files.
+            if (string.IsNullOrWhiteSpace(root))
+                root = new[] { GameRegistration.RootOf(Settings.FfxiFolderOverride), Settings.GameInstallRoot,
+                    GameRegistration.RootOf(ClientVersion.FindFfxiFolder()), AshitaRoot, ClientInstall.DefaultRoot }
+                    .FirstOrDefault(r => !string.IsNullOrWhiteSpace(r) && version != null &&
+                        ClientVersion.ReadInstalled(ClientInstall.GameFolder(r)) == version);
+            if (string.IsNullOrEmpty(version))
+            {
+                if (requireSuccess) throw new IOException("The server client version could not be checked. Please try Play again when the server is available.");
+                PendingClientUpdate = null; Notify(); return;
+            }
             try
             {
                 var m = ClientManifest.Parse(await Downloader.GetStringAsync(ClientInstall.ManifestUrl(version)));
+                if (requireSuccess && m.Chunks.Any(c => c.Required) &&
+                    (root == null || ClientVersion.ReadInstalled(ClientInstall.GameFolder(root)) != m.Version))
+                    throw new IOException("The required character face pack needs client " + m.Version + ". Select that game copy or use Install game before playing.");
                 // the packs belong to the copy Vanadreams plays, which is not always the recorded install
                 var packs = PacksRoot(m.Version);
                 OverlayMigrationDue = LookOverlays.Due(m, packs, HasAshita ? AshitaRoot : null);
                 if (OverlayMigrationDue) Log.Info("the look and title packs in " + packs + " are to move into their overlays");
-                if (!GameRegistration.HasGame(root)) { PendingClientUpdate = null; Notify(); return; }
+                if (!GameRegistration.HasGame(root) && !(m.Chunks.Any(c => c.Required) && root != null &&
+                    ClientVersion.ReadInstalled(ClientInstall.GameFolder(root)) == m.Version))
+                { PendingClientUpdate = null; Notify(); return; }
                 var todo = ClientInstall.Updates(m, root, HasAshita ? AshitaRoot : null);
                 PendingClientUpdate = todo.Count == 0 ? null : new ClientUpdate { Root = root, Manifest = m, Parts = todo };
                 if (PendingClientUpdate != null) Log.Info("game update ready: " + string.Join(", ", todo.Select(c => c.Name)));
             }
-            catch (Exception ex) { Log.Warn("game update check: " + ex.Message); }
+            catch (Exception ex) { Log.Warn("game update check: " + ex.Message); if (requireSuccess) throw; }
             Notify();
         }
 
