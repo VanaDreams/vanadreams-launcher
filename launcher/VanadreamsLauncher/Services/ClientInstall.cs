@@ -283,6 +283,16 @@ namespace Vanadreams.Services
             }
         }
 
+        /// <summary>Required packs were verified in this root; Windows must actually start that same copy.
+        /// Never accept the legacy best-effort registration fallback for a required binary pack.</summary>
+        public static void RequireRegisteredRoot(RegisteredGame registration, string root)
+        {
+            if (!GameRegistration.PointsAt(registration, root) ||
+                !GameRegistration.SameFolder(GameRegistration.CurrentRoot(registration), root))
+                throw new IOException("Windows still points at a different game copy. The required character files were checked in " +
+                    root + ". Select that copy and complete its registration before playing.");
+        }
+
         public static string Sha256Of(string path)
         {
             using (var sha = SHA256.Create())
@@ -339,7 +349,8 @@ namespace Vanadreams.Services
                 before += c.Size;
                 touchedAshita |= c.ToAshita;
             }
-            foreach (var c in m.Chunks.Where(c => c.Verify.Count > 0 && (!c.ToAshita || hasAshita)))
+            foreach (var c in m.Chunks.Where(c => c.Verify.Count > 0 && (!c.ToAshita || hasAshita) &&
+                (!updatesOnly || wasManaged || required.Contains(c.Name))))
                 if (!FilesMatch(c, root, ashitaRoot))
                     throw new IOException(c.Name + " was changed by another pack. Press Patch again before playing.");
             if (touchedAshita) Effects.Apply(ashitaRoot, lowSpec);

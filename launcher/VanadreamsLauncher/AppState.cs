@@ -154,6 +154,7 @@ namespace Vanadreams
 
         /// <summary>New or changed parts of the game the launcher installed, found at start; null when there are none.</summary>
         public ClientUpdate PendingClientUpdate { get; private set; }
+        public bool HasRequiredClientPacks { get; private set; }
 
         /// <summary>
         /// Compares the server's download list with the record in the installed copy and keeps what is new or changed,
@@ -267,7 +268,7 @@ namespace Vanadreams
             return said;
         }
 
-        public async Task CheckClientUpdateAsync(bool requireSuccess = false, string selectedRoot = null)
+        public async Task CheckClientUpdateAsync(bool requireSuccess = false, string selectedRoot = null, bool allowVersionUpgrade = false)
         {
             var version = Status.ClientVer;
             var root = selectedRoot ?? VanadreamsGameRoot();
@@ -286,8 +287,13 @@ namespace Vanadreams
             try
             {
                 var m = ClientManifest.Parse(await Downloader.GetStringAsync(ClientInstall.ManifestUrl(version)));
-                if (requireSuccess && m.Chunks.Any(c => c.Required) &&
-                    (root == null || ClientVersion.ReadInstalled(ClientInstall.GameFolder(root)) != m.Version))
+                HasRequiredClientPacks = m.Chunks.Any(c => c.Required);
+                var installed = root == null ? null : ClientVersion.ReadInstalled(ClientInstall.GameFolder(root));
+                // An already-blocked older client may use the existing full-version Patch flow.
+                // The check immediately before launching never permits this exception.
+                var upgrading = allowVersionUpgrade && Version.ExpectedIsPublished && Version.Verdict == VersionVerdict.ClientTooOld &&
+                    ClientVersion.Compare(installed, m.Version, VersionLock.Exact).Verdict == VersionVerdict.ClientTooOld;
+                if (requireSuccess && m.Chunks.Any(c => c.Required) && installed != m.Version && !upgrading)
                     throw new IOException("The required character face pack needs client " + m.Version + ". Select that game copy or use Install game before playing.");
                 // the packs belong to the copy Vanadreams plays, which is not always the recorded install
                 var packs = PacksRoot(m.Version);

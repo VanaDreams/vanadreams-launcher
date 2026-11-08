@@ -203,6 +203,32 @@ namespace Vanadreams.Tests
         }
 
         [TestMethod]
+        public async Task Imported_client_does_not_verify_uninstalled_optional_packs()
+        {
+            var optional = Pack("optional.zip", "new DLL", "new table");
+            optional.Dest = "optional";
+            optional.Verify.AddRange(_faces.Verify);
+            _manifest.Chunks.Insert(0, optional);
+            CollectionAssert.AreEqual(new[] { "hair.zip", "faces.zip" }, (await Install(updatesOnly: true)).Requested);
+            Assert.IsFalse(Directory.Exists(Path.Combine(_root, "optional")));
+            Assert.AreEqual(0, ClientInstall.Updates(_manifest, _root, null).Count);
+            Assert.IsTrue(ClientInstall.FilesMatch(_faces, _root));
+        }
+
+        [TestMethod]
+        public void Required_pack_launch_guard_rejects_stale_COM_even_when_folder_keys_match()
+        {
+            var registration = new RegisteredGame { GameFolder = ClientInstall.GameFolder(_root),
+                ViewerFolder = ClientInstall.ViewerFolder(_root) };
+            registration.ComServers.Add(Path.Combine(_root, "other", "FFXi.dll"));
+            Assert.ThrowsException<IOException>(() => ClientInstall.RequireRegisteredRoot(registration, _root));
+            registration.ComServers.Clear();
+            registration.ComServers.Add(Path.Combine(ClientInstall.GameFolder(_root), "FFXi.dll"));
+            ClientInstall.RequireRegisteredRoot(registration, _root);
+            Assert.ThrowsException<IOException>(() => ClientInstall.RequireRegisteredRoot(registration, null));
+        }
+
+        [TestMethod]
         public void Imported_other_version_is_not_patched_with_binary_pack()
         {
             File.WriteAllText(Path.Combine(ClientInstall.GameFolder(_root), "patch.cfg"), "30261001_1\n");

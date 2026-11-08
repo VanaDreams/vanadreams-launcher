@@ -50,19 +50,27 @@ repairs resume safely. A final verification pass catches conflicts before a patc
 redownloading the base client. Those receipts do not turn an imported copy into an incomplete managed installation.
 Full installations keep a `@managed -` receipt for safe resumption. Other-server/retail profile launches do not run
 Vanadreams's required-pack check. If the manifest cannot be checked, or the selected client version is incompatible,
-Vanadreams Play stops with an explanation instead of launching unchecked.
+Vanadreams Play stops with an explanation instead of launching unchecked. After registration, it also verifies that
+Windows actually points at the same game/COM root whose files passed checks; the legacy best-effort registration
+fallback cannot launch a different copy when required packs are present. Older clients can still use the normal
+full-version Patch flow, but the final launch check requires the exact pack-compatible version.
 
 ### Release sequence (requires separate deployment approval)
 
 1. Review and test the ZIP, sidecar, launcher changes, and server changes together. Keep server face availability off.
-2. Bump and release a tested, signed launcher containing these checks before activating the new server choices.
+2. Land the reviewed launcher/publisher source and version **0.2.58**, without the new face ZIP/sidecar commit.
+   Keep source and binary-pack commits separate for this purpose; split a combined review before merging.
    Existing launcher 0.2.57 does not understand `requires`, `verify`, or `required`.
-3. Merge the approved pack/publisher change to main only when ready to publish: that merge triggers live R2 shipping.
-   A draft branch does not. Do not dispatch the workflow as part of review.
-4. Verify the public manifest includes the exact ZIP hash, pinned hair baseline, dependency order, and full file-check
+3. With separate approval, run **Launcher release** on that exact main commit. It builds/tests, obtains Azure OIDC
+   signing credentials, signs and verifies the executable, scans it, and publishes `v0.2.58`. Confirm the signed
+   release asset/version and the launcher self-update path before shipping the face pack. Do not tag, sign, release,
+   or dispatch workflows as part of review.
+4. Merge the approved face ZIP/sidecar commit to main only when ready to publish: that merge triggers **Ship client
+   packs**, which uploads the new manifest and archive to live R2. A draft branch does not.
+5. Verify the public manifest includes the exact ZIP hash, pinned hair baseline, dependency order, and full file-check
    list; verify the downloadable ZIP hash. Test a fresh install, an existing install, imported exact-version client,
    interrupted repair, and deliberately missing DLL/table/DAT using the new launcher.
-5. Enable the server asset gate only after player rollout and in-game visibility checks pass. A normal FFXI client
+6. Enable the server asset gate only after player rollout and in-game visibility checks pass. A normal FFXI client
    version stamp is **not** evidence that a player has this pack. Clients bypassing the launcher are not attested by
    these changes; universal enforcement would require server/loader protocol support.
 
@@ -74,3 +82,16 @@ dotnet test launcher/VanadreamsLauncher.Tests -c Release --nologo -v q
 ```
 
 `ship_chunks.py --dry-run` reads the live R2 manifest; it is not the offline test command.
+
+### Local 0.2.58 candidate and signing prerequisites
+
+The local Release build is an **unsigned review candidate**, not a distributable update. The existing release
+workflow remains the supported signed distribution route. It requires the repository's Azure client/tenant/
+subscription variables, OIDC federation, and the Artifact Signing Certificate Profile Signer permission; those
+credentials/permissions have not been exercised during this source-only preparation.
+
+On the review computer, the Windows SDK `signtool.exe` and Azure CLI are installed, and the repository contains
+signing metadata. The local `launcher/release.ps1` route is blocked because
+`launcher/tools/signing/client/bin/x64/Azure.CodeSigning.Dlib.dll` is absent. No signing package was downloaded and
+no Azure login, signing request, tag, release, workflow dispatch, or deployment was performed. Do not bypass the
+signature requirements or distribute the unsigned candidate to players.

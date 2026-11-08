@@ -214,7 +214,7 @@ namespace Vanadreams.Pages
                 {
                     PlayButton.Content = "Checking patches...";
                     await App.State.RefreshStatusAsync();
-                    await App.State.CheckClientUpdateAsync(requireSuccess: true);
+                    await App.State.CheckClientUpdateAsync(requireSuccess: true, allowVersionUpgrade: true);
                     if (App.State.PatchNeeded) _patchedNow = false;
                 }
                 if (PatchFirst) { Patch(); return; }
@@ -409,6 +409,8 @@ namespace Vanadreams.Pages
             }
             var previousRoot = GameRegistration.CurrentRoot(reg);
             if (root != null && !EnsureGameIsRegistered(root, reg, lang)) return;
+            if (_profile.IsVanadreams && state.HasRequiredClientPacks)
+                ClientInstall.RequireRegisteredRoot(GameRegistration.Read(lang), root);
             // 12 Oct 2026: Mogsy's loader logged in and closed, because neither pol.exe nor FFXiMain.dll was where
             // Windows pointed. When no copy we know of is a whole game, the launch is all but sure to do the same.
             if (_profile.IsVanadreams && root == null &&
