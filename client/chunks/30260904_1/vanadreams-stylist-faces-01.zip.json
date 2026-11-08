@@ -1,0 +1,196 @@
+{
+  "required": true,
+  "requires": [
+    {
+      "name": "vanadreams-hair-01.zip",
+      "sha256": "daec3d8434bab1dd4411e089c03e80434747eed8369834a8218dc6a2d0883993"
+    }
+  ],
+  "sha256": "47ece5a82234f3e94aec8e9c8c3755d94a342144988e68179d4163e099dc1e87",
+  "verify": [
+    {
+      "path": "FFXiMain.dll",
+      "sha256": "b217f97b2eb04be3198fd4780d919054068e0d4246c8d0599a7a73bed11f50ba"
+    },
+    {
+      "path": "FTABLE.DAT",
+      "sha256": "426a0299ef1772617fda195241880d69ae480aca1a30b4090ab254c3e16c33a5"
+    },
+    {
+      "path": "ROM9/102/0.DAT",
+      "sha256": "06ba8c2d5d25c2fd82450cc2bc2481f3a5d0667a7bd667dd593d0204fe3025b4"
+    },
+    {
+      "path": "ROM9/102/1.DAT",
+      "sha256": "e78f4e4c4a77c709cdd286525048caf186cb5c24ace44a648dd69fe6947c10aa"
+    },
+    {
+      "path": "ROM9/102/10.DAT",
+      "sha256": "073183e124ada40994e71eb405220d8cc808d017cf7b8a129727e55ae030a687"
+    },
+    {
+      "path": "ROM9/102/11.DAT",
+      "sha256": "0213b0b0d9ddff3661516161c7fc37c60acac6bbcf7584a00c0da5fbe6e65873"
+    },
+    {
+      "path": "ROM9/102/12.DAT",
+      "sha256": "f12a943e26318b9359e13d45779785319b2e4f5b5c0993b1619b565c641e86dd"
+    },
+    {
+      "path": "ROM9/102/13.DAT",
+      "sha256": "8759c6914cfb81c44d14dc62bcc06921ffdf36d7fa4119491a58d9bc600a51c4"
+    },
+    {
+      "path": "ROM9/102/14.DAT",
+      "sha256": "9ead72b6e3affca1a627a275d4ffc97d18723866d32ea6b35d1ae1d740b40980"
+    },
+    {
+      "path": "ROM9/102/15.DAT",
+      "sha256": "534c505a5afeab3b03dae95438960cfb3d1a073ab2391242ab19434fb7562b91"
+    },
+    {
+      "path": "ROM9/102/16.DAT",
+      "sha256": "156874a2a5c7f4cde3a36147835dc955ec39cc62c023c5b6a841874c79c169ea"
+    },
+    {
+      "path": "ROM9/102/17.DAT",
+      "sha256": "1584c87738e9d6309acec2d014029315bb2c27c4129ae41f7d698ab98adf0ccc"
+    },
+    {
+      "path": "ROM9/102/18.DAT",
+      "sha256": "b74f160477949d6fb576b893fa328d822c201a1da45a7ea1c022736cacf0ce14"
+    },
+    {
+      "path": "ROM9/102/19.DAT",
+      "sha256": "d8512acce996450c621b45ca95e508bae7e292d3489942d4b3bf019251cd17da"
+    },
+    {
+      "path": "ROM9/102/2.DAT",
+      "sha256": "f645e7ca6beedc7b741287e103c54354233927514191013e9d7c54f05ef3702f"
+    },
+    {
+      "path": "ROM9/102/20.DAT",
+      "sha256": "8d977179c34123b356d6b045eb7564a382857bde6ca628e47beccba2eb266082"
+    },
+    {
+      "path": "ROM9/102/21.DAT",
+      "sha256": "e83021d40142f11e254534c68f2132736654053a046620ea09a8fec80cd61d9a"
+    },
+    {
+      "path": "ROM9/102/22.DAT",
+      "sha256": "3c6d71025ddc402b97165d5c0b426c788e697d1e2988f9b27bce21f178f81a73"
+    },
+    {
+      "path": "ROM9/102/23.DAT",
+      "sha256": "13032e3496f7abb9f639a8a0ef6d3d468c8fb3f689b9d25d92125119f9756563"
+    },
+    {
+      "path": "ROM9/102/24.DAT",
+      "sha256": "1f6f3ee73430c4d06794966a7e221668fff1682a1e83ca5577f4caaa37f20cc6"
+    },
+    {
+      "path": "ROM9/102/25.DAT",
+      "sha256": "f43697f795cbe2dfa7f2278deaca7ab0386c2a5fd0991cbd30fdbc6cfd1a8a7a"
+    },
+    {
+      "path": "ROM9/102/26.DAT",
+      "sha256": "31c8b1e1f3f255d511d575b3b0ec21ae71da2e24786906df99b020d273c3f358"
+    },
+    {
+      "path": "ROM9/102/27.DAT",
+      "sha256": "5e436ebe88cf27646db415f3d1cb41b9383deea92689334aba75463f2eba728d"
+    },
+    {
+      "path": "ROM9/102/28.DAT",
+      "sha256": "04edde197d9bd8045b9c93b252f8d7cf6924dd0797c059c29a59626a0949c9f9"
+    },
+    {
+      "path": "ROM9/102/29.DAT",
+      "sha256": "8b7b2a96d3d86df412dc101e502013cf777c5f0632623619b87206d70b8cd42a"
+    },
+    {
+      "path": "ROM9/102/3.DAT",
+      "sha256": "a140a548abf17ac9ee03b3346b9ec3c7ef78acbdb07663226a6410284d05e16d"
+    },
+    {
+      "path": "ROM9/102/30.DAT",
+      "sha256": "07667deb3f81b0ed0e36b001373e23860f838e5fd61197885079d6a3f2b69e18"
+    },
+    {
+      "path": "ROM9/102/31.DAT",
+      "sha256": "c8f01bbdb7658fae53c749d0b0cbaadaaa4a5d2c3e8f36cb4246df3714690839"
+    },
+    {
+      "path": "ROM9/102/32.DAT",
+      "sha256": "16145efdcdc623bbd8a4d3d662fc431e148f9d8190384dc312f50b34cda0f45d"
+    },
+    {
+      "path": "ROM9/102/33.DAT",
+      "sha256": "35d502ce2093a8bce21ecb6723f405666a7b610bfd2a5526d3f4212722954cff"
+    },
+    {
+      "path": "ROM9/102/34.DAT",
+      "sha256": "0ee332ac330e3c1b138244d13cc35ce87d57f5185f1b645fc193f7e36979302e"
+    },
+    {
+      "path": "ROM9/102/35.DAT",
+      "sha256": "d64323af4b08d5e4f5f61943674d50535f0283403ab43847e2cec28d404cc10a"
+    },
+    {
+      "path": "ROM9/102/36.DAT",
+      "sha256": "08643edf9749ebdb43c6b0fa7bbb809afc255b068f12a794d511557e8fac34da"
+    },
+    {
+      "path": "ROM9/102/37.DAT",
+      "sha256": "68beeafbcbb194fc0c5f5044b298922f9cca00f018ad2164f1f82c9e0e08448d"
+    },
+    {
+      "path": "ROM9/102/38.DAT",
+      "sha256": "2d5322c4ff02bc326aa531a42a8e8a25e3f0daa4e99bb2d3afb5d3c41d4223ac"
+    },
+    {
+      "path": "ROM9/102/39.DAT",
+      "sha256": "e1a068a7f2c0c323f8a0738508c921ebf65c93a3ead921120bcb0f16cc5a377c"
+    },
+    {
+      "path": "ROM9/102/4.DAT",
+      "sha256": "2fd530e468ba13547a109d17f9b920dfd7ac848cf8ec501cdfc4e3a14b2dd310"
+    },
+    {
+      "path": "ROM9/102/40.DAT",
+      "sha256": "1388d0a3ffc9868b784b7f67d3e7ad81cde7ec653c075537ebee62ecb7f2e4b7"
+    },
+    {
+      "path": "ROM9/102/5.DAT",
+      "sha256": "f1774a13ca47cf2261af89296052959947386852d02bd95d2c5009a1cd71b301"
+    },
+    {
+      "path": "ROM9/102/6.DAT",
+      "sha256": "ec0a4c72fa271dbffb08b4d260fc84bfe4dff0bb901d6b7dde469b9d05102de6"
+    },
+    {
+      "path": "ROM9/102/7.DAT",
+      "sha256": "090cb73518176727d570138e1e441c48e90c279ff662a5b767adc5329c52b444"
+    },
+    {
+      "path": "ROM9/102/8.DAT",
+      "sha256": "63503b58ddf7b08cd9d52c518a8ca7b612900235f00e447c5742f2093de2f776"
+    },
+    {
+      "path": "ROM9/102/9.DAT",
+      "sha256": "142e8b08e466f4d1cfe96dc89ff044d83b135bd0eef54cc35a5117f5921a82ba"
+    },
+    {
+      "path": "ROM9/FTABLE9.DAT",
+      "sha256": "318a8aa71f84d2eb91950de49183ccd6b60bf94c30fe719ef7d8ccaa5f67c8cf"
+    },
+    {
+      "path": "ROM9/VTABLE9.DAT",
+      "sha256": "b6715f89be03f007882bf1d86abf5f4a6f8cceace48f2ffc8be3c4dc81cb218c"
+    },
+    {
+      "path": "VTABLE.DAT",
+      "sha256": "2c7bc48aae03230b3e69e4650c6b2c3d1680e1802ee53d1270742c2968b98145"
+    }
+  ]
+}

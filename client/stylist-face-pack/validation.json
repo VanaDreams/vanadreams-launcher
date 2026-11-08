@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "validated_at": "2026-11-08",
+  "client_version": "30260904_1",
+  "launcher_version": "0.2.58",
+  "launcher_source_commit": "64a8279d22e0d0c4262635e0dc39b39a304a3c73",
+  "archive": {
+    "candidate_sha256": "47ece5a82234f3e94aec8e9c8c3755d94a342144988e68179d4163e099dc1e87",
+    "size": 3355243,
+    "archive_files": 46,
+    "verify_entries": 46,
+    "unpacked": 5865838,
+    "publisher_validation": "passed",
+    "dependency_order": [
+      "vanadreams-hair-01.zip",
+      "vanadreams-stylist-faces-01.zip"
+    ]
+  },
+  "generated_server_catalog_sha256": "f14aaeb3c3936a3e53ae86e931065d7e10ae479efe124f449f7ff7f7c42898aa",
+  "race_sex_choices": 41,
+  "named_npc_variants": 34,
+  "launcher_unit_tests_passed": 182,
+  "publisher_unit_tests_passed": 9,
+  "actual_archive_integration": {
+    "passed": 19,
+    "assertions": [
+      "Real launcher parser orders reversed candidate manifest hair before faces",
+      "Launcher reads required flag and all 46 installed-file hashes",
+      "Fresh install extracts the actual canonical hair and candidate face ZIPs in order",
+      "All 46 real installed files match candidate hashes",
+      "Both success receipts are written after verification",
+      "Unchanged complete install downloads nothing twice",
+      "All 256 non-overlapping canonical hair assets are byte-identical",
+      "Missing real head DAT overrides an existing success receipt",
+      "Missing real head DAT repairs from candidate ZIP alone",
+      "Legacy hair overwrite is detected from actual DLL/table bytes",
+      "Face ZIP restores current DLL/tables after legacy hair overwrite",
+      "A missing hair receipt replays both actual ZIPs despite valid face bytes",
+      "Interruption after real hair extraction cannot leave a false face success receipt",
+      "Interrupted actual-pack replay resumes at faces and verifies every installed file",
+      "Partial real extraction with a locked primary table is not recorded as successful",
+      "Partial real extraction resumes safely and restores all 46 files",
+      "Exact-version imported client receives the required real pack closure",
+      "Imported client verifies real assets and remains imported rather than becoming a partial full install",
+      "Different-version imported client is not offered incompatible binary patches"
+    ]
+  },
+  "in_game_tested": false,
+  "published": false
+}

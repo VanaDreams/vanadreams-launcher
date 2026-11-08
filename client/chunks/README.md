@@ -13,8 +13,12 @@ Changing a zip replaces its entry in place; unchanged ZIP bytes are not uploaded
 After a game update moves the client to a new version, move the packs to the new version's folder (rebuild any that
 patch the game exe or dll).
 
-Current packs: `30260904_1/vanadreams-hair-01.zip`, pink and platinum hair for the Stylist Moogle (see
+Existing baseline: `30260904_1/vanadreams-hair-01.zip`, pink and platinum hair for the Stylist Moogle (see
 `client/hair-pack/README.md`). Keep `xi.stylist.HAIR_COLOURS_OPEN` off on the server until players have it.
+
+New review candidate: `30260904_1/vanadreams-stylist-faces-01.zip`, 41 race/sex choices including the five Ark Angels.
+See [the roster, limitations, validation record and staged release notes](../stylist-face-pack/README.md).
+Keep its asset commit separate from the launcher 0.2.58 source release, and keep the server asset gate off until rollout.
 
 ## Required character face packs
 
