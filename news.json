@@ -2,6 +2,42 @@
   "_about": "Vana'News on the launcher's Play page. Newest first. The launcher shows the first 8 and caches the last copy it fetched.",
   "items": [
     {
+      "date": "2026-11-08",
+      "by": "Ferrin",
+      "title": "Chocobo racing and breeding",
+      "body": "Chocobo racing is open at the Circuit's Paddock Clerk, from C4 to C1, with gil prizes, racing levels and bonus points. Breeding passes on part of the parents' racing bonuses, and raising food and care gains are improved. Race your own bird; traded chococards are for breeding. Item prizes are not included yet."
+    },
+    {
+      "date": "2026-11-03",
+      "by": "Ferrin",
+      "title": "Odyssey Sheol and Skillz Rings",
+      "body": "Sheol A, B and C have revised camps, species, landings and translocators, with higher enemy HP. Halo squads and reward paths are installed for live testing; please report route, fight or reward problems. Moogle Mode grants a Skillz Ring, and existing characters missing one were sent it through the delivery box."
+    },
+    {
+      "date": "2026-11-02",
+      "by": "Ferrin",
+      "title": "New battles and endgame repairs",
+      "body": "Master Trials, Wings of War and Ode of Life Bestowing are installed with their rewards and Emporox services. Ambuscade encounter mechanics, Abyssea Dominion repeat credit and morale, the Nyzul staging lamp, Domain Invasion trusts and Walk of Echoes reward returns have fixes. Individual fights and rewards still need in-game checks."
+    },
+    {
+      "date": "2026-10-31",
+      "by": "Ferrin",
+      "title": "Divergence reopens and mission fixes",
+      "body": "Dynamis - Divergence entry is open again. Magian shield trials, Moogle Mode skip rewards and Rhapsodies progress have repairs. Omen takes the whole party, Voidwatch uses carried voidstones before officer stock, and Divine Might can be repeated for each earring. Trust, login and map-server crash fixes are also included."
+    },
+    {
+      "date": "2026-10-30",
+      "by": "Ferrin",
+      "title": "Classic Limbus, Salvage II and Adoulin",
+      "body": "Classic level-75 Limbus is available alongside current Limbus, with the original entry requirements. The four Salvage II runs, Meeble Burrows expeditions and all 90 Coalition Assignments are live. Adoulin services, Mog Garden, Bard, Puppetmaster, Geomancer, Summoner and Treasure Hunter received updates."
+    },
+    {
+      "date": "2026-10-29",
+      "by": "Ferrin",
+      "title": "Clan Centurio, upgrades and trust orders",
+      "body": "Clan Centurio's NM-hunting expansion is enabled in Lower Jeuno, with bills, Warbands, crafting rewards, a shared Clan Vault and Clan Bank. Nolan and Oboro upgrade paths, trust leader and aggro orders, Rem's Tales storage and Porter slips 29/30 are included, alongside progression, combat and travel fixes."
+    },
+    {
       "date": "2026-10-24",
       "by": "Ferrin",
       "title": "VanaGear 0.2.0 and launcher 0.2.50",
