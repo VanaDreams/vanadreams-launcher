@@ -2,6 +2,12 @@
   "_about": "Vana'News on the launcher's Play page. Newest first. The launcher shows the first 8 and caches the last copy it fetched.",
   "items": [
     {
+      "date": "2026-11-09",
+      "by": "Ferrin",
+      "title": "Kupo RoE, training crabs and gameplay fixes",
+      "body": "Moogle Mode Kupo objectives now use the native Records of Eminence menu, including monster-drop scrolls and pacts. Update through the launcher before using them; in-game menu and reward checks are still pending. Level 150 and 175 training crabs and Sheol Gaol support jobs are available. Fixes cover Aquaveil, GEO luopans with automatons, Oboro, Velkk moves, Delve pops and quest scenes."
+    },
+    {
       "date": "2026-11-08",
       "by": "Ferrin",
       "title": "Chocobo racing and breeding",
