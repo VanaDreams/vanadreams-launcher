@@ -63,6 +63,7 @@ for _,underlay in ipairs({true,false}) do
     -- No file or saved per-spell picks were written as a side effect of inheritance.
     assert(gVana.FileSets.IndiFury==nil and gVana.FileSets.Indi.Range=='Dunna')
     assert(gVana.Own.IndiFury==nil)
+    assert(gVana.SetSources[p.Sets.IndiFury].Body==nil) -- inherited armour is authored, even if its text matches built
     local f=assert(io.open(p.FilePath));local text=f:read('*all');f:close()
     assert(not text:find("IndiFury={Range='Dunna'",1,true))
     current={Range='Previous range'};cast(p,'Geo-Fury');assert(current.Range=='Previous range')
@@ -74,6 +75,7 @@ end
 local p=geo("{Geomancy={Range='Geomancy bell'},Indi={Range='Dunna',Body='Indi body'},IndiFury={Range='Filiae Bell',Hands='My gloves'}}")
 current={};cast(p,'Indi-Fury')
 assert(current.Range=='Filiae Bell' and current.Body=='Indi body' and current.Hands=='My gloves')
+assert(gVana.SetSources[p.Sets.IndiFury].Body==nil and gVana.SetSources[p.Sets.GeoFury].Body=='Geo body')
 current={};cast(p,'Geo-Fury');assert(current.Range=='Geomancy bell')
 p=geo("{Indi={Range='Dunna'},IndiFury={Range='remove'}}")
 current={};cast(p,'Indi-Fury');assert(current.Range=='remove')

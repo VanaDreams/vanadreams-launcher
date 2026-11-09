@@ -186,6 +186,16 @@ local ClearEquipBuffer = function()
     gEquip.ClearBuffer();
 end
 
+local equipOrder = 0;
+local function nextEquipOrder()
+    equipOrder = equipOrder + 1;
+    return equipOrder;
+end
+local function generatedSlot(set, slot, entry)
+    local source = gVana and gVana.SetSources and gVana.SetSources[set];
+    return source ~= nil and source[slot] ~= nil and source[slot] == entry;
+end
+
 local Combine = function(base, override)
     local newSet = {};
     local const = gData.Constants;
@@ -208,6 +218,18 @@ local Combine = function(base, override)
         end
     end
     
+    if (gVana ~= nil) and (gVana.SetSources ~= nil) then
+        local source = {};
+        for _, from in ipairs({ base, override }) do
+            for slot, entry in pairs(from) do
+                local index = (type(slot) == 'string') and const.EquipSlotsLC[string.lower(slot)];
+                if (index) then
+                    source[const.EquipSlotNames[index]] = generatedSlot(from, slot, entry) and entry or nil;
+                end
+            end
+        end
+        gVana.SetSources[newSet] = source;
+    end
     return newSet;
 end
 
@@ -259,7 +281,7 @@ local Enable = function(slot)
     end
 end
 
-local Equip = function(slot, item)
+local Equip = function(slot, item, generated, order)
     local equipSlot = gData.GetEquipSlot(slot);
     if (equipSlot == 0) then
         print(chat.header('vanagear') .. chat.error("Invalid slot specified: ") .. chat.color1(2, slot));
@@ -270,10 +292,13 @@ local Equip = function(slot, item)
     if (table == nil) or (type(table.Name) ~= 'string') then
         return;
     end    
+    table.Generated = generated == true;
+    table.Order = order or nextEquipOrder();
     gEquip.EquipItemToBuffer(equipSlot, table);
 end
 
 local EquipSet = function(set)
+    local order = nextEquipOrder();
     if (type(set) == 'string') then
         if (gProfile == nil) then
             print(chat.header('vanagear') .. chat.error('You must have a profile loaded to use EquipSet(string).'));
@@ -288,7 +313,7 @@ local EquipSet = function(set)
         local setTable = StringToSet(set);
         if (type(setTable) == 'table') then
             for k, v in pairs(setTable) do
-                Equip(k, v);
+                Equip(k, v, generatedSlot(setTable, k, v), order);
             end
             return;
         end
@@ -296,7 +321,7 @@ local EquipSet = function(set)
         print(chat.header('vanagear') .. chat.error('Set not found: ' .. set));
     elseif (type(set) == 'table') then
         for k, v in pairs(set) do
-            Equip(k, v);
+            Equip(k, v, generatedSlot(set, k, v), order);
         end
     end
 end
@@ -396,6 +421,7 @@ local ForceEquipSet = function(set)
         return;
     end
     local newTable = {};
+    local order = nextEquipOrder();
     for k,v in pairs(setTable) do
         local equipSlot = gData.GetEquipSlot(k);
         if (equipSlot == 0) then
@@ -405,13 +431,15 @@ local ForceEquipSet = function(set)
 
         local table = gEquip.MakeItemTable(v);
         if (table ~= nil) and (type(table.Name) == 'string') then
+            table.Generated = generatedSlot(setTable, k, v);
+            table.Order = order;
             newTable[equipSlot] = table;
         end
     end
     gEquip.EquipSet(newTable, 'auto');
 end
 
-local InterimEquip = function(slot, item)
+local InterimEquip = function(slot, item, generated, order)
     local equipSlot = gData.GetEquipSlot(slot);
     if (equipSlot == 0) then
         print(chat.header('vanagear') .. chat.error("Invalid slot specified: ") .. chat.color1(2, slot));
@@ -422,10 +450,13 @@ local InterimEquip = function(slot, item)
     if (table == nil) or (type(table.Name) ~= 'string') then
         return;
     end    
+    table.Generated = generated == true;
+    table.Order = order or nextEquipOrder();
     gEquip.EquipItemToBuffer(equipSlot, table, true);
 end
 
 local InterimEquipSet = function(set)
+    local order = nextEquipOrder();
     if (type(set) == 'string') then
         if (gProfile == nil) then
             print(chat.header('vanagear') .. chat.error('You must have a profile loaded to use InterimEquipSet(string).'));
@@ -440,7 +471,7 @@ local InterimEquipSet = function(set)
         local setTable = StringToSet(set);
         if (type(setTable) == 'table') then
             for k, v in pairs(setTable) do
-                InterimEquip(k, v);
+                InterimEquip(k, v, generatedSlot(setTable, k, v), order);
             end
             return;
         end
@@ -448,7 +479,7 @@ local InterimEquipSet = function(set)
         print(chat.header('vanagear') .. chat.error('Set not found: ' .. set));
     elseif (type(set) == 'table') then
         for k, v in pairs(set) do
-            InterimEquip(k, v);
+            InterimEquip(k, v, generatedSlot(set, k, v), order);
         end
     end
 end

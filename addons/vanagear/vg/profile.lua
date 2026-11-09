@@ -447,15 +447,36 @@ local indiSpells = {
     'IndiSlow', 'IndiParalysis', 'IndiGravity',
 };
 local function inheritIndi(worn, own, fileSets)
+    local inherited = {};
     local family = fileSets.Indi;
-    if (type(family) ~= 'table') then return; end
+    if (type(family) ~= 'table') then return inherited; end
     for _, name in ipairs(indiSpells) do
         for slot, piece in pairs(family) do
             if (isSlot(slot)) and (not (own[name] and own[name][slot])) then
                 worn[name] = worn[name] or {};
                 worn[name][slot] = (type(piece) == 'table') and copy(piece) or piece;
+                inherited[name] = inherited[name] or {};
+                inherited[name][slot] = true;
             end
         end
+    end
+    return inherited;
+end
+
+-- Tag only generated slots, without adding private fields to the profile's item entries.
+-- Weak keys let temporary combined sets be collected between refreshes.
+profile.MarkSources = function(sets, own, built, inherited)
+    gVana.SetSources = setmetatable({}, { __mode = 'k' });
+    for name, set in pairs(sets) do
+        local source = gVana.SetSources[set] or {};
+        for slot, entry in pairs(set) do
+            if (built[name] and built[name][slot] == entry) and
+               (not (own[name] and own[name][slot])) and
+               (not (inherited and inherited[name] and inherited[name][slot])) then
+                source[slot] = entry;
+            end
+        end
+        gVana.SetSources[set] = source;
     end
 end
 
@@ -473,8 +494,9 @@ profile.Refresh = function()
     local fileSets = (type(p.Sets) == 'table') and p.Sets or {};
     local built = profile.PlayerBuilt((type(p.Built) == 'table') and p.Built or {});
     local worn, own, names = profile.Merge(fileSets, built, require('vg.core').Underlay());
+    local inherited;
     if (gProfile.VgTemplate) and (gProfile.VgJob == 'GEO') then
-        inheritIndi(worn, own, fileSets);
+        inherited = inheritIndi(worn, own, fileSets);
     end
 
     -- Main/Sub keep their existing weapons-off policy. Range/Ammo are ordinary per-set choices.
@@ -504,6 +526,7 @@ profile.Refresh = function()
     gVana.Own = own;
     gVana.FileSets = fileSets;
     gVana.FileNames = names;
+    profile.MarkSources(worn, own, built, inherited);
     gVana.Commands = (type(p.Commands) == 'table') and p.Commands or nil;
     return true;
 end

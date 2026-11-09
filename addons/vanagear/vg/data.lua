@@ -22,6 +22,7 @@ local function load(name)
 end
 
 data.Items = function() return load('items'); end
+data.SlotBlocks = function() return load('slotblocks'); end
 data.Augments = function() return load('augments'); end
 data.Weaponskills = function() return load('weaponskills'); end
 data.Abilities = function() return load('abilities'); end

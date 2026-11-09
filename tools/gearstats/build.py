@@ -1,6 +1,7 @@
 """Builds vanagear's data files from the Vanadreams server source.
 
     python tools/gearstats/build.py <path to the vanadreams checkout>
+    python tools/gearstats/build.py --slotblocks <path>  # only multi-slot exclusion masks
 
 Reads the server's own tables (sql/item_equipment.sql, item_weapon.sql, item_mods.sql,
 item_mods_pet.sql, item_latents.sql, augments.sql, weapon_skills.sql), the mod enum
@@ -249,11 +250,23 @@ def write_table(path, header, entries, chunk=400):
     path.write_text('\n'.join(lines) + '\n', encoding='utf-8', newline='\n')
 
 
+def slotblocks(server):
+    """Rebuild only equipment exclusion masks; leave unrelated generated stats unchanged."""
+    entries = {r[0]: r[9] for r in rows(Path(server) / 'sql' / 'item_equipment.sql', 'item_equipment') if r[9]}
+    OUT.mkdir(parents=True, exist_ok=True)
+    write_table(OUT / 'slotblocks.lua', [
+        'Additional equipment slots excluded by each item (server item_equipment.rslot).',
+        'Item id = slot bitmask; appearance-only rslotlook is deliberately not used.',
+    ], entries)
+    print(f'slot exclusions {len(entries)}')
+
+
 def main(server):
     server = Path(server)
     sql = server / 'sql'
     names = mod_names(server)
     OUT.mkdir(parents=True, exist_ok=True)
+    slotblocks(server)
 
     items = {}
     for r in rows(sql / 'item_equipment.sql', 'item_equipment'):
@@ -481,7 +494,9 @@ def extras(server):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3 and sys.argv[1] == '--extras':
+    if len(sys.argv) == 3 and sys.argv[1] == '--slotblocks':
+        slotblocks(sys.argv[2])
+    elif len(sys.argv) == 3 and sys.argv[1] == '--extras':
         extras(sys.argv[2])
     elif len(sys.argv) == 2:
         main(sys.argv[1])

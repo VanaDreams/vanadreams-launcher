@@ -33,6 +33,8 @@ gVana = {
     Pieces = {},
     Built = {},
     Own = {},
+    SlotBlocks = (vdata.SlotBlocks ~= nil) and vdata.SlotBlocks() or {},
+    SetSources = setmetatable({}, { __mode = 'k' }),
 };
 
 -- ---------------------------------------------------------------- preferences on disk
@@ -232,6 +234,7 @@ core.ApplyOwn = function()
         for k in pairs(gVana.Sets) do gVana.Sets[k] = nil; end
         for k, v in pairs(gVana.Built) do gVana.Sets[k] = v; end
         gVana.Own = {};
+        vp.MarkSources(gVana.Sets, {}, gVana.Built);
     end
 end
 

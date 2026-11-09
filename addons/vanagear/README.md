@@ -32,6 +32,11 @@ while vanagear is ticked.
 - Generated player sets leave Main, Sub, Range and Ammo alone. A jug, pet food, animator, ranged weapon
   or ammunition you equip stays until you change it or an explicit profile/action set changes it.
   There is no automatic slot lock; ordinary armour still follows your profile.
+- Multi-slot armour is kept compatible: a Tunic cannot be worn with a head piece. Generated
+  sets account for those exclusions, and old or combined sets are checked before swapping.
+  Your explicit set choices beat conflicting generated pieces. If two explicit choices conflict,
+  item Priority wins, then the later equip call, then slot order. Existing disabled/encumbered
+  slots stay protected; simply wearing a multi-slot piece does not lock the other slots.
 - The fighting set is listed as **Engaged** (a set of yours named Engaged, TP or Melee is the
   same set).
 - Waits after every zone: nothing is equipped, loaded or sent to the game until you have been

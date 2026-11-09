@@ -45,6 +45,31 @@ local GetCurrentEquip = function(slot)
     end
 end
 
+-- Armour can exclude another armour slot (a Tunic takes Head). Range/Ammo and
+-- weapon transitions keep their separate player-controlled behavior.
+local function ArmorMask(id)
+    return bit.band((gVana and gVana.SlotBlocks and gVana.SlotBlocks[id]) or 0, 0xFFF0);
+end
+local function ArmorConflict(aSlot, aId, bSlot, bId)
+    return aSlot > 4 and bSlot > 4 and aSlot ~= bSlot and
+        (bit.band(ArmorMask(aId), bit.lshift(1, bSlot - 1)) ~= 0 or
+         bit.band(ArmorMask(bId), bit.lshift(1, aSlot - 1)) ~= 0);
+end
+
+-- The server implicitly unequips conflicting armour. Mirror that in the short packet cache
+-- rather than briefly pretending that both pieces are still equipped.
+local function RememberArmorUnequips(slot, item)
+    if slot <= 4 or item == nil then return; end
+    for other = 5, 16 do
+        if other ~= slot then
+            local current = GetCurrentEquip(other);
+            if current.Item ~= nil and ArmorConflict(slot, item.Id, other, current.Item.Id) then
+                Internal[other] = { Container = 0, Item = nil, Timer = os.clock() + 0.2 };
+            end
+        end
+    end
+end
+
 --Create new table so we aren't directly altering users tables or storing item indices
 local MakeItemTable = function(item)
     local itemTable = {}
@@ -422,6 +447,7 @@ local ProcessEquip = function(equipInfo, set)
         end
         internalEntry.Timer = os.clock() + 0.2;
         Internal[equipEntry.Slot + 1] = internalEntry;
+        RememberArmorUnequips(equipEntry.Slot + 1, internalEntry.Item);
         if (gSettings.Debug) then
             if (equipEntry.Index == 0) then
                 print(chat.header('LuAshitacast:' .. gState.CurrentCall) .. chat.message('Unequipping item from ' .. gData.ResolveString(gData.Constants.EquipSlotNames, equipEntry.Slot) .. '.'));
@@ -463,6 +489,7 @@ local ProcessEquipSet = function(equipInfo, set)
         end
         internalEntry.Timer = os.clock() + 0.2;
         Internal[equipEntry.Slot + 1] = internalEntry;
+        RememberArmorUnequips(equipEntry.Slot + 1, internalEntry.Item);
 
         if (gSettings.Debug) then
             if (equipEntry.Index == 0) then
@@ -521,6 +548,45 @@ local UnequipConflicts = function(equipInfo)
 end
 
 
+-- Resolve only candidates that really exist, after fallback. Explicit profile/direct picks
+-- outrank generated ones; among equal sources Priority, then the later call, then slot decide.
+-- Do not let a discarded piece keep blocking others. A worn piece is not a hidden slot lock.
+local function ResolveArmorConflicts(set)
+    local candidates, locked = {}, {};
+    for slot = 5, 16 do
+        local current = GetCurrentEquip(slot);
+        if (gState.Disabled[slot] or gState.Encumbrance[slot]) and current.Item ~= nil then
+            locked[#locked + 1] = { slot = slot, id = current.Item.Id };
+        end
+        local e = set[slot];
+        if e ~= nil and e.Index ~= nil and e.Index > 0 then
+            local item = inventoryManager:GetContainerItem(e.Container, e.Index);
+            if item ~= nil and item.Id > 0 then
+                candidates[#candidates + 1] = { slot = slot, id = item.Id, entry = e };
+            end
+        end
+    end
+    table.sort(candidates, function(a, b)
+        if (a.entry.Generated == true) ~= (b.entry.Generated == true) then return a.entry.Generated ~= true; end
+        if a.entry.Priority ~= b.entry.Priority then return a.entry.Priority > b.entry.Priority; end
+        if (a.entry.Order or 0) ~= (b.entry.Order or 0) then return (a.entry.Order or 0) > (b.entry.Order or 0); end
+        return a.slot < b.slot;
+    end);
+    local kept = {};
+    for _, c in ipairs(candidates) do
+        local conflict = false;
+        for _, block in ipairs(locked) do
+            if ArmorConflict(c.slot, c.id, block.slot, block.id) then conflict = true; break; end
+        end
+        if not conflict then
+            for _, block in ipairs(kept) do
+                if ArmorConflict(c.slot, c.id, block.slot, block.id) then conflict = true; break; end
+            end
+        end
+        if conflict then set[c.slot] = nil; else kept[#kept + 1] = c; end
+    end
+end
+
 local EquipSet = function(set, style)
     UpdateJobLevel();
     if (type(set) ~= 'table') then
@@ -564,6 +630,7 @@ local EquipSet = function(set, style)
                 local copy = {};
                 for k, v in pairs(Fallback[slot]) do copy[k] = v; end
                 copy.Index = nil; copy.Container = nil; copy.Skip = nil;
+                copy.Generated = true; copy.Order = equipTable.Order;
                 set[slot] = copy;
                 retry[slot] = copy;
             end
@@ -576,6 +643,8 @@ local EquipSet = function(set, style)
         gVana.LastMissing = missing;
         gVana.LastEquipAt = os.clock();
     end
+
+    ResolveArmorConflicts(set);
 
     --Prepare table of equip packets.
     local equipInfo = PrepareEquip(set);
