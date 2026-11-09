@@ -88,7 +88,7 @@ end
 --[[
     Returns a list of { Name = set name, Mode = mode table, Slots = { slot indexes } } and the
     reasons slots were held, for the job, subjob and weapons the player has right now.
-    opts.Weapons: let the builder choose Main, Sub and Range.
+    Weapons/ammo are excluded; opts.Locked also excludes explicitly locked armour slots.
 ]]--
 -- A job file's Bands are level ranges, each with its own Tweaks and Modes: { To = 30, Tweaks = {...} }
 -- in rising order. The band the player's level falls in is laid over the job's all-level Tweaks,

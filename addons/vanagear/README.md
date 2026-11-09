@@ -137,6 +137,19 @@ job-wide Range preference stays in prefs for reference but is no longer forced o
 A profile's explicit Range/Ammo choices can still replace a manual choice when that set runs;
 remove that slot from the set (choose Built in its drop-down) if you want it left alone.
 
+## Geomancer handbells
+
+A handbell you equip manually is left alone by generated sets. You can also choose it explicitly
+in Geomancy (Geo and Indi spells), Indi (Indi spells only), or an individual spell set such as
+IndiFury. An individual spell choice takes priority over the shared Indi choice. This also works
+with existing GEO template profiles and the underlay off, without rewriting your profile.
+Clearing a spell-specific pick returns to its shared Indi choice; clear that slot in Indi too
+if you want the currently equipped item left alone.
+
+Only your explicit selections are used; vanagear does not choose a bell or lock Range. An explicit
+incompatible Ammo choice can still remove a bell under the server's equipment rules, so leave
+Ammo unspecified in those sets unless you intentionally want that swap.
+
 ## Your own sets
 
 - `/vg dress` stops the swapping. Put on what you like from the equipment menu, then

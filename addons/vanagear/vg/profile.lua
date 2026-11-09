@@ -436,6 +436,29 @@ profile.Merge = function(fileSets, built, withBuilt)
     return worn, own, names;
 end
 
+-- Existing GEO templates dispatch Indi-Fury to IndiFury, not the shared Indi set.
+-- Apply the player's Indi slot choices to the real spell sets at refresh time, without
+-- rewriting their Lua or choosing a bell. A choice on the individual spell wins.
+local indiSpells = {
+    'IndiRegen', 'IndiPoison', 'IndiRefresh', 'IndiHaste', 'IndiSTR', 'IndiDEX', 'IndiVIT',
+    'IndiAGI', 'IndiINT', 'IndiMND', 'IndiCHR', 'IndiFury', 'IndiBarrier', 'IndiAcumen',
+    'IndiFend', 'IndiPrecision', 'IndiVoidance', 'IndiFocus', 'IndiAttunement', 'IndiWilt',
+    'IndiFrailty', 'IndiFade', 'IndiMalaise', 'IndiSlip', 'IndiTorpor', 'IndiVex', 'IndiLanguor',
+    'IndiSlow', 'IndiParalysis', 'IndiGravity',
+};
+local function inheritIndi(worn, own, fileSets)
+    local family = fileSets.Indi;
+    if (type(family) ~= 'table') then return; end
+    for _, name in ipairs(indiSpells) do
+        for slot, piece in pairs(family) do
+            if (isSlot(slot)) and (not (own[name] and own[name][slot])) then
+                worn[name] = worn[name] or {};
+                worn[name][slot] = (type(piece) == 'table') and copy(piece) or piece;
+            end
+        end
+    end
+end
+
 -- The running profile's sets read out of its file again and merged: filled into the same tables the
 -- profile's own handlers hold (profile.Sets) and the window reads (gVana.Sets), so both see the change.
 profile.Refresh = function()
@@ -450,6 +473,9 @@ profile.Refresh = function()
     local fileSets = (type(p.Sets) == 'table') and p.Sets or {};
     local built = profile.PlayerBuilt((type(p.Built) == 'table') and p.Built or {});
     local worn, own, names = profile.Merge(fileSets, built, require('vg.core').Underlay());
+    if (gProfile.VgTemplate) and (gProfile.VgJob == 'GEO') then
+        inheritIndi(worn, own, fileSets);
+    end
 
     -- Main/Sub keep their existing weapons-off policy. Range/Ammo are ordinary per-set choices.
     -- Retain legacy WeaponPick.Range in prefs, but never enforce it across sets.
