@@ -386,12 +386,26 @@ end
     the slots you gave; names[key] is the name the set has in your file. withBuilt false (the underlay off,
     /vg underlay off): your sets only.
 ]]--
+-- Old profiles can still contain generated weapons/ammo until the next rebuild. Remove only
+-- those generated choices, without editing the player's sets or changing trust gear.
+profile.PlayerBuilt = function(built)
+    local out = {};
+    for name, set in pairs(built or {}) do
+        if (type(set) == 'table') then
+            out[name] = copy(set);
+            out[name].Main = nil;
+            out[name].Sub = nil;
+            out[name].Range = nil;
+            out[name].Ammo = nil;
+        end
+    end
+    return out;
+end
+
 profile.Merge = function(fileSets, built, withBuilt)
     local worn, own, names = {}, {}, {};
     if (withBuilt ~= false) then
-        for name, set in pairs(built or {}) do
-            if (type(set) == 'table') then worn[name] = copy(set); end
-        end
+        worn = profile.PlayerBuilt(built);
     end
     local aliased, exact = {}, {};
     for name, set in pairs(fileSets or {}) do
@@ -434,16 +448,16 @@ profile.Refresh = function()
         return false;
     end
     local fileSets = (type(p.Sets) == 'table') and p.Sets or {};
-    local built = (type(p.Built) == 'table') and p.Built or {};
+    local built = profile.PlayerBuilt((type(p.Built) == 'table') and p.Built or {});
     local worn, own, names = profile.Merge(fileSets, built, require('vg.core').Underlay());
 
-    -- weapons: with /vg weapons off no set carries a Main, Sub or Range; the window's weapon picks
-    -- (prefs.lua WeaponPick) are worn in every set
+    -- Main/Sub keep their existing weapons-off policy. Range/Ammo are ordinary per-set choices.
+    -- Retain legacy WeaponPick.Range in prefs, but never enforce it across sets.
     local picks = {};
     if (not gVana.Prefs.Weapons) then
         local chosen = (gVana.Prefs.WeaponPick or {})[gProfile.VgJob or ''] or {};
         for name, set in pairs(worn) do
-            for _, slot in ipairs({ 'Main', 'Sub', 'Range' }) do
+            for _, slot in ipairs({ 'Main', 'Sub' }) do
                 set[slot] = chosen[slot];
                 if (own[name] ~= nil) then own[name][slot] = nil; end
                 if (chosen[slot] ~= nil) then picks[string.lower(chosen[slot])] = true; end

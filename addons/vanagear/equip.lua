@@ -534,12 +534,13 @@ local EquipSet = function(set, style)
     end
 
     -- vanagear: with /vg weapons off nothing from any set, built, profile or imported, touches
-    -- Main, Sub or Range; only the weapons picked in the window, or named in a profile's gVana.WeaponAllow (its own
+    -- Main or Sub; Range/Ammo remain free for explicit sets and commands. Only the Main/Sub
+    -- weapons picked in the window, or named in a profile's gVana.WeaponAllow (its own
     -- /fish rod and the like), go on. In LuAshitacast mode (a profile of the player's own) the profile's weapons go on
     -- as written, the same as LuAshitacast.
     if (gVana ~= nil) and (gVana.Prefs ~= nil) and (not gVana.Prefs.Weapons) and ((gVanaCore == nil) or (not gVanaCore.PureLac())) then
         local picks = gVana.WeaponPicks or {};
-        for i = 1,3,1 do
+        for i = 1,2,1 do
             if (set[i] ~= nil) and (not picks[set[i].Name]) and (not (gVana.WeaponAllow and gVana.WeaponAllow[set[i].Name])) then
                 set[i] = nil;
             end

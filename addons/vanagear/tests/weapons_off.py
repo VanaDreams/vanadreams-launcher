@@ -1,5 +1,5 @@
-r"""Off-game test of equip.lua's weapon guard: with /vg weapons off no set changes Main, Sub or
-Range, except a weapon the player picked in one of their own sets.
+r"""Off-game test of equip.lua's weapon guard: with /vg weapons off no set changes Main or Sub,
+except a weapon the player explicitly picked. Range/Ammo always allow explicit swaps.
 
     python addons/vanagear/tests/weapons_off.py
 """
@@ -19,9 +19,13 @@ chat = setmetatable({}, { __index = function() return function(...) return table
 
 -- the bag: inventory slot 1 Nyame Helm (head), slot 2 Sanctity Necklace (neck); nothing equipped
 local items = { [1] = { Id = 23761, Index = 1, Count = 1, Flags = 0, Extra = '' },
-                [2] = { Id = 16000, Index = 2, Count = 1, Flags = 0, Extra = '' } }
+                [2] = { Id = 16000, Index = 2, Count = 1, Flags = 0, Extra = '' },
+                [3] = { Id = 17857, Index = 3, Count = 1, Flags = 0, Extra = '' },
+                [4] = { Id = 18731, Index = 4, Count = 1, Flags = 0, Extra = '' } }
 local res = { [23761] = { Name = { 'Nyame Helm' }, Flags = 0x800, Level = 99, Jobs = 0xFFFFFE, Slots = 16 },
-              [16000] = { Name = { 'Aymur' }, Flags = 0x800, Level = 99, Jobs = 0xFFFFFE, Slots = 1 } }
+              [16000] = { Name = { 'Aymur' }, Flags = 0x800, Level = 99, Jobs = 0xFFFFFE, Slots = 1 },
+              [17857] = { Name = { 'Animator' }, Flags = 0x800, Level = 1, Jobs = 0xFFFFFE, Slots = 4 },
+              [18731] = { Name = { 'Automat. Oil' }, Flags = 0x800, Level = 1, Jobs = 0xFFFFFE, Slots = 8 } }
 local sent = {}
 AshitaCore = {
     GetMemoryManager = function() return {
@@ -41,7 +45,7 @@ gSettings = { EquipBags = { 0 }, AllowSyncEquip = true, Debug = false }
 gState = { Disabled = {}, Encumbrance = {} }
 gData = { GetAugment = function() return { Type = 'Unaugmented' } end,
           GetContainerAvailable = function(c) return c == 0 end,
-          GetContainerMax = function() return 2 end,
+          GetContainerMax = function() return 4 end,
           Constants = { Containers = {} } }
 gVana = {}
 package.preload['encoding'] = function() return { ShiftJIS_To_UTF8 = function(_, s) return s end } end
@@ -53,7 +57,8 @@ local function run(picks, weaponsOn, allow)
     package.loaded['equip'] = nil
     local equip = require('equip')
     gVana = { Prefs = { Weapons = weaponsOn }, WeaponPicks = picks, WeaponAllow = allow }
-    equip.EquipSet({ [5] = equip.MakeItemTable('Nyame Helm'), [1] = equip.MakeItemTable('Aymur') }, 'single')
+    equip.EquipSet({ [5] = equip.MakeItemTable('Nyame Helm'), [1] = equip.MakeItemTable('Aymur'),
+        [3] = equip.MakeItemTable('Animator'), [4] = equip.MakeItemTable('Automat. Oil') }, 'single')
     local out = {}
     for _, p in ipairs(sent) do out[#out + 1] = 'slot ' .. p.slot end
     return table.concat(out, ',')
@@ -61,7 +66,7 @@ end
 gState = { Disabled = {}, Encumbrance = {} }
 gData = { GetAugment = function() return { Type = 'Unaugmented' } end,
           GetContainerAvailable = function(c) return c == 0 end,
-          GetContainerMax = function() return 2 end,
+          GetContainerMax = function() return 4 end,
           Constants = { Containers = {} } }
 gSettings = { EquipBags = { 0 }, AllowSyncEquip = true, Debug = false }
 package.preload['encoding'] = function() return { ShiftJIS_To_UTF8 = function(_, s) return s end } end
@@ -69,4 +74,7 @@ return run({}, false) .. ' | ' .. run({ aymur = true }, false) .. ' | ' .. run({
 """, str(ADDON))
 print(result)
 off, picked, on, allowed = [x.strip() for x in result.split('|')]
-print('PASS' if off == 'slot 4' and 'slot 0' in picked and 'slot 0' in on and 'slot 0' in allowed else 'FAIL')
+assert set(off.split(',')) == {'slot 2', 'slot 3', 'slot 4'}, off
+for result in (picked, on, allowed):
+    assert set(result.split(',')) == {'slot 0', 'slot 2', 'slot 3', 'slot 4'}, result
+print('PASS')

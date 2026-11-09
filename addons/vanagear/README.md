@@ -29,8 +29,9 @@ while vanagear is ticked.
 - Rebuilds by itself, without a word in chat, on job change, level up, a weapon change, and
   every zone (gear you picked up or moved since is counted then). `/vg build` rebuilds now and
   says so.
-- Gear you put on yourself from the equipment menu stays on until you zone: a Job Points cape
-  isn't swapped back off.
+- Generated player sets leave Main, Sub, Range and Ammo alone. A jug, pet food, animator, ranged weapon
+  or ammunition you equip stays until you change it or an explicit profile/action set changes it.
+  There is no automatic slot lock; ordinary armour still follows your profile.
 - The fighting set is listed as **Engaged** (a set of yours named Engaged, TP or Melee is the
   same set).
 - Waits after every zone: nothing is equipped, loaded or sent to the game until you have been
@@ -114,20 +115,33 @@ vanagear, `!trustuse <trust>` lists what is switched off, `!trustuse <trust> off
 
 ## Weapons
 
-With `/vg weapons off` (the default) nothing changes Main, Sub or Range: not the built sets, not
-your own vanagear sets, not an imported GearSwap file. (A LuAshitacast profile of your own with sets
-of its own is the exception: it swaps weapons as it always did.) The only way a weapon changes
-is the lists on the Main, Sub and Range lines of the `/vg` window (or `/vg weapon main <item>`):
-they start at "Leave it alone", and the weapon picked is worn in every set for that job.
+Generated player sets never choose weapons or ammunition, including when an old saved setting
+has `/vg weapons on`. Old generated weapon/ammo entries are ignored immediately.
 
-A profile of your own can still put on a weapon for a command of its own (a fishing rod for `/fish`):
-it lists the item names in `gVana.WeaponAllow` and vanagear lets those through.
+With `/vg weapons off` (the default), Main/Sub keep their existing protection. The Main/Sub
+lists in `/vg` (or `/vg weapon main|sub <item>`) choose a weapon for every set. A standalone
+LuAshitacast profile still swaps its weapons as written; a vanagear profile can allow a Main/Sub
+item through with `gVana.WeaponAllow`. `/vg weapons on` now only allows Main/Sub choices
+written in your own profile; it does not let the builder choose weapons.
+
+Range and Ammo are never generated, even with `/vg weapons on`. Their drop-downs are normal
+per-set choices, saved in your profile. Plain equipment-menu and macro changes are not undone by
+generated sets. Explicit profile choices still swap normally, including instruments, ranged
+action ammunition, BST jugs/Reward food and PUP Repair/Maintenance oil. No permanent slot lock
+is added. If an item runs out or an action fails, generated sets do not substitute another
+Range/Ammo item; choose a replacement yourself. Existing helper action timeouts are unchanged.
+
+Old generated Range/Ammo entries are ignored immediately, before the next rebuild. A legacy
+job-wide Range preference stays in prefs for reference but is no longer forced on every set.
+`/vg weapon range <item>` now equips once; use `/vg set <set> Range <item>` to save a choice.
+A profile's explicit Range/Ammo choices can still replace a manual choice when that set runs;
+remove that slot from the set (choose Built in its drop-down) if you want it left alone.
 
 ## Your own sets
 
 - `/vg dress` stops the swapping. Put on what you like from the equipment menu, then
-  `/vg save <name>` saves it under that name and swapping comes back on. Weapons are left out
-  unless `/vg weapons on`.
+  `/vg save <name>` saves it under that name and swapping comes back on. Main/Sub are left out
+  unless `/vg weapons on`; Range/Ammo are saved as explicit choices.
 - Every slot in the `/vg` window is a list: pick a piece and it is yours in that set (marked *).
   **New set** saves what you wear under the typed name. A slot you pick in Idle stays yours
   while you walk and when your HP or MP is low: the Movement, Regen and Refresh pieces vanagear
@@ -150,7 +164,7 @@ it lists the item names in `gVana.WeaponAllow` and vanagear lets those through.
 
 The **Settings** tab of the window has the gear modes as buttons and boxes: damage taken (off,
 all, physical, magic), the fighting set, standing, nukes, your pet, magic burst, kite, Treasure
-Hunter, staged casting, choosing weapons, filling empty slots from the built sets, trust gear,
+Hunter, staged casting, allowing your own Main/Sub swaps, filling empty slots from built sets, trust gear,
 Motenten's keys, the zone wait, the slots you lock, and your job template's own settings. Each
 one does exactly what its `/vg` command does, so macros keep working.
 

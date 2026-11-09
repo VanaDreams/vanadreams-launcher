@@ -364,9 +364,9 @@ mine.SaveSet = function(name)
     end
     local set = {};
     local count = 0;
-    local weapons = { Main = true, Sub = true, Range = true };
+    local weapons = { Main = true, Sub = true };
     for slot, worn in pairs(gData.GetEquipment()) do
-        -- weapons only when vanagear is choosing them (/vg weapons on): swapping costs TP
+        -- Main/Sub only when the player allows their profile swaps (/vg weapons on): costs TP
         if (gVana.Prefs.Weapons) or (not weapons[slot]) then
             set[slot] = worn.Name;
             count = count + 1;

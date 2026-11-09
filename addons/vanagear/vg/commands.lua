@@ -58,8 +58,8 @@ commands.Lines = function()
         line('/vg reward [food]', 'put the pet food in and Reward: alpha ... theta, debuff (Roborant, else Poultice); no food: your best biscuit');
         line('/vg jugs, /vg foods', 'the jugs and pet foods you carry');
     end
-    line('/vg weapons on | off', 'let vanagear choose your weapons (swapping them costs TP); off, the default, leaves them alone');
-    line('/vg weapon main|sub|range <item>', 'the weapon worn in every set, picked by you; the window has the same lists');
+    line('/vg weapons on | off', 'allow Main/Sub swaps from your own profile (costs TP); weapons/ammo are never generated');
+    line('/vg weapon main|sub|range <item>', 'Main/Sub: your pick in every set. Range: equip once; use /vg set for a saved action choice');
     line('/vg lock <slot>|all, /vg unlock <slot>|all', 'keep a slot as you have it: nothing equips it, saved for this job (/vg disable and /vg enable are the same)');
     line('/vg why <set> <slot>', 'the piece that won and the three behind it');
     line('/vg upgrades', 'pieces in storage that would win a slot');
@@ -371,7 +371,7 @@ commands.Vg = function(args)
         say('Pet gear: ' .. t.Pet .. '.');
     elseif (cmd == 'weapons') then
         p.Weapons = onOff(arg, p.Weapons); save(); core.Request();
-        say('vanagear ' .. (p.Weapons and 'chooses your weapons' or 'leaves your weapons alone') .. '.');
+        say('Main/Sub profile swaps ' .. (p.Weapons and 'allowed' or 'protected') .. '. Weapons/ammo are never chosen automatically.');
     elseif (cmd == 'trusts') then
         p.TrustGear = onOff(arg, p.TrustGear ~= false); save();
         say('Trust gear: ' .. (p.TrustGear and 'your called trusts get their sets' or 'nothing is sent to your trusts') .. '.');
@@ -383,7 +383,7 @@ commands.Vg = function(args)
         else
             local lower = string.lower(piece);
             core.SetWeaponPick(slotName, (lower == 'none') and nil or ((lower == 'remove') and 'remove' or piece));
-            say(slotName .. ((lower == 'none') and ' is left alone.' or (': ' .. piece .. ', in every set.')));
+            say(slotName .. ((lower == 'none') and ' is left alone.' or (': ' .. piece .. ((slotName == 'Range') and ', equipped once.' or ', in every set.'))));
         end
     elseif (cmd == 'lock') or (cmd == 'unlock') or (cmd == 'disable') or (cmd == 'enable') then
         -- one lock: /vg disable and /vg enable (LuAshitacast's words) are /vg lock and /vg unlock

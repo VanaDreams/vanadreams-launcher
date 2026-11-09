@@ -247,11 +247,26 @@ trusts.Info = function(t)
     return info[t.Id];
 end
 
+-- These slots are no longer generated for the player. Reserve the pieces actually worn
+-- as well as profile choices, so trusts cannot claim the player's current weapons/ammo.
+local function playerWeapons()
+    local worn = (gData.GetEquipment ~= nil) and gData.GetEquipment() or {};
+    local names = {};
+    for _, slot in ipairs({ 'Main', 'Sub', 'Range', 'Ammo' }) do
+        if (worn[slot] ~= nil) then names[slot] = worn[slot].Name; end
+    end
+    return names;
+end
+
 -- Everything a trust's sets depend on, as one string: your rebuild, your picks, the server's answers, and the
 -- trusts up to and including this one in party order with their levels and what they use. Cheap: five party
 -- reads and no pool walk, so it can be checked every tick and the sets are only built again when it changes.
 trusts.Signature = function(t)
     local parts = { tostring(gVana.BuiltAt), ownVersion, infoVersion };
+    local equipped = playerWeapons();
+    for _, slot in ipairs({ 'Main', 'Sub', 'Range', 'Ammo' }) do
+        parts[#parts + 1] = slot .. '=' .. tostring(equipped[slot]);
+    end
     -- what your own sets hold back from the pool (they have first call): a walk of your sets' slot names,
     -- a few hundred string reads, not of the pieces
     local mine = {};
@@ -414,6 +429,7 @@ end
 -- what was held back, so the sets are built again when that changes.
 trusts.Pool = function(t)
     local held = needed((gProfile ~= nil) and (type(gProfile.Sets) == 'table') and gProfile.Sets or gVana.Sets, {});
+    needed({ EquippedWeapons = playerWeapons() }, held);
     for _, u in ipairs(trusts.Called()) do
         if (u.Id == t.Id) then break; end
         if (trusts.Ours(u)) then

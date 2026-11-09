@@ -253,7 +253,7 @@ local function renderSettings()
 
     imgui.Separator();
     vd.Eyebrow('How vanagear works for you');
-    v = tick('Let vanagear choose your weapons (swapping them costs TP)', 'weapons', p.Weapons); if (v ~= nil) then run({ 'weapons', v and 'on' or 'off' }); end
+    v = tick('Allow Main/Sub swaps from my profile (costs TP)', 'weapons', p.Weapons); if (v ~= nil) then run({ 'weapons', v and 'on' or 'off' }); end
     v = tick('Fill the slots your sets leave empty from the built sets', 'underlay', require('vg.core').Underlay()); if (v ~= nil) then run({ 'underlay', v and 'on' or 'off' }); end
     v = tick('Send your called trusts their sets', 'trusts', p.TrustGear ~= false); if (v ~= nil) then run({ 'trusts', v and 'on' or 'off' }); end
     v = tick('Motenten\'s F9-F12 keys, as GearSwap players have them', 'keys', p.MoteKeys); if (v ~= nil) then run({ 'keys', v and 'mote' or 'off' }); end
@@ -376,10 +376,16 @@ renderSlots = function(name)
     for slot = 1, 16 do
         local slotName = gData.Constants.EquipSlotNames[slot];
         local entry = pieceName(set[slotName]);
+        if (slotName == 'Range') then
+            local legacy = ((gVana.Prefs.WeaponPick or {})[gVana.Who and gVana.Who.JobName or ''] or {}).Range;
+            if (legacy ~= nil) then
+                imgui.TextWrapped('Previous every-set Range pick: ' .. legacy .. '. No longer forced; choose it below to save it in this set.');
+            end
+        end
         local ranks = ex and ex.ranks[slot];
         imgui.Text(string.format('%-6s', slotName));
         imgui.SameLine(80);
-        if (slot <= 3) and (not gVana.Prefs.Weapons) then
+        if (slot <= 2) and (not gVana.Prefs.Weapons) then
             -- one weapon per slot for the job, worn in every set; nothing else ever changes it
             local core = require('vg.core');
             local picked = ((gVana.Prefs.WeaponPick or {})[gVana.Who and gVana.Who.JobName or ''] or {})[slotName];

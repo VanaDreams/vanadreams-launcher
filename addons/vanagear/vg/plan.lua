@@ -241,14 +241,13 @@ plan.For = function(who, equipment, opts)
     add(job.Modes or {});
     if (band ~= nil) then add(band.Modes or {}); end
 
-    -- slots: weapons held unless asked; ammo held under a bow or gun, which shoots it
+    -- Player weapons and ammo are never chosen by scoring, even with an old Weapons=true
+    -- preference. Only the player or an explicit profile/action set chooses these slots.
     local slots, held = {}, {};
     for i = 1, 16 do
         local keep = false;
-        if (i <= 3) and (not opts.Weapons) then
-            keep = true; held[i] = 'weapons are held (/vg weapons on lets vanagear choose them)';
-        elseif (i == 4) and ((rangeSkill == 25) or (rangeSkill == 26)) then
-            keep = true; held[i] = 'ammo stays with the bow or gun';
+        if (i <= 4) then
+            keep = true; -- not a lock: explicit sets and the slot's drop-down still work
         elseif (opts.Locked ~= nil) and (opts.Locked[i]) then
             keep = true; held[i] = 'locked with /vg lock';
         end

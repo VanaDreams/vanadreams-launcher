@@ -228,15 +228,20 @@ core.ApplyOwn = function()
     end
     if (not vp.Refresh()) and (fresh ~= nil) then
         -- no profile file running yet: the sets just built, as they are
-        gVana.Built = fresh.sets;
+        gVana.Built = vp.PlayerBuilt(fresh.sets);
         for k in pairs(gVana.Sets) do gVana.Sets[k] = nil; end
-        for k, v in pairs(fresh.sets) do gVana.Sets[k] = v; end
+        for k, v in pairs(gVana.Built) do gVana.Sets[k] = v; end
         gVana.Own = {};
     end
 end
 
 -- The weapon worn in a slot whatever set is on, or nil to leave the slot alone.
 core.SetWeaponPick = function(slotName, piece)
+    -- The old Range command is a one-time equip, not a job-wide lock.
+    if (slotName == 'Range') then
+        if (piece ~= nil) then gFunc.ForceEquip('Range', piece); end
+        return;
+    end
     local job = gVana.Who and gVana.Who.JobName or '';
     if (job == '') then return; end
     gVana.Prefs.WeaponPick = gVana.Prefs.WeaponPick or {};

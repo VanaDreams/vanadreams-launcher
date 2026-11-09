@@ -205,6 +205,27 @@ for name, n in pairs(promised) do
     if (n > (carried[name] or 0)) and (name ~= 'Healer Cap') then over[#over + 1] = name .. ' ' .. n end
 end
 out[#out + 1] = 'over-promised: ' .. ((#over > 0) and table.concat(over, ', ') or 'none')
+-- Manually equipped weapons/ammo are not in generated player sets, but still belong to the player.
+gProfile = { Sets = { Idle = { Main = 'Player sword' } } }
+gVana.Pieces = {
+    { Name = 'Player sword' }, { Name = 'Player sword' }, { Name = 'Player sword' },
+    { Name = 'Player animator' }, { Name = 'Player ammo' }, { Name = 'Spare ammo' },
+}
+local worn = { Main={Name='Player sword'},Sub={Name='Player sword'},Range={Name='Player animator'},Ammo={Name='Player ammo'} }
+gData.GetEquipment = function() return worn end
+local pool = trusts.Pool(exc)
+local counts = {}
+for _, p in ipairs(pool) do counts[p.Name]=(counts[p.Name] or 0)+1 end
+assert(counts['Player sword']==1) -- two worn, not three from double-counting the profile
+assert(counts['Player animator']==nil and counts['Player ammo']==nil and counts['Spare ammo']==1)
+local before = trusts.Signature(exc)
+worn.Ammo = {Name='Spare ammo'}
+assert(trusts.Signature(exc) ~= before)
+pool = trusts.Pool(exc); counts={}
+for _, p in ipairs(pool) do counts[p.Name]=(counts[p.Name] or 0)+1 end
+assert(counts['Player ammo']==1 and counts['Spare ammo']==nil)
+before = trusts.Signature(exc); worn.Range=nil
+assert(trusts.Signature(exc) ~= before)
 return table.concat(out, '\n')
 """, str(ADDON), TMP)
 print(result)
