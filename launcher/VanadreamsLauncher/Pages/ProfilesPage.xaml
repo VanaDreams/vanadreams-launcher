@@ -1,6 +1,7 @@
 <UserControl x:Class="Vanadreams.Pages.ProfilesPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
              xmlns:local="clr-namespace:Vanadreams"
              Focusable="True">
     <Grid>
@@ -18,7 +19,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Profiles"/>
+                <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t206bc7b7ecd8}"/>
                 <ListBox Grid.Row="1" x:Name="List" Background="Transparent" BorderThickness="0" SelectionChanged="List_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -52,14 +53,14 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <WrapPanel Grid.Row="2" Margin="0,4,0,0">
-                    <Button Style="{StaticResource GhostButton}" Content="New" Padding="11,5" Margin="0,0,5,5" Click="New_Click"/>
-                    <Button Style="{StaticResource GhostButton}" Content="Retail" Padding="11,5" Margin="0,0,5,5" Click="Retail_Click"/>
-                    <Button Style="{StaticResource GhostButton}" Content="Copy" Padding="11,5" Margin="0,0,5,5" Click="Duplicate_Click"/>
-                    <Button Style="{StaticResource GhostButton}" Content="Delete" Padding="11,5" Margin="0,0,0,5" Click="Delete_Click"/>
+                    <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=t18fdd549b2ed}" Padding="11,5" Margin="0,0,5,5" Click="New_Click"/>
+                    <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=tcdb38c8dc89a}" Padding="11,5" Margin="0,0,5,5" Click="Retail_Click"/>
+                    <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=te21f935f11d7}" Padding="11,5" Margin="0,0,5,5" Click="Duplicate_Click"/>
+                    <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=te2d0a54968ea}" Padding="11,5" Margin="0,0,0,5" Click="Delete_Click"/>
                 </WrapPanel>
                 <!-- the last thing in the box: the moogle takes its own room, under the buttons -->
                 <local:CrewGuide Grid.Row="3" Who="moogle" ImageHeight="92" BubbleWidth="114"
-                                 Tip="Kupo! Each profile keeps its own login, window size and macros."/>
+                                 Tip="{lang:Text Key=tb45280d6f902}"/>
             </Grid>
         </Border>
 
@@ -70,7 +71,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Profile"/>
+                <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t0c6173b0276b}"/>
                 <Grid Grid.Row="1" x:Name="Form">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="126"/>
@@ -80,58 +81,58 @@
                         <RowDefinition Height="30"/><RowDefinition Height="30"/><RowDefinition Height="30"/><RowDefinition Height="30"/><RowDefinition Height="30"/>
                         <RowDefinition Height="30"/><RowDefinition Height="30"/><RowDefinition Height="30"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Name" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{lang:Text Key=tdcd1d5223f73}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <TextBox Grid.Column="1" x:Name="NameBox" VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="1" Text="Server address" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="1" Text="{lang:Text Key=t8be89710b2f1}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <Grid Grid.Row="1" Grid.Column="1">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                         <TextBox x:Name="ServerBox" VerticalAlignment="Center"/>
-                        <CheckBox Grid.Column="1" x:Name="TailscaleBox" Content="Over Tailscale" VerticalAlignment="Center" Margin="10,0,0,0"
+                        <CheckBox Grid.Column="1" x:Name="TailscaleBox" Content="{lang:Text Key=tfc68d0cff199}" VerticalAlignment="Center" Margin="10,0,0,0"
                                   Checked="Tailscale_Changed" Unchecked="Tailscale_Changed"
-                                  ToolTip="For when your router or internet provider blocks the game. Install Tailscale, accept the share of the Vanadreams server you were sent, then tick this and Save."/>
+                                  ToolTip="{lang:Text Key=tbf1117ab696c}"/>
                     </Grid>
-                    <TextBlock Grid.Row="2" Text="Username" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="2" Text="{lang:Text Key=te3b89e9d33f8}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <TextBox Grid.Row="2" Grid.Column="1" x:Name="UserBox" VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="3" Text="Password" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="3" Text="{lang:Text Key=te7cf3ef4f17c}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <PasswordBox Grid.Row="3" Grid.Column="1" x:Name="PassBox" VerticalAlignment="Center"/>
-                    <TextBlock Grid.Row="4" Text="Boot file" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="4" Text="{lang:Text Key=tfdaf6244773d}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <Grid Grid.Row="4" Grid.Column="1">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                         <TextBox x:Name="BootBox" VerticalAlignment="Center"/>
                         <Button Grid.Column="1" Style="{StaticResource GhostButton}" Content="…" Padding="10,2" Margin="6,0,0,0" Click="Browse_Click"/>
                     </Grid>
-                    <TextBlock Grid.Row="5" Text="Game folder" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="5" Text="{lang:Text Key=t5ba13e9bd4c7}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <Grid Grid.Row="5" Grid.Column="1">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                         <TextBox x:Name="GameBox" VerticalAlignment="Center"/>
                         <Button Grid.Column="1" x:Name="GameBrowse" Style="{StaticResource GhostButton}" Content="…" Padding="10,2" Margin="6,0,0,0" Click="GameBrowse_Click"/>
                     </Grid>
-                    <TextBlock Grid.Row="6" Text="Extra loader args" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="6" Text="{lang:Text Key=t941a1dda2cd3}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <TextBox Grid.Row="6" Grid.Column="1" x:Name="ExtraBox" VerticalAlignment="Center"/>
                     <!-- window mode and size are on the Graphics page; the menu is drawn at a scale of the window -->
-                    <TextBlock Grid.Row="7" Text="Menu scale" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="7" Text="{lang:Text Key=t6d06791f7c70}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <ComboBox Grid.Row="7" Grid.Column="1" x:Name="MenuScaleBox" HorizontalAlignment="Left" MinWidth="170" FontSize="14" VerticalAlignment="Center"
-                              ToolTip="How big the game draws its menus and text. 1x is the smallest; 2x is twice as big. It follows the window size on the Graphics page."/>
-                    <TextBlock Grid.Row="8" Text="Background" Style="{StaticResource Muted}" VerticalAlignment="Top" Margin="0,6,0,0"/>
+                              ToolTip="{lang:Text Key=t076b840600f4}"/>
+                    <TextBlock Grid.Row="8" Text="{lang:Text Key=tea2b8a878841}" Style="{StaticResource Muted}" VerticalAlignment="Top" Margin="0,6,0,0"/>
                     <WrapPanel Grid.Row="8" Grid.Column="1"
-                                ToolTip="The resolution the game draws the world at. Higher is sharper and asks more of your graphics card: twice or four times the window size is usual, 4096 × 4096 is common. Leave blank for the game's own default.">
+                                ToolTip="{lang:Text Key=t44bb255b9c24}">
                         <StackPanel Orientation="Horizontal" Height="30" Margin="0,0,12,0">
                             <TextBox x:Name="BgWBox" Width="64" VerticalAlignment="Center"/>
                             <TextBlock Text=" × " VerticalAlignment="Center"/>
                             <TextBox x:Name="BgHBox" Width="64" VerticalAlignment="Center"/>
                         </StackPanel>
-                        <TextBlock Text="blank for default" Style="{StaticResource Muted}" FontSize="13.5" VerticalAlignment="Center" Height="30" Padding="0,6,0,0"/>
+                        <TextBlock Text="{lang:Text Key=tc1895571ecd1}" Style="{StaticResource Muted}" FontSize="13.5" VerticalAlignment="Center" Height="30" Padding="0,6,0,0"/>
                     </WrapPanel>
                     <WrapPanel Grid.Row="9" Grid.Column="1" Margin="0,4,0,0">
                         <CheckBox x:Name="AutoCloseBox" VerticalAlignment="Center" Margin="0,0,18,4">
-                            <TextBlock Text="Close the launcher after launching" TextWrapping="Wrap"/>
+                            <TextBlock Text="{lang:Text Key=te3bed3579ecb}" TextWrapping="Wrap"/>
                         </CheckBox>
-                        <CheckBox x:Name="AdminBox" Content="Run as administrator" VerticalAlignment="Center" Margin="0,0,0,4"
-                                  ToolTip="Asks Windows' permission on every launch. Leave it off unless this game needs it: the prompt can close a game that is already running."/>
+                        <CheckBox x:Name="AdminBox" Content="{lang:Text Key=tfe9ae39c8769}" VerticalAlignment="Center" Margin="0,0,0,4"
+                                  ToolTip="{lang:Text Key=t76649a3d515a}"/>
                     </WrapPanel>
                 </Grid>
                 <DockPanel Grid.Row="2" Margin="0,6,0,0">
-                    <Button DockPanel.Dock="Left" Style="{StaticResource GoldButton}" Content="Save" Click="Save_Click" VerticalAlignment="Center"/>
+                    <Button DockPanel.Dock="Left" Style="{StaticResource GoldButton}" Content="{lang:Text Key=t1509f561f241}" Click="Save_Click" VerticalAlignment="Center"/>
                     <TextBlock x:Name="Note" Style="{StaticResource Muted}" FontSize="14" VerticalAlignment="Center" Margin="12,0,0,0" Foreground="{StaticResource Warn}" TextWrapping="Wrap"/>
                 </DockPanel>
             </Grid>

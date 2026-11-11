@@ -1,6 +1,7 @@
 <UserControl x:Class="Vanadreams.Pages.VanatunesPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
              xmlns:local="clr-namespace:Vanadreams"
              Focusable="True">
     <Grid>
@@ -12,28 +13,28 @@
         <Border Grid.Column="0" Style="{StaticResource Box}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel Margin="0,0,4,0">
-                    <TextBlock Style="{StaticResource Eyebrow}" Text="✦ What it is"/>
+                    <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t62a990590575}"/>
                     <TextBlock TextWrapping="Wrap" Margin="0,0,0,12"
-                               Text="A music player that runs inside the game. It plays the Vanadreams songs and any you add yourself, shuffled, wherever you are. While one of ours plays, the game's own music is turned down, and it comes back when ours stops."/>
-                    <TextBlock Style="{StaticResource Eyebrow}" Text="✦ How to use it"/>
-                    <TextBlock Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,5" Text="1.  In game, type /&#x2060;vanatunes to open the player's window."/>
-                    <TextBlock Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,5" Text="2.  Press Play. Shuffle, Next and Volume are on the window, and a song in the list plays when you click it."/>
-                    <TextBlock Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,5" Text="3.  Your own songs: put mp3 or wav files in the Vanadreams Music folder on your Desktop (Open my music folder, right). They join the list; /&#x2060;vanatunes rescan picks up new ones without leaving the game."/>
-                    <TextBlock Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,5" Text="4.  My music or Game music, at the top of the window, switches back to the game's own soundtrack and pauses ours."/>
-                    <TextBlock Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Text="5.  New Vanadreams songs come out now and then: Get new songs fetches them."/>
+                               Text="{lang:Text Key=tcb8a24909a5b}"/>
+                    <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t2be652d19212}"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,5" Text="{lang:Text Key=t9743b8725307}"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,5" Text="{lang:Text Key=tf8aca14f370d}"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,5" Text="{lang:Text Key=t37cb851dc818}"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,5" Text="{lang:Text Key=tf502f7d35776}"/>
+                    <TextBlock Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Text="{lang:Text Key=t4464ebb4b728}"/>
                 </StackPanel>
             </ScrollViewer>
         </Border>
         <Border Grid.Column="2" Style="{StaticResource Box}">
             <Grid>
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Music"/>
+                <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t1ba8bcdf19e8}"/>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource Display40}" FontSize="29" Text="vanatunes"/>
+                        <TextBlock Style="{StaticResource Display40}" FontSize="29" Text="{lang:Text Key=t90f3792a66b0}"/>
                         <TextBlock x:Name="State" Style="{StaticResource Mono}" Margin="0,4,0,10" TextWrapping="Wrap"/>
                         <CheckBox x:Name="EnabledBox" Click="Enabled_Click">
-                            <TextBlock Text="Load the music player at startup" TextWrapping="Wrap"/>
+                            <TextBlock Text="{lang:Text Key=t5bf8cd75c3d5}" TextWrapping="Wrap"/>
                         </CheckBox>
                         <TextBlock x:Name="Songs" Style="{StaticResource Mono}" Margin="0,12,0,0" TextWrapping="Wrap"/>
                         <TextBlock x:Name="Note" Style="{StaticResource Muted}" FontSize="13.5" Margin="0,8,0,0" TextWrapping="Wrap"/>
@@ -41,11 +42,11 @@
                 </ScrollViewer>
                 <StackPanel Grid.Row="2" Margin="0,8,0,0">
                     <WrapPanel>
-                        <Button Style="{StaticResource GhostButton}" Content="Open my music folder" Click="Folder_Click" Margin="0,0,7,7"/>
-                        <Button x:Name="GetButton" Style="{StaticResource GhostButton}" Content="Get new songs" Click="Get_Click" Margin="0,0,0,7"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=tc5a87e45b243}" Click="Folder_Click" Margin="0,0,7,7"/>
+                        <Button x:Name="GetButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t6ea68412d83f}" Click="Get_Click" Margin="0,0,0,7"/>
                     </WrapPanel>
                     <local:CrewGuide Who="mandragora" BubbleWidth="140"
-                                     Tip="La la la! Type /&#x2060;vanatunes in game and I'll sing for you."/>
+                                     Tip="{lang:Text Key=taa35dc30b116}"/>
                 </StackPanel>
             </Grid>
         </Border>

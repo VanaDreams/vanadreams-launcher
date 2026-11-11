@@ -27,6 +27,11 @@ namespace Vanadreams
                 if (args[i] == "--ashita" && i + 1 < args.Length) { State = State ?? new AppState(); State.Settings.AshitaRoot = args[i + 1]; }
             }
             State = State ?? new AppState();
+            UiText.Initialize(State.Settings.UiLanguage);
+            // Snapshot-only language override; it never writes the player settings.
+            if (!string.IsNullOrEmpty(SnapshotPath))
+                for (var i = 0; i + 1 < args.Length; i++)
+                    if (args[i] == "--ui-language") UiText.Initialize(args[i + 1]);
             Log.Info("Launcher " + typeof(App).Assembly.GetName().Version + " starting from " + SelfInstall.CurrentExe);
             Updater.SweepOld();
 
@@ -38,8 +43,8 @@ namespace Vanadreams
             if (wantsInstall && string.IsNullOrEmpty(SnapshotPath))
             {
                 var answer = MessageBox.Show(
-                    "Install the Vanadreams Launcher?\n\nIt copies itself to your apps folder and adds Start menu and desktop shortcuts. Nothing else changes. Choose No to run it from here just this once.",
-                    "Vanadreams Launcher", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                    UiText.T("Install the Vanadreams Launcher?\n\nIt copies itself to your apps folder and adds Start menu and desktop shortcuts. Nothing else changes. Choose No to run it from here just this once."),
+                    UiText.T("Vanadreams Launcher"), MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 if (answer == MessageBoxResult.Cancel) { Shutdown(); return; }
                 if (answer == MessageBoxResult.Yes)
                 {
@@ -48,13 +53,13 @@ namespace Vanadreams
                         if (SelfInstall.IsInstalledCopy) { SelfInstall.MakeShortcuts(); }   // already here: just the shortcuts
                         else { SelfInstall.Install(); SelfInstall.HandOver(); Shutdown(); return; }
                     }
-                    catch (Exception ex) { Log.Error("self-install", ex); MessageBox.Show("Couldn't install: " + ex.Message + "\n\nRunning from here instead.", "Vanadreams Launcher"); }
+                    catch (Exception ex) { Log.Error("self-install", ex); MessageBox.Show(UiText.T("Couldn't install: ") + ex.Message + UiText.T("\n\nRunning from here instead."), UiText.T("Vanadreams Launcher")); }
                 }
             }
             DispatcherUnhandledException += (s, ex) =>
             {
                 Log.Error("unhandled", ex.Exception);
-                MessageBox.Show(ex.Exception.Message, "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Exception.Message, UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Error);
                 ex.Handled = true;
             };
         }

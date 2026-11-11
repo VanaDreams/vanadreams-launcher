@@ -1,19 +1,20 @@
 <Window x:Class="Vanadreams.UpdateWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Vanadreams Launcher update" Icon="assets/moon.ico" Width="480" SizeToContent="Height" ResizeMode="NoResize"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
+        Title="{lang:Text Key=t48bb859616ce}" Icon="assets/moon.ico" Width="480" SizeToContent="Height" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{StaticResource WindowSky}"
         FontFamily="{StaticResource Body}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
     <Border Style="{StaticResource Box}" Margin="14">
         <StackPanel>
-            <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Launcher update"/>
+            <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t970fc672f1ca}"/>
             <TextBlock x:Name="Heading" Style="{StaticResource Display40}" FontSize="26" TextWrapping="Wrap"/>
             <TextBlock x:Name="Body" TextWrapping="Wrap" LineHeight="22" Margin="0,10,0,0"/>
             <ProgressBar x:Name="Bar" Margin="0,16,0,0" Maximum="1"/>
-            <TextBlock x:Name="BarLine" Style="{StaticResource Muted}" FontSize="12" Margin="0,6,0,0" Text="Moogling in progress…"/>
+            <TextBlock x:Name="BarLine" Style="{StaticResource Muted}" FontSize="12" Margin="0,6,0,0" Text="{lang:Text Key=tc599cfb790e4}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
-                <Button x:Name="LaterButton" Style="{StaticResource GhostButton}" Content="Later" Padding="16,6" IsCancel="True"/>
-                <Button x:Name="UpdateButton" Style="{StaticResource GoldButton}" Content="Update and restart" Padding="18,6" Margin="10,0,0,0"
+                <Button x:Name="LaterButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t73b6e48a1b55}" Padding="16,6" IsCancel="True"/>
+                <Button x:Name="UpdateButton" Style="{StaticResource GoldButton}" Content="{lang:Text Key=t853c6a3cc7ff}" Padding="18,6" Margin="10,0,0,0"
                         IsDefault="True" IsEnabled="False" Click="Update_Click"/>
             </StackPanel>
         </StackPanel>

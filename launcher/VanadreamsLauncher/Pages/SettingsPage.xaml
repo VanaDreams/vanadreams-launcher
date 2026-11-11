@@ -1,6 +1,7 @@
 <UserControl x:Class="Vanadreams.Pages.SettingsPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
              xmlns:local="clr-namespace:Vanadreams"
              Focusable="True">
     <UserControl.Resources>
@@ -23,7 +24,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Settings"/>
+                <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=tef72ffd0a037}"/>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <Grid Margin="0,0,4,0">
                         <Grid.ColumnDefinitions>
@@ -37,46 +38,54 @@
                         </Grid.RowDefinitions>
                         <!-- the label and what it does above the two buttons, so neither crowds the other -->
                         <StackPanel Grid.ColumnSpan="2" Margin="0,0,0,8">
-                            <TextBlock Text="Menu layout" FontWeight="SemiBold"/>
-                            <TextBlock Text="The menu down the left, or tabs across the top" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap"/>
+                            <TextBlock Text="{lang:Text Key=t98f79fcd1e05}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{lang:Text Key=tb56d4cabfb1c}" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap"/>
                             <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
-                                <Button x:Name="VerticalButton" Content="Vertical" Padding="14,3" Tag="vertical" Click="Layout_Click"/>
-                                <Button x:Name="HorizontalButton" Content="Horizontal" Padding="14,3" Margin="6,0,0,0" Tag="horizontal" Click="Layout_Click"/>
+                                <Button x:Name="VerticalButton" Content="{lang:Text Key=t727cd3a64d79}" Padding="14,3" Tag="vertical" Click="Layout_Click"/>
+                                <Button x:Name="HorizontalButton" Content="{lang:Text Key=t0abba441f16e}" Padding="14,3" Margin="6,0,0,0" Tag="horizontal" Click="Layout_Click"/>
                             </StackPanel>
+
+                            <TextBlock Text="{lang:Text Key=tccde8cf1c656}" FontWeight="SemiBold"/>
+                            <ComboBox x:Name="LanguageBox" HorizontalAlignment="Left" MinWidth="220" Margin="0,6,0,0">
+                                <ComboBoxItem Tag="auto" Content="{lang:Text Key=teb9fdea00f4f}"/>
+                                <ComboBoxItem Tag="en" Content="English"/>
+                                <ComboBoxItem Tag="ja" Content="日本語"/>
+                            </ComboBox>
+                            <TextBlock Text="{lang:Text Key=te858d8395c50}" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,4,0,0"/>
                         </StackPanel>
-                        <TextBlock Grid.Row="1" Text="Ashita folder" Style="{StaticResource Label}"/>
+                        <TextBlock Grid.Row="1" Text="{lang:Text Key=t8662260bac58}" Style="{StaticResource Label}"/>
                         <TextBox Grid.Row="1" Grid.Column="1" x:Name="AshitaBox" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="2" Text="Vanadreams game folder" Style="{StaticResource Label}"/>
+                        <TextBlock Grid.Row="2" Text="{lang:Text Key=t2e21f1e872cc}" Style="{StaticResource Label}"/>
                         <TextBox Grid.Row="2" Grid.Column="1" x:Name="FfxiBox" VerticalAlignment="Center"
-                                 ToolTip="Blank: the launcher picks the copy that fits the server. A FINAL FANTASY XI folder here is always the one Vanadreams plays (same as the Game folder box on a Vanadreams profile)."/>
-                        <TextBlock Grid.Row="3" Text="Catalogue address" Style="{StaticResource Label}"/>
+                                 ToolTip="{lang:Text Key=teb87e698f669}"/>
+                        <TextBlock Grid.Row="3" Text="{lang:Text Key=t9fadba2dde5f}" Style="{StaticResource Label}"/>
                         <TextBox Grid.Row="3" Grid.Column="1" x:Name="CatalogBox" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="4" Text="Status address" Style="{StaticResource Label}"/>
+                        <TextBlock Grid.Row="4" Text="{lang:Text Key=t4ddc16e09f95}" Style="{StaticResource Label}"/>
                         <TextBox Grid.Row="4" Grid.Column="1" x:Name="StatusBox" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Row="5" Text="Server's client version" Style="{StaticResource Label}"/>
+                        <TextBlock Grid.Row="5" Text="{lang:Text Key=td27521b815a6}" Style="{StaticResource Label}"/>
                         <TextBlock Grid.Row="5" Grid.Column="1" x:Name="ExpectedBox" Style="{StaticResource Mono}" VerticalAlignment="Center" TextWrapping="Wrap"/>
-                        <TextBlock Grid.Row="6" Text="Vanadreams plays" Style="{StaticResource Label}"/>
+                        <TextBlock Grid.Row="6" Text="{lang:Text Key=t0f425ec0efa7}" Style="{StaticResource Label}"/>
                         <TextBlock Grid.Row="6" Grid.Column="1" x:Name="DetectedBox" Style="{StaticResource Mono}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                         <!-- the effects (Low spec) are the Graphics page's presets now, per profile -->
-                        <TextBlock Grid.Row="7" Text="Music" Style="{StaticResource Label}" VerticalAlignment="Top" Margin="0,7,8,0"/>
+                        <TextBlock Grid.Row="7" Text="{lang:Text Key=t6eb00b4b2614}" Style="{StaticResource Label}" VerticalAlignment="Top" Margin="0,7,8,0"/>
                         <StackPanel Grid.Row="7" Grid.Column="1" Margin="0,7,0,0">
                             <CheckBox x:Name="MusicBox">
-                                <TextBlock Text="Play “The Lanterns Are Lit” while the launcher is open" TextWrapping="Wrap"/>
+                                <TextBlock Text="{lang:Text Key=t97a7ee1266ae}" TextWrapping="Wrap"/>
                             </CheckBox>
                             <TextBlock x:Name="MusicCredit" Style="{StaticResource Muted}" FontSize="13.5" Margin="20,2,0,0" TextWrapping="Wrap"/>
                         </StackPanel>
-                        <TextBlock Grid.Row="8" Text="Other game" Style="{StaticResource Label}" VerticalAlignment="Top" Margin="0,11,8,0"/>
+                        <TextBlock Grid.Row="8" Text="{lang:Text Key=tf935f3e4ccd6}" Style="{StaticResource Label}" VerticalAlignment="Top" Margin="0,11,8,0"/>
                         <StackPanel Grid.Row="8" Grid.Column="1" Margin="0,11,0,0">
                             <CheckBox x:Name="RestoreBox">
-                                <TextBlock Text="Point Windows back at my other FFXI when Vanadreams closes" TextWrapping="Wrap"/>
+                                <TextBlock Text="{lang:Text Key=t6c19ebf074f4}" TextWrapping="Wrap"/>
                             </CheckBox>
-                            <TextBlock Text="Windower and PlayOnline find the game through the one location Windows keeps. Play moves it to Vanadreams; this puts it back afterwards, with a Windows permission prompt." Style="{StaticResource Muted}" FontSize="13.5" Margin="20,2,0,0" TextWrapping="Wrap"/>
-                            <Button Content="Give my other game back now" Padding="14,3" HorizontalAlignment="Left" Margin="20,6,0,0" Click="GiveBack_Click"/>
+                            <TextBlock Text="{lang:Text Key=tc0e59692ad24}" Style="{StaticResource Muted}" FontSize="13.5" Margin="20,2,0,0" TextWrapping="Wrap"/>
+                            <Button Content="{lang:Text Key=t1f8073f0bb19}" Padding="14,3" HorizontalAlignment="Left" Margin="20,6,0,0" Click="GiveBack_Click"/>
                         </StackPanel>
                     </Grid>
                 </ScrollViewer>
                 <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,8,0,0">
-                    <Button Style="{StaticResource GoldButton}" Content="Save" Click="Save_Click" MinWidth="110"/>
+                    <Button Style="{StaticResource GoldButton}" Content="{lang:Text Key=t1509f561f241}" Click="Save_Click" MinWidth="110"/>
                     <TextBlock x:Name="Note" Style="{StaticResource Muted}" VerticalAlignment="Center" Margin="12,0,0,0" TextWrapping="Wrap" MaxWidth="320"/>
                 </StackPanel>
             </Grid>
@@ -85,18 +94,18 @@
         <Border Grid.Column="2" Style="{StaticResource Box}">
             <Grid>
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource Eyebrow}" Text="✦ About"/>
+                <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=td3fed74dac50}"/>
                 <StackPanel Grid.Row="1">
                     <TextBlock x:Name="About" Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,12"/>
                     <WrapPanel>
-                        <Button Style="{StaticResource GhostButton}" Content="Refresh catalogue" Margin="0,0,7,7" Click="Catalog_Click"/>
-                        <Button Style="{StaticResource GhostButton}" Content="Open data folder" Margin="0,0,7,7" Click="Data_Click"/>
-                        <Button Style="{StaticResource GhostButton}" Content="Open log" Margin="0,0,7,7" Click="Log_Click"/>
-                        <Button x:Name="ShortcutsButton" Style="{StaticResource GhostButton}" Content="Install shortcuts" Margin="0,0,7,7" Click="Shortcuts_Click"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=t4bc465d2f66c}" Margin="0,0,7,7" Click="Catalog_Click"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=t24bec7410199}" Margin="0,0,7,7" Click="Data_Click"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=t7230e6fd9880}" Margin="0,0,7,7" Click="Log_Click"/>
+                        <Button x:Name="ShortcutsButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=te13e886c7af9}" Margin="0,0,7,7" Click="Shortcuts_Click"/>
                     </WrapPanel>
                 </StackPanel>
                 <local:CrewGuide Grid.Row="2" Who="orc" BubbleWidth="140"
-                                 Tip="Settings is orc's job. Orc keep things tidy."/>
+                                 Tip="{lang:Text Key=t29d9722dfc95}"/>
             </Grid>
         </Border>
     </Grid>

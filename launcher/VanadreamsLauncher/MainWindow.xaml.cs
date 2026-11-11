@@ -52,18 +52,18 @@ namespace Vanadreams
 
         private readonly List<NavItem> _nav = new List<NavItem>
         {
-            new NavItem { Label = "Play", Key = "play" },
-            new NavItem { Label = "Graphics", Key = "graphics" },
-            new NavItem { Label = "Profiles", Key = "profiles" },
-            new NavItem { Label = "Addons", Key = "addons" },
-            new NavItem { Label = "Fishing", Key = "fishing" },
+            new NavItem { Label = UiText.T("Play"), Key = "play" },
+            new NavItem { Label = UiText.T("Graphics"), Key = "graphics" },
+            new NavItem { Label = UiText.T("Profiles"), Key = "profiles" },
+            new NavItem { Label = UiText.T("Addons"), Key = "addons" },
+            new NavItem { Label = UiText.T("Fishing"), Key = "fishing" },
             new NavItem { Label = "Vanatunes", Key = "vanatunes" },
-            new NavItem { Label = "Capture", Key = "capture" },
-            new NavItem { Label = "Setup", Key = "setup" },
-            new NavItem { Label = "Install game", Key = "install" },
-            new NavItem { Label = "Settings", Key = "settings" },
+            new NavItem { Label = UiText.T("Capture"), Key = "capture" },
+            new NavItem { Label = UiText.T("Setup"), Key = "setup" },
+            new NavItem { Label = UiText.T("Install game"), Key = "install" },
+            new NavItem { Label = UiText.T("Settings"), Key = "settings" },
             new NavItem { Label = "Discord", Key = "discord" },
-            new NavItem { Label = "Exit", Key = "exit", Dim = true },
+            new NavItem { Label = UiText.T("Exit"), Key = "exit", Dim = true },
         };
         private const int MainCount = 10;   // Discord and Exit sit apart, at the foot of the rail or past the divider
 
@@ -233,15 +233,15 @@ namespace Vanadreams
             {
                 var asset = await Updater.CheckAsync(State.Downloader);
                 if (asset == null) return;
-                NewsLine.Text = "·  Launcher " + asset.Tag + " downloading…";
+                NewsLine.Text = UiText.T("·  Launcher ") + asset.Tag + UiText.T(" downloading…");
                 var progress = new Progress<DownloadProgress>();
                 var ready = FetchAndApplyAsync(asset, progress);
                 var box = new UpdateWindow(asset.Tag, Updater.Normalise(Updater.Current), ready, progress) { Owner = this };
                 if (box.ShowDialog() == true && _updatedExe != null) { Updater.Restart(_updatedExe); return; }
                 await ready;
-                if (_updatedExe == null) { NewsLine.Text = "·  Launcher " + asset.Tag + " is on vanadreams.org"; return; }
+                if (_updatedExe == null) { NewsLine.Text = UiText.T("·  Launcher ") + asset.Tag + UiText.T(" is on vanadreams.org"); return; }
                 NewsLine.Text = "";   // the button says it, and the footer has room for one of them
-                UpdateButton.Content = "Restart into " + asset.Tag;
+                UpdateButton.Content = UiText.T("Restart into ") + asset.Tag;
                 UpdateButton.Visibility = Visibility.Visible;
                 RefreshStrip();
             }
@@ -293,7 +293,7 @@ namespace Vanadreams
             if (sw.Windows.Count == 0) return false;
             if (_tray == null)
             {
-                _tray = new System.Windows.Forms.NotifyIcon { Text = "Vanadreams Launcher · window switcher", Visible = false };
+                _tray = new System.Windows.Forms.NotifyIcon { Text = UiText.T("Vanadreams Launcher · window switcher"), Visible = false };
                 try
                 {
                     using (var s = Application.GetResourceStream(new Uri("pack://application:,,,/assets/moon.ico")).Stream)
@@ -301,8 +301,8 @@ namespace Vanadreams
                 }
                 catch (Exception ex) { Log.Warn("tray icon: " + ex.Message); _tray.Icon = System.Drawing.SystemIcons.Application; }
                 var menu = new System.Windows.Forms.ContextMenuStrip();
-                menu.Items.Add("Open the launcher", null, (s, e) => Dispatcher.BeginInvoke(new Action(ShowFromTray)));
-                menu.Items.Add("Quit (the window switcher stops)", null, (s, e) => Dispatcher.BeginInvoke(new Action(Quit)));
+                menu.Items.Add(UiText.T("Open the launcher"), null, (s, e) => Dispatcher.BeginInvoke(new Action(ShowFromTray)));
+                menu.Items.Add(UiText.T("Quit (the window switcher stops)"), null, (s, e) => Dispatcher.BeginInvoke(new Action(Quit)));
                 _tray.ContextMenuStrip = menu;
                 _tray.DoubleClick += (s, e) => Dispatcher.BeginInvoke(new Action(ShowFromTray));
             }
@@ -311,7 +311,7 @@ namespace Vanadreams
             if (!_trayTold)
             {
                 _trayTold = true;
-                _tray.ShowBalloonTip(4000, "Window switcher still on", "The launcher is in the tray so your switch keys keep working. Right-click the moon to quit.", System.Windows.Forms.ToolTipIcon.None);
+                _tray.ShowBalloonTip(4000, UiText.T("Window switcher still on"), UiText.T("The launcher is in the tray so your switch keys keep working. Right-click the moon to quit."), System.Windows.Forms.ToolTipIcon.None);
             }
             Log.Info("hidden to the tray for the window switcher");
             return true;
@@ -363,7 +363,7 @@ namespace Vanadreams
         public void RefreshMute()
         {
             var on = State.Settings.MusicOn;
-            MuteButton.Content = !on ? "♪ music off" : Music.Playing ? "♪ mute" : "♪ play";
+            MuteButton.Content = !on ? UiText.T("♪ music off") : Music.Playing ? UiText.T("♪ mute") : UiText.T("♪ play");
             MuteButton.Opacity = on && Music.Playing ? 0.75 : 1.0;
         }
 
@@ -371,9 +371,9 @@ namespace Vanadreams
         public void RefreshStrip()
         {
             var s = State.Status;
-            StatusWord.Text = s.StateWord;
-            StatusWhen.Text = s.Online.HasValue && !s.FromCache ? " · " + s.Online.Value + " online" : s.FromCache && s.CheckedAt.HasValue ? " · " + s.CheckedWord + " (last seen)" : "";
-            var note = string.IsNullOrWhiteSpace(s.Note) ? (s.Error != null ? "Couldn't reach vanadreams.org." : null) : s.Note;
+            StatusWord.Text = UiText.T(s.StateWord);
+            StatusWhen.Text = s.Online.HasValue && !s.FromCache ? " · " + s.Online.Value + UiText.T(" online") : s.FromCache && s.CheckedAt.HasValue ? " · " + CheckedWord(s) + UiText.T(" (last seen)") : "";
+            var note = string.IsNullOrWhiteSpace(s.Note) ? (s.Error != null ? UiText.T("Couldn't reach vanadreams.org.") : null) : s.Note;
             StatusWord.ToolTip = note == null ? s.CheckedWord : note + "\n" + s.CheckedWord;   // the server's whole note, however long
             Brush dot;
             switch (s.State)
@@ -387,10 +387,13 @@ namespace Vanadreams
             StatusDot.Effect = new System.Windows.Media.Effects.DropShadowEffect { Color = ((SolidColorBrush)dot).Color, BlurRadius = 8, ShadowDepth = 0 };
             // a game update is the Play page's Patch button now; the footer only names the version installed
             var v = State.Version;
-            GameVersion.Text = string.IsNullOrEmpty(v.Installed) ? "not found" : v.Installed;
+            GameVersion.Text = string.IsNullOrEmpty(v.Installed) ? UiText.T("not found") : v.Installed;
             GameVersion.Foreground = (Brush)FindResource(!v.ExpectedIsPublished || v.Verdict == VersionVerdict.Ready ? "Cream" : v.Verdict == VersionVerdict.Unknown ? "Warn" : "Bad");
             GameVersion.ToolTip = v.Sentence;
         }
+
+        private static string CheckedWord(StatusInfo status) => status.CheckedAt.HasValue
+            ? UiText.T("checked ") + status.CheckedAt.Value.ToLocalTime().ToString("h:mm tt", System.Globalization.CultureInfo.InvariantCulture).ToLowerInvariant() : "";
 
         private void DrawStars()
         {

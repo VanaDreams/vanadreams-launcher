@@ -52,50 +52,50 @@ namespace Vanadreams.Pages
             var have = ClientVersion.ReadInstalled(found);
             var want = Expected;
             FolderText.Text = ClientInstall.GameFolder(_root);
-            VersionText.Text = want == null ? "the server hasn't published its version yet" : want + " · the version the server runs";
-            FoundText.Text = found == null ? "none on this PC" : (have ?? "version unknown") + " · " + found.TrimEnd('\\');
+            VersionText.Text = want == null ? UiText.T("the server hasn't published its version yet") : want + UiText.T(" · the version the server runs");
+            FoundText.Text = found == null ? UiText.T("none on this PC") : (have ?? UiText.T("version unknown")) + " · " + found.TrimEnd('\\');
             var matches = found != null && have != null && want != null && string.CompareOrdinal(have.Substring(0, 6), want.Substring(0, 6)) >= 0;
-            State.Text = found == null ? "Not installed yet." : matches ? "✓ Installed · matches the server" : "Installed, but older than the server needs. Install game fetches the right one.";
+            State.Text = found == null ? UiText.T("Not installed yet.") : matches ? UiText.T("✓ Installed · matches the server") : UiText.T("Installed, but older than the server needs. Install game fetches the right one.");
             State.Foreground = (Brush)FindResource(found == null ? "Warn" : matches ? "Ok" : "Warn");
             if (Pending != null && _cancel == null)
             {
-                State.Text = "Update ready · " + Pending.Words + ". Only these are downloaded.";
+                State.Text = UiText.T("Update ready · ") + Pending.Words + UiText.T(". Only these are downloaded.");
                 State.Foreground = (Brush)FindResource("Warn");
             }
-            InstallButton.Content = _cancel != null ? "Stop" : Pending != null ? "Update game" : found == null ? "Install game" : "Install a fresh copy";
+            InstallButton.Content = _cancel != null ? UiText.T("Stop") : Pending != null ? UiText.T("Update game") : found == null ? UiText.T("Install game") : UiText.T("Install a fresh copy");
 
         }
 
         private async Task LoadManifestAsync()
         {
-            if (Expected == null) { SizeText.Text = "known once the server's version is published"; return; }
-            SizeText.Text = "checking…";
+            if (Expected == null) { SizeText.Text = UiText.T("known once the server's version is published"); return; }
+            SizeText.Text = UiText.T("checking…");
             try
             {
                 _manifest = ClientManifest.Parse(await App.State.Downloader.GetStringAsync(ClientInstall.ManifestUrl(Expected)));
                 var left = ClientInstall.Remaining(_manifest, ClientInstall.Done(_root, _manifest.Version, AshitaFolder));
                 SizeText.Text = left.Count > 0 && left.Count < _manifest.Chunks.Count
-                    ? Gb(left.Sum(c => c.Size)) + " still to fetch, of " + Gb(_manifest.TotalSize)
-                    : Gb(_manifest.TotalSize) + " · " + Gb(_manifest.TotalUnpacked) + " on disk";
+                    ? Gb(left.Sum(c => c.Size)) + UiText.T(" still to fetch, of ") + Gb(_manifest.TotalSize)
+                    : Gb(_manifest.TotalSize) + " · " + Gb(_manifest.TotalUnpacked) + UiText.T(" on disk");
             }
             catch (Exception ex)
             {
                 Log.Warn("client manifest: " + ex.Message);
-                SizeText.Text = "the download isn't available right now";
+                SizeText.Text = UiText.T("the download isn't available right now");
             }
         }
 
         private async void Install_Click(object sender, RoutedEventArgs e)
         {
             if (_cancel != null) { _cancel.Cancel(); return; }
-            if (_manifest == null) { await LoadManifestAsync(); if (_manifest == null) { ProgressText.Text = "The game download isn't available right now. Try again in a while."; return; } }
+            if (_manifest == null) { await LoadManifestAsync(); if (_manifest == null) { ProgressText.Text = UiText.T("The game download isn't available right now. Try again in a while."); return; } }
 
             var drive = new DriveInfo(Path.GetPathRoot(_root));
             var todo = ClientInstall.Remaining(_manifest, ClientInstall.Done(_root, _manifest.Version, AshitaFolder));
             var needed = todo.Sum(c => c.Size + c.Unpacked);
             // only new parts for a copy that is already registered: no permission prompt at the end
             var updateOnly = todo.Count < _manifest.Chunks.Count && ClientInstall.IsRegistered(_root);
-            if (drive.AvailableFreeSpace < needed) { ProgressText.Text = $"{drive.Name} has {Gb(drive.AvailableFreeSpace)} free and the install needs {Gb(needed)}. Pick another folder."; return; }
+            if (drive.AvailableFreeSpace < needed) { ProgressText.Text = UiText.F("{0} has {1} free and the install needs {2}. Pick another folder.", drive.Name, Gb(drive.AvailableFreeSpace), Gb(needed)); return; }
 
             var state = App.State;
             _cancel = new CancellationTokenSource();
@@ -108,8 +108,8 @@ namespace Vanadreams.Pages
                 if (startedAt < 0) startedAt = p.Done;
                 var secs = (DateTime.UtcNow - started).TotalSeconds;
                 var rate = secs > 5 ? (p.Done - startedAt) / secs : 0;
-                var left = rate > 0 ? " · about " + Math.Max(1, (int)Math.Ceiling((p.Total - p.Done) / rate / 60)) + " min left" : "";
-                ProgressText.Text = $"{p.Stage} part {p.Part} of {p.Parts} · {Gb(p.Done)} of {Gb(p.Total)}{left}";
+                var left = rate > 0 ? UiText.T(" · about ") + Math.Max(1, (int)Math.Ceiling((p.Total - p.Done) / rate / 60)) + UiText.T(" min left") : "";
+                ProgressText.Text = UiText.F("{0} part {1} of {2} · {3} of {4}{5}", UiText.T(p.Stage), p.Part, p.Parts, Gb(p.Done), Gb(p.Total), left);
             });
             try
             {
@@ -120,19 +120,19 @@ namespace Vanadreams.Pages
                 // the look and title packs land as XIPivot overlays: XIPivot in place and the overlays listed, once
                 XIPivotBundle.Ensure(AshitaFolder);
                 if (state.GiveOverlays()) state.ApplyEnabledAddons();
-                if (updateOnly) ProgressText.Text = "Updated. Press Play.";
+                if (updateOnly) ProgressText.Text = UiText.T("Updated. Press Play.");
                 else
                 {
-                    ProgressText.Text = "Files in place. Windows will ask for permission to register the game…";
+                    ProgressText.Text = UiText.T("Files in place. Windows will ask for permission to register the game…");
                     var ok = await Task.Run(() => ClientInstall.RunRegister(_root, state.Settings.DownloadsFolder));
-                    ProgressText.Text = ok ? "Installed. Run Setup if you haven't, then press Play."
-                                           : "The permission prompt was refused, so the game isn't registered yet. Press Install game again to finish; nothing downloads twice.";
+                    ProgressText.Text = ok ? UiText.T("Installed. Run Setup if you haven't, then press Play.")
+                                           : UiText.T("The permission prompt was refused, so the game isn't registered yet. Press Install game again to finish; nothing downloads twice.");
                 }
                 await state.CheckClientUpdateAsync();
                 state.CheckVersion();
                 state.Notify();
             }
-            catch (OperationCanceledException) { ProgressText.Text = "Stopped. Press Install game to carry on where it left off."; }
+            catch (OperationCanceledException) { ProgressText.Text = UiText.T("Stopped. Press Install game to carry on where it left off."); }
             catch (Exception ex) { Log.Error("client install", ex); ProgressText.Text = ex.Message; }
             finally
             {
@@ -147,7 +147,7 @@ namespace Vanadreams.Pages
 
         private void Folder_Click(object sender, RoutedEventArgs e)
         {
-            var d = new System.Windows.Forms.FolderBrowserDialog { Description = "Pick the folder the game goes in (Final Fantasy XI and PlayOnlineViewer are made inside it)", SelectedPath = _root };
+            var d = new System.Windows.Forms.FolderBrowserDialog { Description = UiText.T("Pick the folder the game goes in (Final Fantasy XI and PlayOnlineViewer are made inside it)"), SelectedPath = _root };
             if (d.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
             _root = d.SelectedPath;
             App.State.Settings.GameInstallRoot = _root;
@@ -158,7 +158,7 @@ namespace Vanadreams.Pages
         public bool CanLeave()
         {
             if (_cancel == null) return true;
-            ProgressText.Text = "Stop the install first.";
+            ProgressText.Text = UiText.T("Stop the install first.");
             return false;
         }
     }

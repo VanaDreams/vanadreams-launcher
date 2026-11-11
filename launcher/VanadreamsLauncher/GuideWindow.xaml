@@ -1,7 +1,8 @@
 <Window x:Class="Vanadreams.GuideWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Installing FFXI for Vanadreams" Width="900" Height="640" ResizeMode="CanMinimize"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
+        Title="{lang:Text Key=t3bde21b9cc11}" Width="900" Height="640" ResizeMode="CanMinimize"
         WindowStartupLocation="CenterOwner" Background="{StaticResource WindowSky}" FontFamily="{StaticResource Body}">
     <Grid Margin="24">
         <Grid.ColumnDefinitions>
@@ -11,7 +12,7 @@
         </Grid.ColumnDefinitions>
         <Border Style="{StaticResource Box}">
             <StackPanel>
-                <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Steps"/>
+                <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t5fae21c82eb5}"/>
                 <ItemsControl x:Name="Steps">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -47,13 +48,13 @@
                 </ScrollViewer>
                 <StackPanel Grid.Row="2">
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                        <Button x:Name="LinkButton" Style="{StaticResource GhostButton}" Content="Open the link" Padding="14,6" Click="Link_Click"/>
-                        <Button x:Name="CheckButton" Style="{StaticResource GoldButton}" Content="Check" Padding="18,6" Margin="8,0,0,0" Click="Check_Click"/>
-                        <Button x:Name="DoneButton" Style="{StaticResource GhostButton}" Content="I did this" Padding="14,6" Margin="8,0,0,0" Click="Done_Click"/>
+                        <Button x:Name="LinkButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=tf902d8995ddf}" Padding="14,6" Click="Link_Click"/>
+                        <Button x:Name="CheckButton" Style="{StaticResource GoldButton}" Content="{lang:Text Key=t9d60841e0a78}" Padding="18,6" Margin="8,0,0,0" Click="Check_Click"/>
+                        <Button x:Name="DoneButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t88f5a5aad8ac}" Padding="14,6" Margin="8,0,0,0" Click="Done_Click"/>
                     </StackPanel>
                     <Grid>
-                        <Button Style="{StaticResource GhostButton}" Content="Something's wrong" Padding="14,6" HorizontalAlignment="Left" Click="Wrong_Click"/>
-                        <Button x:Name="NextButton" Style="{StaticResource GoldButton}" Content="Next ▸" Padding="18,6" HorizontalAlignment="Right" Click="Next_Click"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=t76d442a923b6}" Padding="14,6" HorizontalAlignment="Left" Click="Wrong_Click"/>
+                        <Button x:Name="NextButton" Style="{StaticResource GoldButton}" Content="{lang:Text Key=td0cc4d250209}" Padding="18,6" HorizontalAlignment="Right" Click="Next_Click"/>
                     </Grid>
                 </StackPanel>
             </Grid>

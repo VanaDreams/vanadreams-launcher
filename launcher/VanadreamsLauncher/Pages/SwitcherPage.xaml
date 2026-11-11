@@ -1,6 +1,7 @@
 <UserControl x:Class="Vanadreams.Pages.SwitcherPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
              Focusable="True">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -21,7 +22,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock x:Name="Heading" Style="{StaticResource Eyebrow}" Text="✦ Game windows"/>
+                <TextBlock x:Name="Heading" Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t6ae462e46b13}"/>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <ItemsControl x:Name="Slots">
                         <ItemsControl.ItemTemplate>
@@ -42,32 +43,32 @@
                                     </StackPanel>
                                     <Button Grid.Column="2" Style="{StaticResource GhostButton}" Padding="9,2" FontSize="13" Margin="4,0,5,0" MinWidth="96"
                                             Content="{Binding KeyText}" Visibility="{Binding KeyVisibility}" Tag="{Binding}" Click="SlotKey_Click"
-                                            ToolTip="The key that brings this slot forward. Click, then press the key; Esc clears it."/>
+                                            ToolTip="{lang:Text Key=t1b7835c55d6a}"/>
                                     <Button Grid.Column="3" Style="{StaticResource GhostButton}" Padding="0,2" FontSize="13" Margin="0,0,4,0" Content="▲"
-                                            IsEnabled="{Binding CanUp}" Tag="{Binding}" Click="Up_Click" ToolTip="Move this character up a slot"/>
+                                            IsEnabled="{Binding CanUp}" Tag="{Binding}" Click="Up_Click" ToolTip="{lang:Text Key=t7305cf032151}"/>
                                     <Button Grid.Column="4" Style="{StaticResource GhostButton}" Padding="0,2" FontSize="13" Margin="0,0,4,0" Content="▼"
-                                            IsEnabled="{Binding CanDown}" Tag="{Binding}" Click="Down_Click" ToolTip="Move this character down a slot"/>
-                                    <Button Grid.Column="5" Style="{StaticResource GhostButton}" Padding="0,2" FontSize="13" Content="Show"
-                                            IsEnabled="{Binding HasWindow}" Tag="{Binding}" Click="Show_Click" ToolTip="Bring this window to the front"/>
+                                            IsEnabled="{Binding CanDown}" Tag="{Binding}" Click="Down_Click" ToolTip="{lang:Text Key=t88f279aeeb8a}"/>
+                                    <Button Grid.Column="5" Style="{StaticResource GhostButton}" Padding="0,2" FontSize="13" Content="{lang:Text Key=t0df6f1cad36c}"
+                                            IsEnabled="{Binding HasWindow}" Tag="{Binding}" Click="Show_Click" ToolTip="{lang:Text Key=t5b3824024dd2}"/>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
 
-                <TextBlock Grid.Row="2" Style="{StaticResource Eyebrow}" Text="✦ Layouts" Margin="0,8,0,6"/>
+                <TextBlock Grid.Row="2" Style="{StaticResource Eyebrow}" Text="{lang:Text Key=tf4be743b8bc3}" Margin="0,8,0,6"/>
                 <WrapPanel Grid.Row="3">
-                    <ComboBox x:Name="LayoutBox" Width="180" VerticalAlignment="Center" Margin="0,0,8,6" ToolTip="Your saved layouts"/>
-                    <Button Style="{StaticResource GhostButton}" Padding="13,4" Content="Restore" Margin="0,0,8,6" Click="Restore_Click"
-                            ToolTip="Put every window back where this layout has it"/>
-                    <Button Style="{StaticResource GhostButton}" Padding="13,4" Content="Delete" Margin="0,0,0,6" Click="Delete_Click"/>
+                    <ComboBox x:Name="LayoutBox" Width="180" VerticalAlignment="Center" Margin="0,0,8,6" ToolTip="{lang:Text Key=t182c7291054b}"/>
+                    <Button Style="{StaticResource GhostButton}" Padding="13,4" Content="{lang:Text Key=ta76e13b98392}" Margin="0,0,8,6" Click="Restore_Click"
+                            ToolTip="{lang:Text Key=t6704500b46c4}"/>
+                    <Button Style="{StaticResource GhostButton}" Padding="13,4" Content="{lang:Text Key=te2d0a54968ea}" Margin="0,0,0,6" Click="Delete_Click"/>
                 </WrapPanel>
                 <WrapPanel Grid.Row="4">
-                    <TextBox x:Name="LayoutName" Width="180" VerticalAlignment="Center" Margin="0,0,8,6" ToolTip="A name for the layout, e.g. Full party"/>
-                    <Button Style="{StaticResource GhostButton}" Padding="13,4" Content="Save windows as this layout" Margin="0,0,0,6" Click="Save_Click"/>
+                    <TextBox x:Name="LayoutName" Width="180" VerticalAlignment="Center" Margin="0,0,8,6" ToolTip="{lang:Text Key=t8e3e16400047}"/>
+                    <Button Style="{StaticResource GhostButton}" Padding="13,4" Content="{lang:Text Key=t0cda517d5961}" Margin="0,0,0,6" Click="Save_Click"/>
                 </WrapPanel>
                 <CheckBox Grid.Row="5" x:Name="AutoLayoutBox" Margin="0,4,0,0" Click="AutoLayout_Click">
-                    <TextBlock Text="Put each character in its place in the layout as it logs in" TextWrapping="Wrap"/>
+                    <TextBlock Text="{lang:Text Key=td3cfa1479377}" TextWrapping="Wrap"/>
                 </CheckBox>
                 <TextBlock Grid.Row="6" x:Name="LayoutNote" Style="{StaticResource Muted}" FontSize="13.5" Margin="0,6,0,0" TextTrimming="CharacterEllipsis"/>
             </Grid>
@@ -83,9 +84,9 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Window switcher"/>
+                <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t390a7dfe76a6}"/>
                 <CheckBox Grid.Row="1" x:Name="OnBox" Click="On_Click">
-                    <TextBlock Text="On: switch between my game windows" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                    <TextBlock Text="{lang:Text Key=t27dada242a07}" TextWrapping="Wrap" FontWeight="SemiBold"/>
                 </CheckBox>
                 <Grid Grid.Row="2" Margin="0,8,0,0">
                     <Grid.ColumnDefinitions>
@@ -95,25 +96,25 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="34"/><RowDefinition Height="34"/><RowDefinition Height="34"/><RowDefinition Height="34"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Next" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{lang:Text Key=t1ff57a29d7c9}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <Button Grid.Column="1" x:Name="NextKey" Style="{StaticResource GhostButton}" Padding="10,3" FontSize="13.5" Tag="next" Click="Key_Click"
-                            ToolTip="Click, then press the key; Esc clears it"/>
-                    <TextBlock Grid.Row="1" Text="Previous" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                            ToolTip="{lang:Text Key=t43c0fc23799b}"/>
+                    <TextBlock Grid.Row="1" Text="{lang:Text Key=ta57b08a480b8}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <Button Grid.Row="1" Grid.Column="1" x:Name="PrevKey" Style="{StaticResource GhostButton}" Padding="10,3" FontSize="13.5" Tag="prev" Click="Key_Click"
-                            ToolTip="Click, then press the key; Esc clears it"/>
-                    <TextBlock Grid.Row="2" Text="Pad next" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                            ToolTip="{lang:Text Key=t43c0fc23799b}"/>
+                    <TextBlock Grid.Row="2" Text="{lang:Text Key=t55a11d50dba2}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <ComboBox Grid.Row="2" Grid.Column="1" x:Name="PadNextBox" VerticalAlignment="Center" FontSize="13.5" SelectionChanged="Pad_Changed"/>
-                    <TextBlock Grid.Row="3" Text="Pad previous" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="3" Text="{lang:Text Key=tf986aa6a88c8}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                     <ComboBox Grid.Row="3" Grid.Column="1" x:Name="PadPrevBox" VerticalAlignment="Center" FontSize="13.5" SelectionChanged="Pad_Changed"/>
                 </Grid>
                 <CheckBox Grid.Row="3" x:Name="AnywhereBox" Margin="0,8,0,0" Click="Anywhere_Click"
-                          ToolTip="Off: the keys only work while a game window is in front, so they never get in the way elsewhere.">
-                    <TextBlock Text="Keys work from any window, not just the game" TextWrapping="Wrap" FontSize="14.5"/>
+                          ToolTip="{lang:Text Key=tdfbbc6c889c0}">
+                    <TextBlock Text="{lang:Text Key=t51f256052e9f}" TextWrapping="Wrap" FontSize="14.5"/>
                 </CheckBox>
                 <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,8,0,0">
                     <TextBlock x:Name="Note" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap"/>
                 </ScrollViewer>
-                <Button Grid.Row="5" Style="{StaticResource GhostButton}" Content="Back" HorizontalAlignment="Left" Margin="0,6,0,0" Click="Back_Click"/>
+                <Button Grid.Row="5" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t76900f1bfd16}" HorizontalAlignment="Left" Margin="0,6,0,0" Click="Back_Click"/>
             </Grid>
         </Border>
     </Grid>

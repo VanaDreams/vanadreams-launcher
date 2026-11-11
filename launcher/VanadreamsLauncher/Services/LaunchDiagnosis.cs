@@ -257,40 +257,40 @@ namespace Vanadreams.Services
             switch (stop)
             {
                 case LoaderStop.LoaderError:
-                    sb.Append("The loader stopped with this error:\n\n");
+                    sb.Append(UiText.T("The loader stopped with this error:\n\n"));
                     foreach (var e in loaderErrors.Take(4)) sb.Append("  ").Append(e).Append('\n');
                     sb.Append('\n').Append(AdviceFor(loaderErrors));
                     break;
                 case LoaderStop.GameQuit:
-                    sb.Append("You logged in and your profile loaded, so the server, your password and your firewall are fine. Then the game itself quit as it started. " +
-                              "The loader prints nothing for that, which is why its window only says \"Closing...\".\n\n");
+                    sb.Append(UiText.T("You logged in and your profile loaded, so the server, your password and your firewall are fine. Then the game itself quit as it started. ") +
+                              UiText.T("The loader prints nothing for that, which is why its window only says \"Closing...\".\n\n"));
                     if (problems.Count > 0)
                     {
-                        sb.Append("What the launcher found:\n");
+                        sb.Append(UiText.T("What the launcher found:\n"));
                         foreach (var p in problems.Take(5)) sb.Append("  • ").Append(p.Text).Append('\n');
                         sb.Append('\n');
                     }
-                    sb.Append("Try these in order, pressing Play after each:\n" +
-                              "1. Close every other copy of FFXI, PlayOnline and Windower.\n" +
-                              "2. Turn on Low spec on the Graphics page (it turns the modern look's graphics DLLs off). If that works, install DirectX 9 (https://www.microsoft.com/en-us/download/details.aspx?id=35) and turn Low spec off again.\n" +
-                              "3. Open Install game on the menu and press Repair, which checks every game file.\n\n" +
-                              "If it still closes, use Send bug report on the Setup page: it now carries the loader's own text and these checks.");
+                    sb.Append(UiText.T("Try these in order, pressing Play after each:\n") +
+                              UiText.T("1. Close every other copy of FFXI, PlayOnline and Windower.\n") +
+                              UiText.T("2. Turn on Low spec on the Graphics page (it turns the modern look's graphics DLLs off). If that works, install DirectX 9 (https://www.microsoft.com/en-us/download/details.aspx?id=35) and turn Low spec off again.\n") +
+                              UiText.T("3. Open Install game on the menu and press Repair, which checks every game file.\n\n") +
+                              UiText.T("If it still closes, use Send bug report on the Setup page: it now carries the loader's own text and these checks."));
                     break;
                 default:
-                    sb.Append("The loader closed before the game opened.\n\n");
+                    sb.Append(UiText.T("The loader closed before the game opened.\n\n"));
                     if (!string.IsNullOrWhiteSpace(loaderText))
                     {
-                        sb.Append("Its last lines were:\n");
+                        sb.Append(UiText.T("Its last lines were:\n"));
                         foreach (var l in LastLines(loaderText, 6)) sb.Append("  ").Append(l).Append('\n');
                         sb.Append('\n');
                     }
                     if (problems.Count > 0)
                     {
-                        sb.Append("What the launcher found:\n");
+                        sb.Append(UiText.T("What the launcher found:\n"));
                         foreach (var p in problems.Take(5)) sb.Append("  • ").Append(p.Text).Append('\n');
                         sb.Append('\n');
                     }
-                    sb.Append("Use Send bug report on the Setup page and post it in the Vanadreams Discord bug channel: it carries the loader's own text and these checks.");
+                    sb.Append(UiText.T("Use Send bug report on the Setup page and post it in the Vanadreams Discord bug channel: it carries the loader's own text and these checks."));
                     break;
             }
             return sb.ToString().TrimEnd();
@@ -306,14 +306,14 @@ namespace Vanadreams.Services
         {
             var all = string.Join("\n", errors ?? new List<string>());
             Func<string, bool> has = s => all.IndexOf(s, StringComparison.OrdinalIgnoreCase) >= 0;
-            if (has("Invalid username or password")) return "Check the username and password on the Profiles page. Passwords are case sensitive.";
-            if (has("already logged in")) return "That account is still logged in, often from a game that closed badly. Wait a minute and press Play again.";
-            if (has("version mismatch") || has("too old")) return "Open Setup and press Check and update, which puts in the loader the server takes.";
-            if (has("polcore") || has("PlayOnline install folder") || has("FFxi")) return "Windows has no working copy of the game registered. Open Install game on the menu and press Repair.";
-            if (has("profile server")) return "Your network blocks the profile server's port " + PlayCheck.ProfilePort + ". Allow outgoing TCP " + PlayCheck.ProfilePort + ", or ask on Discord for Tailscale access.";
-            if (has("Security software")) return "Your antivirus blocked the loader. Add the Ashita folder to its exclusions and press Play again.";
-            if (has("connect") || has("resolve")) return "Your PC could not reach the Vanadreams server. Turn off any VPN and try again, or ask on Discord for Tailscale access.";
-            return "Post a screenshot of this box in the Vanadreams Discord bug channel.";
+            if (has("Invalid username or password")) return UiText.T("Check the username and password on the Profiles page. Passwords are case sensitive.");
+            if (has("already logged in")) return UiText.T("That account is still logged in, often from a game that closed badly. Wait a minute and press Play again.");
+            if (has("version mismatch") || has("too old")) return UiText.T("Open Setup and press Check and update, which puts in the loader the server takes.");
+            if (has("polcore") || has("PlayOnline install folder") || has("FFxi")) return UiText.T("Windows has no working copy of the game registered. Open Install game on the menu and press Repair.");
+            if (has("profile server")) return UiText.T("Your network blocks the profile server's port ") + PlayCheck.ProfilePort + UiText.T(". Allow outgoing TCP ") + PlayCheck.ProfilePort + UiText.T(", or ask on Discord for Tailscale access.");
+            if (has("Security software")) return UiText.T("Your antivirus blocked the loader. Add the Ashita folder to its exclusions and press Play again.");
+            if (has("connect") || has("resolve")) return UiText.T("Your PC could not reach the Vanadreams server. Turn off any VPN and try again, or ask on Discord for Tailscale access.");
+            return UiText.T("Post a screenshot of this box in the Vanadreams Discord bug channel.");
         }
 
         /// <summary>The text written to the log and kept as last-launch.txt for the bug report.</summary>

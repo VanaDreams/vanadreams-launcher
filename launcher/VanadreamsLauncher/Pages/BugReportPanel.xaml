@@ -1,16 +1,17 @@
 <UserControl x:Class="Vanadreams.Pages.BugReportPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lang="clr-namespace:Vanadreams.Localization">
     <!-- Send bug report (Services\BugReport.cs). Self-contained: drop it in any box. -->
     <StackPanel>
-        <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Something wrong?"/>
+        <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=tf16443daebd9}"/>
         <TextBlock Style="{StaticResource Muted}" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,8"
-                   Text="Zips your logs and settings (no passwords) to the Desktop for #bugs-we-all-found."/>
-        <Button x:Name="SendButton" Style="{StaticResource GoldButton}" Content="⚑  Send bug report" HorizontalAlignment="Left" Click="Send_Click"/>
+                   Text="{lang:Text Key=t69d842d1d77f}"/>
+        <Button x:Name="SendButton" Style="{StaticResource GoldButton}" Content="{lang:Text Key=t59ebc7b253a4}" HorizontalAlignment="Left" Click="Send_Click"/>
         <TextBlock x:Name="Result" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,6,0,0"/>
         <!-- shown once the zip is made: the channel link only works for players already in the server -->
         <TextBlock x:Name="JoinLine" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,4,0,0" Visibility="Collapsed">
-            <Run Text="Not in our Discord yet? "/><Hyperlink Foreground="{StaticResource GoldSoft}" Click="Join_Click">Join first</Hyperlink>
+            <Run Text="{lang:Text Key=t6912fbefa767}"/><Hyperlink Foreground="{StaticResource GoldSoft}" Click="Join_Click"><Run Text="{lang:Text Key=tae55dfa130ee}"/></Hyperlink>
         </TextBlock>
     </StackPanel>
 </UserControl>

@@ -19,7 +19,7 @@ namespace Vanadreams.Pages
         public bool CanUp { get; set; }
         public bool CanDown { get; set; }
         public Visibility ArrowsVisibility => Pack.CanSwitch ? Visibility.Visible : Visibility.Hidden;
-        public string SwitchTip => Pack.CanSwitch ? "Load this pack, or leave it out" : "Unpacked into the game's own files, so it is always on";
+        public string SwitchTip => Pack.CanSwitch ? UiText.T("Load this pack, or leave it out") : UiText.T("Unpacked into the game's own files, so it is always on");
     }
 
     /// <summary>The packs this PC has, with their switches and order. Only XIPivot overlays move or switch (ModPacks).</summary>
@@ -41,7 +41,7 @@ namespace Vanadreams.Pages
             Draw();
             var overlays = _packs.Any(p => p.CanSwitch);
             Note.Text = overlays && !ModPacks.PivotInstalled(state.AshitaRoot)
-                ? "Overlays need XIPivot: tick it on the Addons page and press Install."
+                ? UiText.T("Overlays need XIPivot: tick it on the Addons page and press Install.")
                 : "";
         }
 

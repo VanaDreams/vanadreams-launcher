@@ -65,7 +65,7 @@ namespace Vanadreams.Pages
                        ?? all.FirstOrDefault(p => !p.IsExample) ?? all.FirstOrDefault();
             if (_profile == null)
             {
-                ProfileLine.Text = "No profile yet · run Setup";
+                ProfileLine.Text = UiText.T("No profile yet · run Setup");
                 PlayButton.IsEnabled = false;
                 UserBox.IsEnabled = PassBox.IsEnabled = RememberBox.IsEnabled = false;
                 ShowPatch();
@@ -73,7 +73,7 @@ namespace Vanadreams.Pages
             }
             PlayButton.IsEnabled = true;
             UserBox.IsEnabled = PassBox.IsEnabled = RememberBox.IsEnabled = true;
-            ProfileLine.Text = "Profile: " + _profile.Name;
+            ProfileLine.Text = UiText.T("Profile: ") + _profile.Name;
             if (!string.Equals(_loginFor, _profile.Id, StringComparison.OrdinalIgnoreCase))
             {
                 _loginFor = _profile.Id;
@@ -98,37 +98,37 @@ namespace Vanadreams.Pages
             var pending = App.State.PendingClientUpdate;
             if (PatchFirst)
             {
-                PlayButton.Content = "⟳  Patch";
+                PlayButton.Content = UiText.T("⟳  Patch");
                 PatchPanel.Visibility = Visibility.Visible;
                 PatchBar.Visibility = Visibility.Visible;
                 PatchBar.Value = 0;
                 PatchText.Foreground = (Brush)FindResource("GoldSoft");
                 PatchText.Text = pending != null
-                    ? "A game update is ready: " + pending.Words + ". Press Patch to install it."
+                    ? UiText.T("A game update is ready: ") + pending.Words + UiText.T(". Press Patch to install it.")
                     : App.State.OverlayMigrationDue
-                    ? "The look and title packs are moving into packs you can switch on and off (about 400 MB). Press Patch."
-                    : "The server runs " + App.State.Version.Expected + " and this game is " + (App.State.Version.Installed ?? "older") + ". Press Patch to bring it up to date.";
+                    ? UiText.T("The look and title packs are moving into packs you can switch on and off (about 400 MB). Press Patch.")
+                    : UiText.T("The server runs ") + App.State.Version.Expected + UiText.T(" and this game is ") + (App.State.Version.Installed ?? "older") + UiText.T(". Press Patch to bring it up to date.");
                 return;
             }
-            PlayButton.Content = "▶  Play";
+            PlayButton.Content = UiText.T("▶  Play");
             if (!_patchedNow) PatchPanel.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>Snapshot hook (menu-patching): the page part way through a patch, nothing downloaded.</summary>
         public void ShowSamplePatch(double fraction)
         {
-            PlayButton.Content = "Patching…";
+            PlayButton.Content = UiText.T("Patching…");
             PlayButton.IsEnabled = false;
             PatchPanel.Visibility = Visibility.Visible;
             PatchBar.Visibility = Visibility.Visible;
             PatchBar.Value = fraction * 100;
-            PatchText.Text = "Patch in progress, please wait.";
+            PatchText.Text = UiText.T("Patch in progress, please wait.");
         }
 
         public bool CanLeave()
         {
             if (_patching == null) return true;
-            PatchText.Text = "Patch in progress, please wait.";
+            PatchText.Text = UiText.T("Patch in progress, please wait.");
             return false;
         }
 
@@ -136,17 +136,17 @@ namespace Vanadreams.Pages
         {
             var state = App.State;
             _patching = new System.Threading.CancellationTokenSource();
-            PlayButton.Content = "Patching…";
+            PlayButton.Content = UiText.T("Patching…");
             PlayButton.IsEnabled = false;
             PatchPanel.Visibility = Visibility.Visible;
             PatchBar.Visibility = Visibility.Visible;
             PatchBar.Value = 0;
             PatchText.Foreground = (Brush)FindResource("GoldSoft");
-            PatchText.Text = "Patch in progress, please wait.";
+            PatchText.Text = UiText.T("Patch in progress, please wait.");
             var progress = new Progress<InstallProgress>(p =>
             {
                 PatchBar.Value = 100.0 * p.Done / Math.Max(1, p.Total);
-                PatchBar.ToolTip = $"{p.Stage} part {p.Part} of {p.Parts} · {p.Done / 1073741824.0:0.0} of {p.Total / 1073741824.0:0.0} GB";
+                PatchBar.ToolTip = UiText.F("{0} part {1} of {2} · {3:0.0} of {4:0.0} GB", UiText.T(p.Stage), p.Part, p.Parts, p.Done / 1073741824.0, p.Total / 1073741824.0);
             });
             try
             {
@@ -154,10 +154,10 @@ namespace Vanadreams.Pages
                 _patching = null;
                 if (said != null) { PatchText.Text = said; PatchText.Foreground = (Brush)FindResource("Warn"); return; }
                 _patchedNow = !state.PatchNeeded;
-                if (!_patchedNow) { PatchText.Text = "Part of the patch is still to come. Press Patch again."; return; }
+                if (!_patchedNow) { PatchText.Text = UiText.T("Part of the patch is still to come. Press Patch again."); return; }
                 PatchBar.Value = 100;
                 PatchBar.Visibility = Visibility.Collapsed;
-                PatchText.Text = "Patch finished. You're up to date.";
+                PatchText.Text = UiText.T("Patch finished. You're up to date.");
                 Log.Info("patch finished from the Play page");
                 Music.Jingle();
             }
@@ -171,7 +171,7 @@ namespace Vanadreams.Pages
             {
                 _patching = null;
                 PlayButton.IsEnabled = _profile != null;
-                PlayButton.Content = PatchFirst ? "⟳  Patch" : "▶  Play";   // the line under the news keeps what happened
+                PlayButton.Content = PatchFirst ? UiText.T("⟳  Patch") : UiText.T("▶  Play");   // the line under the news keeps what happened
                 _win.RefreshStrip();
             }
         }
@@ -294,14 +294,14 @@ namespace Vanadreams.Pages
                     return true;
                 }
                 MessageBox.Show(
-                    "Windows needs permission to point at the game in " + ClientInstall.GameFolder(root) + " before it can start.\n\n" +
-                    "Press Play again and choose Yes.",
-                    "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    UiText.T("Windows needs permission to point at the game in ") + ClientInstall.GameFolder(root) + UiText.T(" before it can start.\n\n") +
+                    UiText.T("Press Play again and choose Yes."),
+                    UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (Exception ex)
             {
                 Log.Error("register on play", ex);
-                MessageBox.Show(ex.Message, "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return false;
         }
@@ -316,13 +316,13 @@ namespace Vanadreams.Pages
             if (LoaderCommand.MovedTo(_profile.Command.Server) != null && File.Exists(_profile.Path)) _profile = Profile.Load(_profile.Path);
             // what the facts panel used to show beside Play is said when Play is pressed
             PlayNote.Visibility = login == null ? Visibility.Visible : Visibility.Collapsed;
-            PlayNote.Text = login == null ? "No login typed: the loader's window will ask for your username and password." : "";
+            PlayNote.Text = login == null ? UiText.T("No login typed: the loader's window will ask for your username and password.") : "";
             if (_profile.IsRetail && !File.Exists(_profile.BootFile))
             {
-                MessageBox.Show("This profile plays retail through PlayOnline Viewer, and PlayOnline Viewer is not on this PC" +
+                MessageBox.Show(UiText.T("This profile plays retail through PlayOnline Viewer, and PlayOnline Viewer is not on this PC") +
                                 (string.IsNullOrWhiteSpace(_profile.BootFile) ? "." : " (" + _profile.BootFile + ").") +
-                                "\n\nInstall the retail client, then browse to its pol.exe on the Profiles page.",
-                    "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                UiText.T("\n\nInstall the retail client, then browse to its pol.exe on the Profiles page."),
+                    UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             // The loader has to be one the Vanadreams server accepts, and the newest one is not (Services\Loader.cs).
@@ -352,7 +352,7 @@ namespace Vanadreams.Pages
             catch (Exception ex)
             {
                 Log.Error("vc runtime on play", ex);
-                MessageBox.Show(ex.Message, "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(ex.Message, UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             // The effects are only a rename in bootloader\, so they are put right on every Play, in case an update put a
@@ -376,13 +376,13 @@ namespace Vanadreams.Pages
             // 12 Oct 2026: Mogsy's loader logged in and closed, because neither pol.exe nor FFXiMain.dll was where
             // Windows pointed. When no copy we know of is a whole game, the launch is all but sure to do the same.
             if (_profile.IsVanadreams && root == null &&
-                MessageBox.Show(PlayCheck.NoGameSentence, "Vanadreams Launcher", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+                MessageBox.Show(UiText.T(PlayCheck.NoGameSentence), UiText.T("Vanadreams Launcher"), MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
                 return;
 
             state.CheckVersion();
             if (_profile.IsVanadreams && state.Version.BlocksPlay)   // the Vanadreams version rule has no say over other servers
             {
-                MessageBox.Show(state.Version.Sentence + "\n\nInstall game, on the menu, fetches the version the server runs.", "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(state.Version.Sentence + UiText.T("\n\nInstall game, on the menu, fetches the version the server runs."), UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 _win.RefreshStrip();
                 return;
             }
@@ -394,8 +394,8 @@ namespace Vanadreams.Pages
                 try
                 {
                     await state.RefreshCatalogAsync();
-                    var overruled = await state.OverruleOldVisionAsync("before play");
-                    if (await state.UpdateInstalledAddonsAsync("before play") || overruled) state.Settings.Save();
+                    var overruled = await state.OverruleOldVisionAsync(UiText.T("before play"));
+                    if (await state.UpdateInstalledAddonsAsync(UiText.T("before play")) || overruled) state.Settings.Save();
                     if (overruled) state.ApplyEnabledAddons();
                 }
                 catch (Exception ex) { Log.Warn("addon update on play: " + ex.Message); }
@@ -440,7 +440,7 @@ namespace Vanadreams.Pages
             catch (Exception ex)
             {
                 Log.Error("launch failed", ex);
-                MessageBox.Show(ex.Message, "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -488,18 +488,18 @@ namespace Vanadreams.Pages
             // Windows Security alone can be told to leave the folders alone from here; any other antivirus only by hand
             if (PlayCheck.OtherAntivirus(av).Count == 0)
             {
-                var ask = MessageBox.Show(text + "\n\nAdd the Ashita and game folders to Windows Security's exclusions now? Windows will ask for permission.",
-                    "Vanadreams Launcher", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                var ask = MessageBox.Show(text + UiText.T("\n\nAdd the Ashita and game folders to Windows Security's exclusions now? Windows will ask for permission."),
+                    UiText.T("Vanadreams Launcher"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (ask == MessageBoxResult.Yes)
                 {
                     var ok = PlayCheck.AddDefenderExclusions(new[] { state.AshitaRoot, state.Settings.GameInstallRoot });
-                    MessageBox.Show(ok ? "Done. Now open Setup and press Check and update to put the missing files back, then press Play."
-                                       : "The exclusions were not added. Add the folders by hand in Windows Security, Virus & threat protection, Exclusions.",
-                        "Vanadreams Launcher", MessageBoxButton.OK, ok ? MessageBoxImage.Information : MessageBoxImage.Warning);
+                    MessageBox.Show(ok ? UiText.T("Done. Now open Setup and press Check and update to put the missing files back, then press Play.")
+                                       : UiText.T("The exclusions were not added. Add the folders by hand in Windows Security, Virus & threat protection, Exclusions."),
+                        UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, ok ? MessageBoxImage.Information : MessageBoxImage.Warning);
                 }
                 return;
             }
-            MessageBox.Show(text, "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(text, UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         /// <summary>False, after telling the player, when the server's login ports do not answer from this PC. A failed check never blocks Play on its own.</summary>
@@ -511,7 +511,7 @@ namespace Vanadreams.Pages
             Log.Info("port check " + reach.Host + ": open " + string.Join(",", reach.Open) + " closed " + string.Join(",", reach.Closed) + (reach.NoName ? " (no name)" : ""));
             var text = PlayCheck.ReachSentence(reach, _profile.Command.IsTailscale, state.Status.State);
             if (text == null) return true;
-            return MessageBox.Show(text + "\n\nPlay anyway?", "Vanadreams Launcher", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
+            return MessageBox.Show(text + UiText.T("\n\nPlay anyway?"), UiText.T("Vanadreams Launcher"), MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
         }
 
         /// <summary>
@@ -547,14 +547,14 @@ namespace Vanadreams.Pages
             if (crash != null)
             {
                 Log.Warn("crash after play: " + crash.App + " in " + crash.Module + " " + crash.ModuleVersion);
-                MessageBox.Show(PlayCheck.CrashSentence(crash), "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(PlayCheck.CrashSentence(crash), UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
             // the loader said why, or got as far as starting the game: that is the answer, the port check below cannot add to it
             if (stop == LoaderStop.LoaderError || stop == LoaderStop.GameQuit)
             {
-                MessageBox.Show(LaunchDiagnosis.Sentence(stop, loaderErrors, findings, watch.LastText), "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(LaunchDiagnosis.Sentence(stop, loaderErrors, findings, watch.LastText), UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
@@ -564,15 +564,15 @@ namespace Vanadreams.Pages
                 {
                     var reach = await PlayCheck.TryPortsAsync(profile.Command.Server, PlayCheck.LoginPorts, TimeSpan.FromSeconds(4));
                     var text = PlayCheck.ReachSentence(reach, profile.Command.IsTailscale, state.Status.State);
-                    if (text != null) { MessageBox.Show(text, "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
+                    if (text != null) { MessageBox.Show(text, UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
                 }
                 catch (Exception ex) { Log.Warn("port check after play: " + ex.Message); }
             }
 
-            var said = outcome == LaunchOutcome.NeverStarted ? PlayCheck.NeverStartedNoCause
-                     : stop == LoaderStop.Unknown ? PlayCheck.ClosedNoCause
+            var said = outcome == LaunchOutcome.NeverStarted ? UiText.T(PlayCheck.NeverStartedNoCause)
+                     : stop == LoaderStop.Unknown ? UiText.T(PlayCheck.ClosedNoCause)
                      : LaunchDiagnosis.Sentence(stop, loaderErrors, findings, watch.LastText);
-            MessageBox.Show(said, "Vanadreams Launcher", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(said, UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
             return false;
         }
     }

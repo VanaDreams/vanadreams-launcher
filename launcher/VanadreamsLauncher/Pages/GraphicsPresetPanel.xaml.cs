@@ -16,9 +16,9 @@ namespace Vanadreams.Pages
 
         private static readonly Tuple<GfxPreset, string, string>[] Looks =
         {
-            Tuple.Create(GfxPreset.Potato, "Potato", "Lighting and sharpening off, 30 fps. Runs on anything."),
-            Tuple.Create(GfxPreset.Balanced, "Balanced", "The modern look pack, 60 fps."),
-            Tuple.Create(GfxPreset.Pretty, "Pretty", "The look pack with lighting and sharpening, 60 fps."),
+            Tuple.Create(GfxPreset.Potato, UiText.T("Potato"), UiText.T("Lighting and sharpening off, 30 fps. Runs on anything.")),
+            Tuple.Create(GfxPreset.Balanced, UiText.T("Balanced"), UiText.T("The modern look pack, 60 fps.")),
+            Tuple.Create(GfxPreset.Pretty, UiText.T("Pretty"), UiText.T("The look pack with lighting and sharpening, 60 fps.")),
         };
 
         public GraphicsPresetPanel()
@@ -29,7 +29,7 @@ namespace Vanadreams.Pages
         public void Show(Profile p)
         {
             _profile = p;
-            Heading.Text = "✦ Graphics" + (p == null ? "" : " · " + p.Name);
+            Heading.Text = UiText.T("✦ Graphics") + (p == null ? "" : " · " + p.Name);
             IsEnabled = p != null && !p.IsExample;
             Draw();
         }

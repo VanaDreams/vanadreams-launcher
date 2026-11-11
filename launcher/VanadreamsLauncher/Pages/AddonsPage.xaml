@@ -1,6 +1,7 @@
 <UserControl x:Class="Vanadreams.Pages.AddonsPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
              xmlns:local="clr-namespace:Vanadreams"
              Focusable="True">
     <Grid>
@@ -17,10 +18,10 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <DockPanel Margin="0,0,0,6">
-                    <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="Coming from Windower?" FontSize="12.5" Padding="10,1"
+                    <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t3cf65c955e1c}" FontSize="12.5" Padding="10,1"
                             VerticalAlignment="Top" Margin="8,0,0,0" Click="Windower_Click"
-                            ToolTip="Ashita look-alikes of your Windower addons, your init.txt binds, and your GearSwap sets"/>
-                    <TextBlock x:Name="Heading" Style="{StaticResource Eyebrow}" Text="✦ Your addons" TextWrapping="Wrap"/>
+                            ToolTip="{lang:Text Key=t32717a2e3e17}"/>
+                    <TextBlock x:Name="Heading" Style="{StaticResource Eyebrow}" Text="{lang:Text Key=tdcf21dc7a422}" TextWrapping="Wrap"/>
                 </DockPanel>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <ItemsControl x:Name="List">
@@ -32,7 +33,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="0,5,0,9">
-                                    <TextBlock Text="{Binding Name}" Style="{StaticResource Eyebrow}" Margin="0,0,0,4"/>
+                                    <TextBlock Text="{Binding DisplayName}" Style="{StaticResource Eyebrow}" Margin="0,0,0,4"/>
                                     <ItemsControl ItemsSource="{Binding Rows}" SizeChanged="SectionRows_SizeChanged">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
@@ -69,7 +70,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Selected"/>
+                <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=tdf622343962d}"/>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
                         <TextBlock x:Name="ItemName" Style="{StaticResource Display40}" FontSize="27" Text="—" TextWrapping="Wrap"/>
@@ -83,19 +84,19 @@
                 </ScrollViewer>
                 <StackPanel Grid.Row="2" Margin="0,8,0,0">
                     <WrapPanel>
-                        <Button x:Name="InstallButton" Style="{StaticResource GoldButton}" Content="Install" Click="Install_Click" Margin="0,0,7,7" MinWidth="110"/>
-                        <Button x:Name="DocsButton" Style="{StaticResource GhostButton}" Content="Read the docs" Click="Docs_Click" Margin="0,0,7,7"/>
-                        <Button x:Name="ConfigButton" Style="{StaticResource GhostButton}" Content="Open config folder" Click="Config_Click" Margin="0,0,7,7"/>
-                        <Button x:Name="SwitcherButton" Style="{StaticResource GhostButton}" Content="Switcher settings" Click="Switcher_Click" Margin="0,0,7,7" Visibility="Collapsed"/>
+                        <Button x:Name="InstallButton" Style="{StaticResource GoldButton}" Content="{lang:Text Key=t569ca49f4aaf}" Click="Install_Click" Margin="0,0,7,7" MinWidth="110"/>
+                        <Button x:Name="DocsButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t559b1cc46027}" Click="Docs_Click" Margin="0,0,7,7"/>
+                        <Button x:Name="ConfigButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=tdfa7029514da}" Click="Config_Click" Margin="0,0,7,7"/>
+                        <Button x:Name="SwitcherButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t27cced67785a}" Click="Switcher_Click" Margin="0,0,7,7" Visibility="Collapsed"/>
                     </WrapPanel>
                     <DockPanel Margin="0,4,0,0">
-                        <Button DockPanel.Dock="Left" Style="{StaticResource GoldButton}" Content="Save" Click="Save_Click" MinWidth="110" VerticalAlignment="Center"
-                                ToolTip="Save writes scripts\vanadreams.txt and the POL plugin flags."/>
+                        <Button DockPanel.Dock="Left" Style="{StaticResource GoldButton}" Content="{lang:Text Key=t1509f561f241}" Click="Save_Click" MinWidth="110" VerticalAlignment="Center"
+                                ToolTip="{lang:Text Key=teacba256aa8d}"/>
                         <TextBlock x:Name="Footer" Style="{StaticResource Muted}" FontSize="13" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </DockPanel>
                     <!-- under the buttons, never over them -->
                     <local:CrewGuide Who="goblin" BubbleWidth="140"
-                                     Tip="Tinker tinker. Updates install themselves when you press Play."/>
+                                     Tip="{lang:Text Key=tec33e074cfdf}"/>
                 </StackPanel>
             </Grid>
         </Border>

@@ -19,12 +19,14 @@ namespace Vanadreams.Pages
             AshitaBox.Text = s.AshitaRoot; FfxiBox.Text = s.FfxiFolderOverride; CatalogBox.Text = s.CatalogUrl; StatusBox.Text = s.StatusUrl;
             // read-only: it comes from the status route, never typed here
             var st = App.State.Status;
-            ExpectedBox.Text = string.IsNullOrEmpty(st.ClientVer) ? "not published by the server yet" : st.ClientVer + " · lock " + (st.Lock.HasValue ? ((int)st.Lock.Value).ToString() : "2") + " · from vanadreams.org";
+            ExpectedBox.Text = string.IsNullOrEmpty(st.ClientVer) ? UiText.T("not published by the server yet") : st.ClientVer + UiText.T(" · lock ") + (st.Lock.HasValue ? ((int)st.Lock.Value).ToString() : "2") + UiText.T(" · from vanadreams.org");
             ShowPlays();
+            foreach (ComboBoxItem choice in LanguageBox.Items)
+                if ((string)choice.Tag == UiLanguage.Normalize(s.UiLanguage)) LanguageBox.SelectedItem = choice;
             MusicBox.IsChecked = s.MusicOn;
             RestoreBox.IsChecked = s.RestoreOtherGame;
-            MusicCredit.Text = "made for Vanadreams with SoundBreak";
-            About.Text = "Vanadreams Launcher " + typeof(App).Assembly.GetName().Version + " · github.com/VanaDreams/vanadreams-launcher · no telemetry";
+            MusicCredit.Text = UiText.T("made for Vanadreams with SoundBreak");
+            About.Text = UiText.T("Vanadreams Launcher ") + typeof(App).Assembly.GetName().Version + UiText.T(" · github.com/VanaDreams/vanadreams-launcher · no telemetry");
             ShowLayout();
         }
 
@@ -50,9 +52,9 @@ namespace Vanadreams.Pages
         private void ShowPlays()
         {
             var plays = App.State.VanadreamsGameRoot();
-            DetectedBox.Text = plays != null ? ClientInstall.GameFolder(plays) : "no game found yet; Play starts what Windows has";
-            DetectedBox.ToolTip = "Windows starts now: " + (ClientVersion.FindFfxiFolder() ?? "nothing registered by PlayOnline") +
-                                  "\nTo always play one copy, put its FINAL FANTASY XI folder in Vanadreams game folder above.";
+            DetectedBox.Text = plays != null ? ClientInstall.GameFolder(plays) : UiText.T("no game found yet; Play starts what Windows has");
+            DetectedBox.ToolTip = UiText.T("Windows starts now: ") + (ClientVersion.FindFfxiFolder() ?? UiText.T("nothing registered by PlayOnline")) +
+                                  UiText.T("\nTo always play one copy, put its FINAL FANTASY XI folder in Vanadreams game folder above.");
         }
 
         /// <summary>The corner mute changed the setting; show it.</summary>
@@ -62,6 +64,9 @@ namespace Vanadreams.Pages
         {
             var s = App.State.Settings;
             s.AshitaRoot = AshitaBox.Text.Trim(); s.FfxiFolderOverride = FfxiBox.Text.Trim(); s.CatalogUrl = CatalogBox.Text.Trim(); s.StatusUrl = StatusBox.Text.Trim();
+            var language = UiLanguage.Normalize((LanguageBox.SelectedItem as ComboBoxItem)?.Tag as string);
+            var languageChanged = language != UiLanguage.Normalize(s.UiLanguage);
+            s.UiLanguage = language;
             s.MusicOn = MusicBox.IsChecked == true;
             s.RestoreOtherGame = RestoreBox.IsChecked == true;
             s.Save();
@@ -70,8 +75,8 @@ namespace Vanadreams.Pages
             App.State.CheckVersion();
             ShowPlays();
             Note.Text = !string.IsNullOrWhiteSpace(s.FfxiFolderOverride) && !GameRegistration.HasGame(GameRegistration.RootOf(s.FfxiFolderOverride))
-                ? "Saved, but there is no game in that Vanadreams game folder: pick FINAL FANTASY XI, with PlayOnlineViewer beside it."
-                : "Saved.";
+                ? UiText.T("Saved, but there is no game in that Vanadreams game folder: pick FINAL FANTASY XI, with PlayOnlineViewer beside it.")
+                : languageChanged ? UiText.T("Language saved. Restart the launcher to apply it.") : UiText.T("Saved.");
             App.State.Notify();
             await App.State.RefreshStatusAsync();
         }
@@ -85,31 +90,31 @@ namespace Vanadreams.Pages
             var back = GameRegistration.RestoreTarget(null, current, s.OtherGameRoot);
             if (back == null)
             {
-                Note.Text = "No other game is remembered. Install or play the other client once, or pick its FINAL FANTASY XI folder on the Profiles page.";
+                Note.Text = UiText.T("No other game is remembered. Install or play the other client once, or pick its FINAL FANTASY XI folder on the Profiles page.");
                 return;
             }
             try
             {
                 Note.Text = ClientInstall.RunRegister(back, s.DownloadsFolder, lang)
-                    ? "Windows now points at " + ClientInstall.GameFolder(back) + ". Play moves it back to Vanadreams when you press it."
-                    : "Windows did not get permission; nothing changed.";
+                    ? UiText.T("Windows now points at ") + ClientInstall.GameFolder(back) + UiText.T(". Play moves it back to Vanadreams when you press it.")
+                    : UiText.T("Windows did not get permission; nothing changed.");
             }
             catch (Exception ex) { Note.Text = ex.Message; }
         }
 
         private async void Catalog_Click(object sender, RoutedEventArgs e)
         {
-            Note.Text = "Fetching…";
+            Note.Text = UiText.T("Fetching…");
             await App.State.RefreshCatalogAsync();
-            Note.Text = App.State.CatalogFromCache ? "Could not fetch; using the cached copy." : "Catalogue updated: " + App.State.Catalog.Items.Count + " items.";
+            Note.Text = App.State.CatalogFromCache ? UiText.T("Could not fetch; using the cached copy.") : UiText.T("Catalogue updated: ") + App.State.Catalog.Items.Count + UiText.T(" items.");
         }
 
         private void Shortcuts_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (!SelfInstall.IsInstalledCopy) { SelfInstall.Install(); Note.Text = "Installed to " + SelfInstall.InstallDir + " with shortcuts. Use the shortcut from now on."; }
-                else { SelfInstall.MakeShortcuts(); Note.Text = "Shortcuts made."; }
+                if (!SelfInstall.IsInstalledCopy) { SelfInstall.Install(); Note.Text = UiText.T("Installed to ") + SelfInstall.InstallDir + UiText.T(" with shortcuts. Use the shortcut from now on."); }
+                else { SelfInstall.MakeShortcuts(); Note.Text = UiText.T("Shortcuts made."); }
             }
             catch (Exception ex) { Note.Text = ex.Message; }
         }

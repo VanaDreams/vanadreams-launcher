@@ -72,19 +72,19 @@ namespace Vanadreams.Pages
             var state = App.State;
             SendButton.IsEnabled = false;
             Result.Foreground = (Brush)FindResource("Mist");
-            Result.Text = "Gathering logs…";
+            Result.Text = UiText.T("Gathering logs…");
             try
             {
                 var now = DateTime.Now;
                 var zip = BugReport.DefaultPath(now);
                 var dumps = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CrashDumps");
                 var version = Updater.Normalise(Updater.Current).ToString();
-                Result.Text = "Checking the game, firewall and antivirus…";
+                Result.Text = UiText.T("Checking the game, firewall and antivirus…");
                 var checks = await Checks(state);
                 var names = await Task.Run(() => BugReport.Build(zip, LauncherSettings.DataFolder, state.HasAshita ? state.AshitaRoot : null, dumps, version, now, checks));
                 Log.Info("bug report: " + zip + " with " + names.Count + " file(s)");
                 Result.Foreground = (Brush)FindResource("Ok");
-                Result.Text = "Saved " + Path.GetFileName(zip) + " on your Desktop. Drop it in #bugs-we-all-found with a line on what happened.";
+                Result.Text = UiText.T("Saved ") + Path.GetFileName(zip) + UiText.T(" on your Desktop. Drop it in #bugs-we-all-found with a line on what happened.");
                 try { Process.Start(new ProcessStartInfo("explorer.exe", "/select,\"" + zip + "\"") { UseShellExecute = true }); } catch (Exception ex) { Log.Warn("show zip: " + ex.Message); }
                 MenuPage.OpenUrl(BugsChannel);
                 JoinLine.Visibility = Visibility.Visible;

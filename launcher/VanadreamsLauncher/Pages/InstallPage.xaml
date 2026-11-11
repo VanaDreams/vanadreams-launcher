@@ -1,6 +1,7 @@
 <UserControl x:Class="Vanadreams.Pages.InstallPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
              xmlns:local="clr-namespace:Vanadreams"
              xmlns:pages="clr-namespace:Vanadreams.Pages"
              Focusable="True">
@@ -16,21 +17,21 @@
                 <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="0,0,4,0">
-                        <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Install game"/>
-                        <TextBlock Style="{StaticResource Display40}" FontSize="27" Text="Final Fantasy XI" TextWrapping="Wrap"/>
+                        <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=td8fd4fc620db}"/>
+                        <TextBlock Style="{StaticResource Display40}" FontSize="27" Text="{lang:Text Key=tc02eece034a2}" TextWrapping="Wrap"/>
                         <TextBlock x:Name="State" Style="{StaticResource Mono}" Margin="0,2,0,8" TextWrapping="Wrap"/>
                         <TextBlock Style="{StaticResource Muted}" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,10"
-                                   Text="Installs Final Fantasy XI, already updated to the version Vanadreams runs. No PlayOnline and no Square Enix account: the launcher downloads the game, checks every part, and sets it up so Play works. Windows asks for permission once at the end, to register the game."/>
+                                   Text="{lang:Text Key=tc08b7741adc7}"/>
                         <Grid x:Name="Facts">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="96"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                            <TextBlock Style="{StaticResource Muted}" Text="Version" Margin="0,0,0,5"/>
+                            <TextBlock Style="{StaticResource Muted}" Text="{lang:Text Key=tdd167905de0d}" Margin="0,0,0,5"/>
                             <TextBlock Grid.Column="1" x:Name="VersionText" Style="{StaticResource Mono}" Margin="0,0,0,5" TextWrapping="Wrap"/>
-                            <TextBlock Grid.Row="1" Style="{StaticResource Muted}" Text="Download" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="1" Style="{StaticResource Muted}" Text="{lang:Text Key=td6eafe823591}" Margin="0,0,0,5"/>
                             <TextBlock Grid.Row="1" Grid.Column="1" x:Name="SizeText" Style="{StaticResource Mono}" Margin="0,0,0,5" TextWrapping="Wrap"/>
-                            <TextBlock Grid.Row="2" Style="{StaticResource Muted}" Text="Install to" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="2" Style="{StaticResource Muted}" Text="{lang:Text Key=t419d221d2c30}" Margin="0,0,0,5"/>
                             <TextBlock Grid.Row="2" Grid.Column="1" x:Name="FolderText" Style="{StaticResource Mono}" Margin="0,0,0,5" TextWrapping="Wrap"/>
-                            <TextBlock Grid.Row="3" Style="{StaticResource Muted}" Text="Game now" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="3" Style="{StaticResource Muted}" Text="{lang:Text Key=t74b2047cb3ae}" Margin="0,0,0,5"/>
                             <TextBlock Grid.Row="3" Grid.Column="1" x:Name="FoundText" Style="{StaticResource Mono}" Margin="0,0,0,5" TextWrapping="Wrap"/>
                         </Grid>
                     </StackPanel>
@@ -39,8 +40,8 @@
                     <ProgressBar x:Name="Progress" Margin="0,0,0,4" Visibility="Collapsed"/>
                     <TextBlock x:Name="ProgressText" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,0,0,6"/>
                     <WrapPanel>
-                        <Button x:Name="InstallButton" Style="{StaticResource GoldButton}" Content="Install game" Click="Install_Click" Margin="0,0,7,0"/>
-                        <Button x:Name="FolderButton" Style="{StaticResource GhostButton}" Content="Change folder" Click="Folder_Click"/>
+                        <Button x:Name="InstallButton" Style="{StaticResource GoldButton}" Content="{lang:Text Key=t675299c2d945}" Click="Install_Click" Margin="0,0,7,0"/>
+                        <Button x:Name="FolderButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t0eb4a70f0097}" Click="Folder_Click"/>
                     </WrapPanel>
                 </StackPanel>
             </Grid>
@@ -53,7 +54,7 @@
                     <pages:ModPacksPanel x:Name="Packs" Margin="0,0,4,0"/>
                 </ScrollViewer>
                 <local:CrewGuide Grid.Row="1" Who="orc" BubbleWidth="140"
-                                 Tip="Orc stack packs. Bottom one wins."/>
+                                 Tip="{lang:Text Key=t07b2564de845}"/>
             </Grid>
         </Border>
     </Grid>
