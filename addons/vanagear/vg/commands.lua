@@ -11,6 +11,8 @@ local use = require('vg.use');
 local mine = require('vg.mine');
 
 local commands = {};
+local locale = require('vg.i18n');
+local chat = locale.Chat(chat);
 
 local function say(text)
     print(chat.header('vanagear') .. chat.message(text));
@@ -36,6 +38,7 @@ commands.Lines = function()
     local s = gVana.Sets;
     local lines = {};
     local function line(cmd, text) lines[#lines + 1] = { cmd, text }; end
+    line('/vg language ' .. locale.CommandOptions(), 'choose Auto, English or Japanese for the addon display');
     line('/vg', 'open the window: your sets, the piece in each slot and why');
     line('/vg build', 'rebuild the sets now (also happens on job change, level up and new gear)');
     line('/vg status', 'what is running, and any piece your sets name that you do not carry');
@@ -302,7 +305,16 @@ commands.Vg = function(args)
         return;
     end
 
-    if (cmd == '') then
+    if (cmd == 'language') or (cmd == 'lang') then
+        if arg == '' then
+            say(string.format('Language: %s (%s).', locale.Preference(), locale.Current()));
+        elseif locale.Set(arg) then
+            core.SavePrefs();
+            say(string.format('Language: %s (%s).', locale.Preference(), locale.Current()));
+        else
+            say('Usage: /vg language ' .. locale.CommandOptions());
+        end
+    elseif (cmd == '') then
         gVana.Window.Open = not gVana.Window.Open;
     elseif (cmd == 'help') or (cmd == 'commands') then
         help();

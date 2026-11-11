@@ -587,12 +587,12 @@
         "path": "addons/vanagear",
         "branch": "main"
       },
-      "version": "0.2.8",
+      "version": "0.2.9",
       "install": "copy-to-addons",
       "load": "/addon load vanagear",
       "config": "config\\addons\\vanagear\\profiles\\",
       "docs": "https://github.com/VanaDreams/vanadreams-launcher/tree/main/addons/vanagear",
-      "description": "Gear sets built for you from what you carry, for your job and level, written into a profile for each job that is shaped for how that job plays: type /vg. Built on LuAshitacast by ThornyFFXI and replaces it; your LuAshitacast profile for a job is brought over the first time you play it. A Settings tab, every command listed in the window, and GearSwap's /gs c commands work too. Your called trusts get a tab each with a fighting set and swap-ins for what they use, from gear in your bags that you and your other trusts are not using.",
+      "description": "Gear sets built for you from what you carry, for your job and level, written into a profile for each job that is shaped for how that job plays: type /vg. Built on LuAshitacast by ThornyFFXI and replaces it; your LuAshitacast profile for a job is brought over the first time you play it. A Settings tab, every command listed in the window, and GearSwap's /gs c commands work too. Your called trusts get a tab each with a fighting set and swap-ins for what they use, from gear in your bags that you and your other trusts are not using. English and Japanese interface with automatic detection and a saved language choice in Settings or /vg language.",
       "category": "VanaDreams"
     },
     {

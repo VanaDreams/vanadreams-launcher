@@ -1,3 +1,4 @@
+local chat = require('vg.i18n').Chat(chat);
 --[[
     vanagear: gear for your trusts.
 

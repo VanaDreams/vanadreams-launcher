@@ -20,6 +20,7 @@ from lupa import luajit21
 
 ADDON = Path(__file__).resolve().parent.parent
 TMP = tempfile.mkdtemp()
+(Path(TMP) / 'config' / 'addons' / 'vanagear').mkdir(parents=True)
 
 L = luajit21.LuaRuntime(unpack_returned_tuples=True)
 result = L.execute(r"""
@@ -115,20 +116,20 @@ check('include: off and low HP wears Dt', wornBodies(false, 30) == 'Dt')
 -- the Settings tab runs the same commands
 gVana.Sets = { Tp_Default = {}, Nuke = {}, Burst = {}, Interim = {} }
 t.DT = false
-click = { ['Magic (Dt_Magic)##vg_set_dt4'] = true }
+click = { ['Magic (Dt_Magic)###Magic (Dt_Magic)##vg_set_dt4'] = true }
 window.RenderSettings()
 check('Settings: Damage taken, Magic', t.DT == 'mdt')
-click = { ['Neck##vg_set_lock10'] = true }
+click = { ['Neck###Neck##vg_set_lock10'] = true }
 window.RenderSettings()
 check('Settings: locking Neck locks it', gState.Disabled[10] == true and gVana.Prefs.Locked.BLM[10] == true)
 gProfile.State = { death = false }
 gProfile.VgJob = 'BLM'
-click = { ['death##vg_set_state_death'] = true }
+click = { ['death###death##vg_set_state_death'] = true }
 window.RenderSettings()
 check('Settings: the template\'s own setting changes', gProfile.State.death == true)
 gProfile.State = { tank = 'Main' }
 gProfile.StateChoices = { tank = { 'Main', 'MEVA', 'None' } }
-click = { ['MEVA##vg_set_state_tank2'] = true }
+click = { ['MEVA###MEVA##vg_set_state_tank2'] = true }
 window.RenderSettings()
 check('Settings: a template choice changes', gProfile.State.tank == 'MEVA')
 
@@ -142,6 +143,27 @@ check('Commands list has yours', have['/vg lizard'] ~= nil)
 check('Commands list has no separate addset or disable lines', have['/vg addset <name>'] == nil)
 window.RenderCommand({ '/vg lizard', have['/vg lizard'] })
 check('a command of yours opens in the panel', true)
+
+-- language command, saved preference and the Settings control share one path
+local locale = require('vg.i18n')
+commands.Vg({ 'language', 'ja' })
+check('/vg language ja overrides detection', locale.Current() == 'ja')
+gVana.Prefs.Language = 'en'
+core.LoadPrefs()
+check('language survives preferences reload', locale.Current() == 'ja')
+commands.Vg({ 'language', 'invalid' })
+check('invalid language keeps the previous preference', locale.Preference() == 'ja')
+commands.Vg({ 'language', 'en' })
+click = { ['日本語 / Japanese###日本語 / Japanese##vg_set_language3'] = true }
+window.RenderSettings()
+check('Settings language choice changes the saved preference', locale.Preference() == 'ja')
+click = { ['魔法 (Dt_Magic)###Magic (Dt_Magic)##vg_set_dt4'] = true }
+t.DT = false
+window.RenderSettings()
+check('Japanese Settings still activates the same gear command', t.DT == 'mdt')
+click = {}
+commands.Vg({ 'language', 'auto' })
+check('Auto restores safe fallback when detection is unavailable', locale.Preference() == 'auto' and locale.Current() == 'en')
 
 return table.concat(out, '\n')
 """, str(ADDON), TMP)

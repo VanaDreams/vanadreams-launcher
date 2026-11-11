@@ -9,12 +9,15 @@
 
 addon.name      = 'vanagear';
 addon.author    = 'Vanadreams, on LuAshitacast by Thorny';
-addon.version   = '0.2.8';
+addon.version   = '0.2.9';
 addon.desc      = 'Gear sets built from your own bags for your job and level, written into a profile for each job.';
 addon.link      = 'https://github.com/VanaDreams/vanadreams-launcher/tree/main/addons/vanagear';
 
 require('common');
 chat = require('chat');
+local locale = require('vg.i18n');
+local chat = locale.Chat(chat);
+local localeFont = require('vg.locale_font');
 local jit = require('jit');
 jit.off();
 if (ashita.addons_version >= 4.3) then
@@ -78,6 +81,7 @@ ashita.events.register('load', 'vanagear_load_cb', function ()
         gPreservedGlobalKeys[key] = true;
     end
     guard('load prefs', gVanaCore.LoadPrefs);
+    guard('language font', localeFont.Load);
     guard('load', gState.Init);
 end);
 
@@ -89,9 +93,11 @@ end);
 ashita.events.register('d3d_present', 'vanagear_render', function()
     guard('tick', gVanaCore.Tick);
     guard('bag watch', gVanaMine.Tick);
+    local pushed = localeFont.Push();
     guard('config window', gConfigGUI.Render, gConfigGUI);
     guard('set display', gSetDisplay.Render, gSetDisplay);
     guard('vanagear window', gVanaWindow.Render);
+    localeFont.Pop(pushed);
 end);
 
 ashita.events.register('packet_in', 'vanagear_packet_in_cb', function (e)

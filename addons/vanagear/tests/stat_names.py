@@ -2,11 +2,13 @@
 
     python addons/vanagear/tests/stat_names.py
 """
+import os
 import re
 from pathlib import Path
 
 ADDON = Path(__file__).resolve().parent.parent
-SERVER_ENUM = ADDON.parent.parent.parent / 'vanadreams' / 'data' / 'enums' / 'mod.yaml'
+SERVER_ROOT = Path(os.environ.get('VANAGEAR_SERVER_ROOT', ADDON.parent.parent.parent / 'vanadreams'))
+SERVER_ENUM = SERVER_ROOT / 'data' / 'enums' / 'mod.yaml'
 
 names = {n.upper() for n in re.findall(r'^\s+([a-z0-9_]+):\s*\d+', SERVER_ENUM.read_text(encoding='utf-8'), re.M)}
 names |= {'PDT', 'MDT'}

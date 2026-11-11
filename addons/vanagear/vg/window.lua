@@ -5,8 +5,9 @@
     New set makes a set of your own.
 ]]--
 
-local imgui = require('imgui');
-local vd = require('vdstyle');
+local locale = require('vg.i18n');
+local imgui = locale.ImGui(require('imgui'));
+local vd = locale.Style(require('vdstyle'));
 
 local window = { Open = false, Selected = nil };
 gVana.Window = window;
@@ -224,6 +225,12 @@ local function renderSettings()
     local t, p = gVana.Toggles, gVana.Prefs;
     local s = gVana.Sets;
     local v;
+
+    v = choice('Language', 'language', locale.Preference(), locale.Choices());
+    if v ~= nil then run({ 'language', v }); end
+    imgui.TextDisabled(locale.Format('Automatic detection: %s', locale.Detected()));
+    imgui.TextWrapped('Display language changes labels and help, not your saved sets or commands.');
+    imgui.Separator();
 
     vd.Eyebrow('Gear modes (the same as the /vg commands, which stay for your macros)');
     local dt = (t.DT == 'pdt') and 'pdt' or ((t.DT == 'mdt') and 'mdt' or (t.DT and 'all' or 'off'));

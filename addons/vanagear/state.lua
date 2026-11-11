@@ -1,3 +1,4 @@
+local chat = require('vg.i18n').Chat(chat);
 -- From LuAshitacast 2.14 by ThornyFFXI (https://github.com/ThornyFFXI/LuAshitacast), MIT licence,
 -- Copyright (c) 2021 ThornyFFXI; see LICENSE-LuAshitacast. Lines marked "vanagear:" are Vanadreams changes.
 local state = {
