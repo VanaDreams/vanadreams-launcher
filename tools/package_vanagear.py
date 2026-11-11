@@ -33,7 +33,8 @@ def package(out):
     commit = git('rev-parse', 'HEAD').decode().strip()
     # Package Git's canonical bytes, as GitHub serves them, not autocrlf's
     # Windows working-copy bytes. No cache or uncommitted file can slip in.
-    tree = git('archive', '--format=tar', commit, 'addons/vanagear')
+    tree = git('-c', 'core.autocrlf=false', '-c', 'core.eol=lf',
+               'archive', '--format=tar', commit, 'addons/vanagear')
     payload = {}
     with tarfile.open(fileobj=io.BytesIO(tree), mode='r:') as tar:
         for member in tar.getmembers():
@@ -47,6 +48,20 @@ def package(out):
             assert archive_name.casefold() not in {n.casefold() for n in payload}, 'Case-colliding archive entries'
             payload[archive_name] = tar.extractfile(member).read()
     payload = dict(sorted(payload.items()))
+    # Archive conversion can be affected by local Git configuration/attributes.
+    # Prove every member equals its committed blob instead of assuming it does.
+    blobs = {}
+    for record in git('ls-tree', '-r', '-z', commit, '--', 'addons/vanagear').split(b'\0'):
+        if not record:
+            continue
+        metadata, name = record.decode('utf-8').split('\t', 1)
+        mode, kind, oid = metadata.split()
+        assert kind == 'blob' and mode in ('100644', '100755'), f'Unexpected Git entry: {name}'
+        blobs[name.removeprefix('addons/')] = oid
+    assert set(blobs) == set(payload), 'Archive differs from committed file inventory'
+    for name, data in payload.items():
+        oid = hashlib.sha1(f'blob {len(data)}\0'.encode('ascii') + data).hexdigest()
+        assert oid == blobs[name], f'Archive bytes differ from committed blob: {name}'
     version = re.search(r"addon\.version\s*=\s*'([^']+)'", payload['vanagear/vanagear.lua'].decode('utf-8'))[1]
     entries = []
     for name in ('catalog.json', 'launcher/VanadreamsLauncher/assets/catalog.json'):
