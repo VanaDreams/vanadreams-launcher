@@ -124,6 +124,96 @@
       "old_desc": "This box looks just like any other old box to you.",
       "new_desc": "Proof of a mark brought down for\nClan Centurio. Montblanc confirms\nthe hunt with the mark's own drop.",
       "why": "Item 9025 is Clan Centurio's Mark Trophy on the server (EX, no stack): a mark's killer gets one, and Montblanc takes it with the mark's own drop."
+    },
+    {
+      "fid": 76,
+      "what": "English armor item strings, Anniversary Ring (item 15793)",
+      "id": 15793,
+      "old_name": "Anniversary Ring",
+      "new_name": "Anniversary Ring",
+      "old_log": [
+        "anniversary ring",
+        "anniversary rings"
+      ],
+      "new_log": [
+        "anniversary ring",
+        "anniversary rings"
+      ],
+      "old_desc": "Experience point bonus: +100%\nMaximum duration: 720 min.\nMaximum bonus: 10000",
+      "new_desc": "Exemplar point bonus: +100%\nMaximum duration: 720 min.\nMaximum bonus: 10000",
+      "why": "Anniversary-family dedication now awards exemplar points on VanaDreams. Names, bonus percentage, duration and cap are unchanged."
+    },
+    {
+      "fid": 76,
+      "what": "English armor item strings, Novennial Ring (item 11666)",
+      "id": 11666,
+      "old_name": "Novennial Ring",
+      "new_name": "Novennial Ring",
+      "old_log": [
+        "novennial ring",
+        "novennial rings"
+      ],
+      "new_log": [
+        "novennial ring",
+        "novennial rings"
+      ],
+      "old_desc": "Experience point bonus: +100%\nMaximum duration: 720 min.\nMaximum bonus: 9000",
+      "new_desc": "Exemplar point bonus: +100%\nMaximum duration: 720 min.\nMaximum bonus: 9000",
+      "why": "Anniversary-family dedication now awards exemplar points on VanaDreams. Names, bonus percentage, duration and cap are unchanged."
+    },
+    {
+      "fid": 76,
+      "what": "English armor item strings, Decennial Ring (item 10796)",
+      "id": 10796,
+      "old_name": "Decennial Ring",
+      "new_name": "Decennial Ring",
+      "old_log": [
+        "decennial ring",
+        "decennial rings"
+      ],
+      "new_log": [
+        "decennial ring",
+        "decennial rings"
+      ],
+      "old_desc": "Experience point bonus: +100%\nMaximum duration: 720 min.\nMaximum bonus: 10000",
+      "new_desc": "Exemplar point bonus: +100%\nMaximum duration: 720 min.\nMaximum bonus: 10000",
+      "why": "Anniversary-family dedication now awards exemplar points on VanaDreams. Names, bonus percentage, duration and cap are unchanged."
+    },
+    {
+      "fid": 55668,
+      "what": "English armor item strings, Undecennial Ring (item 28528)",
+      "id": 28528,
+      "old_name": "Undecennial Ring",
+      "new_name": "Undecennial Ring",
+      "old_log": [
+        "undecennial ring",
+        "undecennial rings"
+      ],
+      "new_log": [
+        "undecennial ring",
+        "undecennial rings"
+      ],
+      "old_desc": "Experience point bonus: +100%\nMaximum duration: 720 min.\nMaximum bonus: 11111",
+      "new_desc": "Exemplar point bonus: +100%\nMaximum duration: 720 min.\nMaximum bonus: 11111",
+      "why": "Anniversary-family dedication now awards exemplar points on VanaDreams. Names, bonus percentage, duration and cap are unchanged."
+    },
+    {
+      "fid": 55668,
+      "what": "English armor item strings, Duodec. Ring (item 28562)",
+      "id": 28562,
+      "old_name": "Duodec. Ring",
+      "new_name": "Duodec. Ring",
+      "old_log": [
+        "duodecennial ring",
+        "duodecennial rings"
+      ],
+      "new_log": [
+        "duodecennial ring",
+        "duodecennial rings"
+      ],
+      "old_desc": "Experience point bonus: +100%\nMaximum duration: 720 min.\nMaximum bonus: 12000",
+      "new_desc": "Exemplar point bonus: +100%\nMaximum duration: 720 min.\nMaximum bonus: 12000",
+      "why": "Anniversary-family dedication now awards exemplar points on VanaDreams. Names, bonus percentage, duration and cap are unchanged."
     }
   ]
 }

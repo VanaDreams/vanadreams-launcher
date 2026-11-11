@@ -61,3 +61,24 @@ already has (lines 0-21, and 6422 for "You do not have enough gil."). The server
 new constants, changes the two bounds in place only after showing every reader is a loop bound or a loop exit, keeps
 every other block byte for byte, and re-decodes each patched block with xi-tools' `xi_explain` against the original.
 The pack then carries 68 event DATs (about 22.7 MB unpacked).
+
+### Anniversary-family exemplar descriptions (unreleased)
+
+The five anniversary-family rings retain their display and log names. Their descriptions
+now say "Exemplar point bonus" instead of "Experience point bonus". Bonus percentage,
+720-minute duration and individual caps are unchanged. Decennial (10796), Novennial
+(11666) and Anniversary (15793) use English armor file ID 76; Undecennial (28528) and
+Duodecennial (28562, displayed as "Duodec. Ring") use armor2 file ID 55668.
+
+Run `python -B -m unittest discover -s client/text-pack -p test_ring_text.py -v` for
+catalog checks. Set `TEXT_PACK_TEST_CLIENT` to a client directory to also run read-only
+DAT tests: exact old strings, rotation roundtrip, rejection of mismatched/oversized
+edits, and byte-identical preservation outside the five descriptions. Tests write no
+DATs. The inspected client already contains the Skillz Ring patch; these tests therefore
+do not certify it as an untouched input for the complete text-pack builder.
+
+This is source-only and must ship with the matching server exemplar effect changes.
+No pack version or launcher manifest is changed here. Before release, obtain a verified
+untouched input for the full builder, coordinate the next PACK version and existing
+Kupo/home-point overlays, and validate all five tooltips in game. Do not overwrite a
+newer text overlay with a partial pack or publish client chunks as part of this change.
