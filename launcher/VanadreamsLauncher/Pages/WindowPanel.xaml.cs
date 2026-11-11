@@ -16,7 +16,7 @@ namespace Vanadreams.Pages
         private bool _filling;
 
         private static readonly Tuple<WindowMode, string>[] ModeChoices =
-            { Tuple.Create(WindowMode.Windowed, "Window"), Tuple.Create(WindowMode.Borderless, "Borderless"), Tuple.Create(WindowMode.Fullscreen, "Fullscreen") };
+            { Tuple.Create(WindowMode.Windowed, UiText.FromKey("window-mode")), Tuple.Create(WindowMode.Borderless, UiText.T("Borderless")), Tuple.Create(WindowMode.Fullscreen, UiText.T("Fullscreen")) };
         private static readonly int[][] SizeChoices = { new[] { 1280, 720 }, new[] { 1600, 900 }, new[] { 1920, 1080 }, new[] { 2560, 1440 } };
 
         public WindowPanel()

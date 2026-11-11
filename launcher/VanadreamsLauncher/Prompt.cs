@@ -1,4 +1,5 @@
 using System.Windows;
+using Vanadreams.Services;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -17,7 +18,7 @@ namespace Vanadreams
             };
             var box = new TextBox { Text = initial ?? "", Margin = new Thickness(0, 8, 0, 16) };
             var ok = new Button { Content = "OK", Style = (Style)Application.Current.FindResource("GoldButton"), IsDefault = true, MinWidth = 90 };
-            var cancel = new Button { Content = "Cancel", Style = (Style)Application.Current.FindResource("GhostButton"), IsCancel = true, MinWidth = 90, Margin = new Thickness(8, 0, 0, 0) };
+            var cancel = new Button { Content = UiText.T("Cancel"), Style = (Style)Application.Current.FindResource("GhostButton"), IsCancel = true, MinWidth = 90, Margin = new Thickness(8, 0, 0, 0) };
             string result = null;
             ok.Click += (s, e) => { result = box.Text; win.DialogResult = true; };
             var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };

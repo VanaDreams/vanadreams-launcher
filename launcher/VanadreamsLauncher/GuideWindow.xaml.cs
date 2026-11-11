@@ -55,69 +55,69 @@ namespace Vanadreams
         {
             new GuideStep
             {
-                Key = "client", Title = "1 · Get the client",
-                Body = "Final Fantasy XI's client is a free download from Square Enix. You need it installed before anything else works; the launcher cannot install it for you.\n\nThe download is a few gigabytes and the installer is PlayOnline's, from 2002. Let it run. Nothing you type into PlayOnline matters for Vanadreams: no account, no login, ever.",
-                Link = "https://www.playonline.com/ff11us/download/media/install_win.html", LinkLabel = "Square Enix download page", Picture = "guide-1-download.png",
-                PictureNote = "Square Enix's download page. Pick the Windows installer.",
+                Key = "client", Title = UiText.T("1 · Get the client"),
+                Body = UiText.T("Final Fantasy XI's client is a free download from Square Enix. You need it installed before anything else works; the launcher cannot install it for you.\n\nThe download is a few gigabytes and the installer is PlayOnline's, from 2002. Let it run. Nothing you type into PlayOnline matters for Vanadreams: no account, no login, ever."),
+                Link = "https://www.playonline.com/ff11us/download/media/install_win.html", LinkLabel = UiText.T("Square Enix download page"), Picture = "guide-1-download.png",
+                PictureNote = UiText.T("Square Enix's download page. Pick the Windows installer."),
             },
             new GuideStep
             {
-                Key = "folder", Title = "2 · Install to a folder you own",
-                Body = "Run FFXISetup.exe from the extracted folder, tick all three items and press Install. Each part then runs its own wizard; when one asks where to put itself, choose a folder outside Program Files, such as C:\\Games\\PlayOnline.\n\nIt works in Program Files too, but every update and file check then asks for administrator permission, and the launcher's version check has to read files it may not be allowed to. A folder you own has neither problem.",
-                Picture = "guide-2-folder.png", PictureNote = "The installer: tick all three, press Install, and pick C:\\Games\\PlayOnline when a wizard asks where.",
+                Key = "folder", Title = UiText.T("2 · Install to a folder you own"),
+                Body = UiText.T("Run FFXISetup.exe from the extracted folder, tick all three items and press Install. Each part then runs its own wizard; when one asks where to put itself, choose a folder outside Program Files, such as C:\\Games\\PlayOnline.\n\nIt works in Program Files too, but every update and file check then asks for administrator permission, and the launcher's version check has to read files it may not be allowed to. A folder you own has neither problem."),
+                Picture = "guide-2-folder.png", PictureNote = UiText.T("The installer: tick all three, press Install, and pick C:\\Games\\PlayOnline when a wizard asks where."),
                 HasCheck = true,
                 Check = st =>
                 {
                     var f = st.FfxiFolder;
-                    if (f == null) return Tuple.Create<bool?, string>(false, "No FFXI install is registered yet. Finish the installer, then check again.");
-                    if (ClientVersion.IsUnderProgramFiles(f)) return Tuple.Create<bool?, string>((bool?)null, "Installed at " + f + ". It works, but updates will prompt for administrator permission.");
-                    return Tuple.Create<bool?, string>(true, "Installed at " + f + ".");
+                    if (f == null) return Tuple.Create<bool?, string>(false, UiText.T("No FFXI install is registered yet. Finish the installer, then check again."));
+                    if (ClientVersion.IsUnderProgramFiles(f)) return Tuple.Create<bool?, string>((bool?)null, UiText.T("Installed at ") + f + UiText.T(". It works, but updates will prompt for administrator permission."));
+                    return Tuple.Create<bool?, string>(true, UiText.T("Installed at ") + f + ".");
                 },
             },
             new GuideStep
             {
-                Key = "update", Title = "3 · Update it once",
-                Body = "Open PlayOnline Viewer from the Start menu. It updates itself first, then shows the FINAL FANTASY XI entry. Choose it and let it download the game update; this is the long part, often an hour.\n\nDo not log in. Close the viewer when the update finishes. Then press Check: the launcher reads the version your client will report and compares it with what Vanadreams expects.",
-                Picture = "guide-3-update.png", PictureNote = "PlayOnline Viewer's menu. Check Files is where the FINAL FANTASY XI update runs.",
+                Key = "update", Title = UiText.T("3 · Update it once"),
+                Body = UiText.T("Open PlayOnline Viewer from the Start menu. It updates itself first, then shows the FINAL FANTASY XI entry. Choose it and let it download the game update; this is the long part, often an hour.\n\nDo not log in. Close the viewer when the update finishes. Then press Check: the launcher reads the version your client will report and compares it with what Vanadreams expects."),
+                Picture = "guide-3-update.png", PictureNote = UiText.T("PlayOnline Viewer's menu. Check Files is where the FINAL FANTASY XI update runs."),
                 HasCheck = true,
                 Check = st =>
                 {
                     var v = st.CheckVersion();
-                    if (!v.ExpectedIsPublished) return Tuple.Create<bool?, string>(null, v.Sentence + (string.IsNullOrEmpty(v.Installed) ? "" : " Your client reports " + v.Installed + "."));
+                    if (!v.ExpectedIsPublished) return Tuple.Create<bool?, string>(null, v.Sentence + (string.IsNullOrEmpty(v.Installed) ? "" : UiText.T(" Your client reports ") + v.Installed + "."));
                     if (v.Verdict == VersionVerdict.Ready) return Tuple.Create<bool?, string>(true, v.Sentence);
                     return Tuple.Create<bool?, string>(false, v.Sentence);
                 },
             },
             new GuideStep
             {
-                Key = "firewall", Title = "4 · Let it through the firewall",
-                Body = "The first time the loader and the game start, Windows asks whether to allow them through the firewall. Tick Private networks and press Allow access.\n\nIf that prompt was dismissed, the game may sit at 'Searching for lobby server'. Press Check: the launcher looks for the allow rules and can add them for you, which asks for administrator permission once.",
-                PictureNote = "A blue-shield window titled Windows Security Alert, naming xiloader or pol. Tick Private networks, then press Allow access.",
+                Key = "firewall", Title = UiText.T("4 · Let it through the firewall"),
+                Body = UiText.T("The first time the loader and the game start, Windows asks whether to allow them through the firewall. Tick Private networks and press Allow access.\n\nIf that prompt was dismissed, the game may sit at 'Searching for lobby server'. Press Check: the launcher looks for the allow rules and can add them for you, which asks for administrator permission once."),
+                PictureNote = UiText.T("A blue-shield window titled Windows Security Alert, naming xiloader or pol. Tick Private networks, then press Allow access."),
                 HasCheck = true,
                 Check = st =>
                 {
-                    if (!st.HasAshita) return Tuple.Create<bool?, string>(false, "Run Setup first so the loader exists to check.");
+                    if (!st.HasAshita) return Tuple.Create<bool?, string>(false, UiText.T("Run Setup first so the loader exists to check."));
                     var exes = new List<string> { Path.Combine(st.AshitaRoot, "bootloader", "xiloader.exe") };
                     var ffxi = st.FfxiFolder;
                     var pol = ffxi != null ? Path.Combine(Path.GetDirectoryName(ffxi.TrimEnd('\\')), "PlayOnlineViewer", "pol.exe") : null;
                     if (pol != null && File.Exists(pol)) exes.Add(pol);
                     var result = Firewall.Check(exes);
                     var missing = result.Where(kv => !kv.Value).Select(kv => Path.GetFileName(kv.Key)).ToList();
-                    if (missing.Count == 0) return Tuple.Create<bool?, string>(true, "Allow rules found for " + string.Join(" and ", result.Keys.Select(Path.GetFileName)) + ".");
-                    return Tuple.Create<bool?, string>(false, "No allow rule for " + string.Join(", ", missing) + ". Press Check again to add them; Windows will ask for permission once.|ADD");
+                    if (missing.Count == 0) return Tuple.Create<bool?, string>(true, UiText.T("Allow rules found for ") + string.Join(UiText.T(" and "), result.Keys.Select(Path.GetFileName)) + ".");
+                    return Tuple.Create<bool?, string>(false, UiText.T("No allow rule for ") + string.Join(", ", missing) + UiText.T(". Press Check again to add them; Windows will ask for permission once.|ADD"));
                 },
             },
             new GuideStep
             {
-                Key = "account", Title = "5 · Make your account",
-                Body = "Press Play in the launcher. The loader's black window appears with a menu: choose Create New Account, pick a username and a password. This is your Vanadreams account, nothing to do with PlayOnline or Square Enix.\n\nAfter that, the launcher can remember the login for you on the Profiles page, and Play goes straight to character select.",
-                PictureNote = "A black console window with a five-line menu appears. Create New Account is option 2; the arrow keys and Enter drive it.",
+                Key = "account", Title = UiText.T("5 · Make your account"),
+                Body = UiText.T("Press Play in the launcher. The loader's black window appears with a menu: choose Create New Account, pick a username and a password. This is your Vanadreams account, nothing to do with PlayOnline or Square Enix.\n\nAfter that, the launcher can remember the login for you on the Profiles page, and Play goes straight to character select."),
+                PictureNote = UiText.T("A black console window with a five-line menu appears. Create New Account is option 2; the arrow keys and Enter drive it."),
             },
             new GuideStep
             {
-                Key = "play", Title = "6 · Play",
-                Body = "That's the whole setup. Pick who you are on the menu and press Play. The bottom strip always shows whether the server is up and whether your client still matches it.\n\nIf anything above turned amber or red, the Discord is where someone can look at it with you.",
-                PictureNote = "From here it is the game. Press Play and you are on Vanadreams.",
+                Key = "play", Title = UiText.T("6 · Play"),
+                Body = UiText.T("That's the whole setup. Pick who you are on the menu and press Play. The bottom strip always shows whether the server is up and whether your client still matches it.\n\nIf anything above turned amber or red, the Discord is where someone can look at it with you."),
+                PictureNote = UiText.T("From here it is the game. Press Play and you are on Vanadreams."),
             },
         };
 
@@ -126,15 +126,15 @@ namespace Vanadreams
             foreach (var s in _steps) s.Selected = false;
             step.Selected = true;
             _current = step;
-            StepEyebrow.Text = "✦ Step " + (_steps.IndexOf(step) + 1) + " of " + _steps.Count;
+            StepEyebrow.Text = UiText.T("✦ Step ") + (_steps.IndexOf(step) + 1) + UiText.T(" of ") + _steps.Count;
             StepTitle.Text = step.Title.Substring(step.Title.IndexOf('·') + 2);
             StepBody.Text = step.Body;
             CheckResult.Text = "";
             LinkButton.Visibility = string.IsNullOrEmpty(step.Link) ? Visibility.Collapsed : Visibility.Visible;
-            LinkButton.Content = step.LinkLabel ?? "Open the link";
+            LinkButton.Content = step.LinkLabel ?? UiText.T("Open the link");
             CheckButton.Visibility = step.HasCheck ? Visibility.Visible : Visibility.Collapsed;
             DoneButton.Visibility = step.HasCheck ? Visibility.Collapsed : Visibility.Visible;
-            NextButton.Content = _steps.IndexOf(step) == _steps.Count - 1 ? "Close" : "Next ▸";
+            NextButton.Content = _steps.IndexOf(step) == _steps.Count - 1 ? UiText.T("Close") : UiText.T("Next ▸");
             Picture.Source = null;
             PictureNote.Text = step.PictureNote;
             try
@@ -170,7 +170,7 @@ namespace Vanadreams
                     if (pol != null && File.Exists(pol)) exes.Add(pol);
                     var ok = Firewall.AddAllowRules(exes);
                     r = _current.Check(_state);
-                    text = ok ? r.Item2.Replace("|ADD", "") : "Permission was refused, so nothing was added.";
+                    text = ok ? r.Item2.Replace("|ADD", "") : UiText.T("Permission was refused, so nothing was added.");
                     CheckResult.Tag = null;
                 }
                 else CheckResult.Tag = "offered";
@@ -187,7 +187,7 @@ namespace Vanadreams
         {
             if (_current == null) return;
             _current.Mark = "✓"; _current.MarkBrushKey = "Ok";
-            CheckResult.Text = "Taken on trust.";
+            CheckResult.Text = UiText.T("Taken on trust.");
             CheckResult.Foreground = (Brush)FindResource("Mist");
             Remember(_current.Key);
         }

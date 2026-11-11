@@ -86,18 +86,18 @@ namespace Vanadreams.Pages
                     CanUp = w != null && i > 0,
                     CanDown = w != null && i < windows.Count - 1,
                     KeyVisibility = i < LauncherSettings.SlotKeyCount ? Visibility.Visible : Visibility.Hidden,
-                    KeyText = i < LauncherSettings.SlotKeyCount ? (_capturing == "slot" + i ? "press a key…" : "Key: " + KeyBinding.Words(S.SwitchSlots[i])) : "",
+                    KeyText = i < LauncherSettings.SlotKeyCount ? (_capturing == "slot" + i ? UiText.T("press a key…") : UiText.T("Key: ") + KeyBinding.Words(S.SwitchSlots[i])) : "",
                 };
                 if (w != null && w.Elevated)
                 {
                     row.Status = "administrator";
-                    row.StatusTip = "This game was started as administrator, so the launcher cannot bring it forward. Start it with Play here, or untick Run as administrator on its profile.";
+                    row.StatusTip = UiText.T("This game was started as administrator, so the launcher cannot bring it forward. Start it with Play here, or untick Run as administrator on its profile.");
                     row.StatusBrush = (Brush)FindResource("Warn");
                 }
                 rows.Add(row);
             }
             Slots.ItemsSource = rows;
-            Heading.Text = windows.Count == 0 ? "✦ Game windows · none open" : "✦ Game windows · " + windows.Count + " open";
+            Heading.Text = windows.Count == 0 ? UiText.T("✦ Game windows · none open") : UiText.T("✦ Game windows · ") + windows.Count + UiText.T(" open");
             ShowNote();
         }
 
@@ -105,16 +105,16 @@ namespace Vanadreams.Pages
         {
             if (Switcher?.LastProblem != null) { Note.Text = Switcher.LastProblem; Note.Foreground = (Brush)FindResource("Warn"); return; }
             Note.ClearValue(TextBlock.ForegroundProperty);
-            if (!S.SwitcherOn) { Note.Text = "Tick On to use the keys. Windows show here as soon as each game opens; names appear once the character is in."; return; }
-            Note.Text = "In game, " + KeyBinding.Words(S.SwitchNext) + " brings the next character forward and " + KeyBinding.Words(S.SwitchPrev) +
-                        " the one before; the keys never reach the game. The game also sees controller presses, so pick ones your pad layout leaves free." +
-                        " Closing the launcher keeps it in the tray while a game is open.";
+            if (!S.SwitcherOn) { Note.Text = UiText.T("Tick On to use the keys. Windows show here as soon as each game opens; names appear once the character is in."); return; }
+            Note.Text = UiText.T("In game, ") + KeyBinding.Words(S.SwitchNext) + UiText.T(" brings the next character forward and ") + KeyBinding.Words(S.SwitchPrev) +
+                        UiText.T(" the one before; the keys never reach the game. The game also sees controller presses, so pick ones your pad layout leaves free.") +
+                        UiText.T(" Closing the launcher keeps it in the tray while a game is open.");
         }
 
         private void ShowKeys()
         {
-            NextKey.Content = _capturing == "next" ? "press a key…" : KeyBinding.Words(S.SwitchNext);
-            PrevKey.Content = _capturing == "prev" ? "press a key…" : KeyBinding.Words(S.SwitchPrev);
+            NextKey.Content = _capturing == "next" ? UiText.T("press a key…") : KeyBinding.Words(S.SwitchNext);
+            PrevKey.Content = _capturing == "prev" ? UiText.T("press a key…") : KeyBinding.Words(S.SwitchPrev);
         }
 
         // ---- keys ----
@@ -214,26 +214,26 @@ namespace Vanadreams.Pages
             foreach (var name in S.Layouts.Keys.OrderBy(k => k, StringComparer.OrdinalIgnoreCase)) LayoutBox.Items.Add(name);
             LayoutBox.SelectedItem = S.Layouts.ContainsKey(S.ActiveLayout ?? "") ? S.Layouts.Keys.First(k => string.Equals(k, S.ActiveLayout, StringComparison.OrdinalIgnoreCase)) : null;
             if (LayoutBox.SelectedItem == null && LayoutBox.Items.Count > 0) LayoutBox.SelectedIndex = 0;
-            LayoutName.Text = LayoutBox.SelectedItem as string ?? "Full party";
+            LayoutName.Text = LayoutBox.SelectedItem as string ?? UiText.T("Full party");
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             var name = LayoutName.Text.Trim();
-            if (name.Length == 0) { LayoutNote.Text = "Give the layout a name first."; return; }
+            if (name.Length == 0) { LayoutNote.Text = UiText.T("Give the layout a name first."); return; }
             Switcher?.Scan();
-            if (Switcher == null || Switcher.Windows.Count == 0) { LayoutNote.Text = "No game window is open to save."; return; }
+            if (Switcher == null || Switcher.Windows.Count == 0) { LayoutNote.Text = UiText.T("No game window is open to save."); return; }
             var n = Switcher.SaveLayout(name);
             LoadLayouts();
-            LayoutNote.Text = "Saved " + name + ": " + n + " window" + (n == 1 ? "" : "s") + ".";
+            LayoutNote.Text = UiText.T("Saved ") + name + ": " + n + UiText.T(" window") + (n == 1 || UiText.Language == "ja" ? "" : "s") + ".";
         }
 
         private void Restore_Click(object sender, RoutedEventArgs e)
         {
             var name = LayoutBox.SelectedItem as string;
-            if (name == null || Switcher == null) { LayoutNote.Text = "No layout saved yet."; return; }
+            if (name == null || Switcher == null) { LayoutNote.Text = UiText.T("No layout saved yet."); return; }
             var n = Switcher.RestoreLayout(name);
-            LayoutNote.Text = n == 0 ? "None of the open windows is in " + name + "." : "Put " + n + " window" + (n == 1 ? "" : "s") + " back as in " + name + ".";
+            LayoutNote.Text = n == 0 ? UiText.T("None of the open windows is in ") + name + "." : UiText.T("Put ") + n + UiText.T(" window") + (n == 1 || UiText.Language == "ja" ? "" : "s") + UiText.T(" back as in ") + name + ".";
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -244,7 +244,7 @@ namespace Vanadreams.Pages
             if (string.Equals(S.ActiveLayout, name, StringComparison.OrdinalIgnoreCase)) S.ActiveLayout = "";
             S.Save();
             LoadLayouts();
-            LayoutNote.Text = "Deleted " + name + ".";
+            LayoutNote.Text = UiText.T("Deleted ") + name + ".";
         }
 
         private void AutoLayout_Click(object sender, RoutedEventArgs e)
@@ -252,7 +252,7 @@ namespace Vanadreams.Pages
             S.AutoLayout = AutoLayoutBox.IsChecked == true;
             if (S.AutoLayout && LayoutBox.SelectedItem is string name) S.ActiveLayout = name;
             S.Save();
-            LayoutNote.Text = S.AutoLayout ? (string.IsNullOrEmpty(S.ActiveLayout) ? "Save a layout first; its places are used as characters log in." : "Characters go to their places in " + S.ActiveLayout + " as they log in.") : "";
+            LayoutNote.Text = S.AutoLayout ? (string.IsNullOrEmpty(S.ActiveLayout) ? UiText.T("Save a layout first; its places are used as characters log in.") : UiText.T("Characters go to their places in ") + S.ActiveLayout + UiText.T(" as they log in.")) : "";
         }
 
         // opened from its row on the Addons page, so Back goes there

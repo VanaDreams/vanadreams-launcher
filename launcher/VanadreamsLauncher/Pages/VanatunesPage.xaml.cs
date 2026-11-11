@@ -38,9 +38,9 @@ namespace Vanadreams.Pages
             EnabledBox.IsChecked = state.Settings.EnabledAddons.Contains(Id, StringComparer.OrdinalIgnoreCase);
             string version;
             state.Settings.InstalledVersions.TryGetValue(Id, out version);
-            State.Text = item == null ? "Not in the catalogue yet." : installed ? "✓ Installed" + (string.IsNullOrEmpty(version) ? "" : " · " + version) : "Not installed yet: press Get new songs.";
+            State.Text = item == null ? UiText.T("Not in the catalogue yet.") : installed ? UiText.T("✓ Installed") + (string.IsNullOrEmpty(version) ? "" : " · " + version) : UiText.T("Not installed yet: press Get new songs.");
             State.Foreground = (Brush)FindResource(installed ? "Ok" : "Warn");
-            Songs.Text = $"{CountSongs(OurFolder)} Vanadreams songs · {CountSongs(MyFolder)} of yours";
+            Songs.Text = UiText.F("{0} Vanadreams songs · {1} of yours", CountSongs(OurFolder), CountSongs(MyFolder));
         }
 
         private void Enabled_Click(object sender, RoutedEventArgs e)
@@ -65,17 +65,17 @@ namespace Vanadreams.Pages
             var state = App.State;
             var item = state.Catalog.Find(Id);
             if (_busy || item == null) return;
-            if (!state.HasAshita) { Note.Text = "Set the Ashita folder on Settings first."; return; }
-            _busy = true; GetButton.IsEnabled = false; Note.Text = "Looking for new songs…";
+            if (!state.HasAshita) { Note.Text = UiText.T("Set the Ashita folder on Settings first."); return; }
+            _busy = true; GetButton.IsEnabled = false; Note.Text = UiText.T("Looking for new songs…");
             try
             {
                 var plan = await AddonInstaller.InstallRepoFolderAsync(state.Downloader, state.Settings, state.AshitaRoot, item,
-                    (name, n, of) => Dispatcher.Invoke(() => Note.Text = $"{name} ({n} of {of})"));
+                    (name, n, of) => Dispatcher.Invoke(() => Note.Text = UiText.F("{0} ({1} of {2})", name, n, of)));
                 if (!state.Settings.EnabledAddons.Contains(Id, StringComparer.OrdinalIgnoreCase)) state.Settings.EnabledAddons.Add(Id);
                 state.Settings.Save();
                 state.ApplyEnabledAddons();
-                Note.Text = plan.Download.Count == 0 && plan.Delete.Count == 0 ? "You have every song already."
-                    : $"{plan.Download.Count} new or changed" + (plan.Delete.Count > 0 ? $", {plan.Delete.Count} removed" : "") + ". In game, /vanatunes rescan picks them up.";
+                Note.Text = plan.Download.Count == 0 && plan.Delete.Count == 0 ? UiText.T("You have every song already.")
+                    : UiText.F("{0} new or changed", plan.Download.Count) + (plan.Delete.Count > 0 ? UiText.F(", {0} removed", plan.Delete.Count) : "") + UiText.T(". In game, /vanatunes rescan picks them up.");
                 Refresh();
             }
             catch (Exception ex) { Log.Error("vanatunes songs", ex); Note.Text = ex.Message; }

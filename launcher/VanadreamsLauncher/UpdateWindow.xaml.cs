@@ -23,7 +23,7 @@ namespace Vanadreams
             progress.ProgressChanged += (s, p) =>
             {
                 Bar.Value = p.Fraction;
-                BarLine.Text = "Moogling in progress… " +(p.Done / 1048576.0).ToString("0.0") + " of " + (p.Total / 1048576.0).ToString("0.0") + " MB";
+                BarLine.Text = UiText.T("Moogling in progress… ") +(p.Done / 1048576.0).ToString("0.0") + UiText.T(" of ") + (p.Total / 1048576.0).ToString("0.0") + " MB";
             };
             Loaded += async (s, e) => await WaitForDownloadAsync(tag);
         }
@@ -31,9 +31,9 @@ namespace Vanadreams
         /// <summary>The words the player reads: Heading is the big line, Body the sentence under it.</summary>
         private void Wording(string tag, Version current)
         {
-            Heading.Text = "A new launcher is here, kupo!";
-            Body.Text = "Version " + tag.TrimStart('v') + " is on its way (you have " + current + "). "
-                      + "A moogle is fetching it now. Restart when it's ready to stay in step with the server.";
+            Heading.Text = UiText.T("A new launcher is here, kupo!");
+            Body.Text = UiText.T("Version ") + tag.TrimStart('v') + UiText.T(" is on its way (you have ") + current + "). "
+                      + UiText.T("A moogle is fetching it now. Restart when it's ready to stay in step with the server.");
         }
 
         private async Task WaitForDownloadAsync(string tag)
@@ -44,13 +44,13 @@ namespace Vanadreams
             if (exe == null)
             {
                 Bar.Visibility = Visibility.Collapsed;
-                BarLine.Text = "Launcher " + tag + " couldn't be downloaded. It is on vanadreams.org.";
+                BarLine.Text = UiText.T("Launcher ") + tag + UiText.T(" couldn't be downloaded. It is on vanadreams.org.");
                 UpdateButton.Visibility = Visibility.Collapsed;
-                LaterButton.Content = "Close";
+                LaterButton.Content = UiText.T("Close");
                 return;
             }
             Bar.Value = 1;
-            BarLine.Text = "Delivered, kupo! Ready when you are.";
+            BarLine.Text = UiText.T("Delivered, kupo! Ready when you are.");
             UpdateButton.IsEnabled = true;
             UpdateButton.Focus();
         }

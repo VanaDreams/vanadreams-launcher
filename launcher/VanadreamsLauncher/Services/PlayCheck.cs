@@ -61,14 +61,14 @@ namespace Vanadreams.Services
             if (missing == null || missing.Count == 0) return null;
             var names = string.Join(", ", missing.Select(Path.GetFileName));
             var av = OtherAntivirus(antivirus);
-            var who = av.Count > 0 ? string.Join(" or ", av) : "Your antivirus";
+            var who = av.Count > 0 ? string.Join(" or ", av) : UiText.T("Your antivirus");
             var sb = new StringBuilder();
-            sb.Append(names).Append(missing.Count == 1 ? " is" : " are").Append(" missing from ").Append(ashitaRoot).Append(".\n\n");
-            sb.Append(who).Append(" most likely removed ").Append(missing.Count == 1 ? "it" : "them")
-              .Append(". Ashita and xiloader are not signed, so some antivirus treats them as unknown programs.\n\n");
-            sb.Append("1. Open ").Append(av.Count > 0 ? av[0] : "your antivirus").Append(", restore the file from quarantine if it is there, and add this folder as an exclusion:\n   ")
+            sb.Append(names).Append(missing.Count == 1 ? UiText.T(" is") : UiText.T(" are")).Append(UiText.T(" missing from ")).Append(ashitaRoot).Append(".\n\n");
+            sb.Append(who).Append(UiText.T(" most likely removed ")).Append(missing.Count == 1 ? UiText.T("it") : UiText.T("them"))
+              .Append(UiText.T(". Ashita and xiloader are not signed, so some antivirus treats them as unknown programs.\n\n"));
+            sb.Append(UiText.T("1. Open ")).Append(av.Count > 0 ? av[0] : UiText.T("your antivirus")).Append(UiText.T(", restore the file from quarantine if it is there, and add this folder as an exclusion:\n   "))
               .Append(ashitaRoot).Append("\n");
-            sb.Append("2. Open Setup on the menu and press Check and update, which puts back anything missing.\n3. Press Play again.");
+            sb.Append(UiText.T("2. Open Setup on the menu and press Check and update, which puts back anything missing.\n3. Press Play again."));
             return sb.ToString();
         }
 
@@ -170,18 +170,18 @@ namespace Vanadreams.Services
         {
             if (r == null || r.AllOpen) return null;
             if (status == ServerState.Offline || status == ServerState.Maintenance)
-                return "The Vanadreams server is " + (status == ServerState.Offline ? "offline" : "down for maintenance") + " right now, so the loader would close straight away. Try again once the status says Online.";
+                return UiText.T("The Vanadreams server is ") + (status == ServerState.Offline ? UiText.T("offline") : UiText.T("down for maintenance")) + UiText.T(" right now, so the loader would close straight away. Try again once the status says Online.");
             if (r.NoName)
-                return "Your PC could not look up " + r.Host + ", so the loader would close without logging in.\n\n" +
-                       "Check that you are online. If other sites work, your network's DNS may be blocking the name: restart your router, or set your network's DNS to 1.1.1.1.";
+                return UiText.T("Your PC could not look up ") + r.Host + UiText.T(", so the loader would close without logging in.\n\n") +
+                       UiText.T("Check that you are online. If other sites work, your network's DNS may be blocking the name: restart your router, or set your network's DNS to 1.1.1.1.");
             if (overTailscale)
-                return "This profile logs in over Tailscale, and the server did not answer there (ports " + string.Join(", ", r.Closed) + ").\n\n" +
-                       "Open Tailscale and make sure it is connected and that the Vanadreams server is shared with you. Or untick Tailscale on the Profiles page to use the public address.";
+                return UiText.T("This profile logs in over Tailscale, and the server did not answer there (ports ") + string.Join(", ", r.Closed) + ").\n\n" +
+                       UiText.T("Open Tailscale and make sure it is connected and that the Vanadreams server is shared with you. Or untick Tailscale on the Profiles page to use the public address.");
             if (r.Open.Count > 0 && r.Closed.Count == 1 && r.Closed[0] == ProfilePort)
-                return "Your network lets the game's login through but blocks port " + ProfilePort + ", which the loader uses right after \"Connected\". The loader would close at that point.\n\n" +
-                       "Allow outgoing TCP " + ProfilePort + " in your firewall or router, or ask on Discord for Tailscale access and tick Tailscale on the Profiles page.";
-            return "Your PC could not reach the Vanadreams server on the game's login ports (" + string.Join(", ", r.Closed) + "), so the loader would close without logging in.\n\n" +
-                   "Some providers, school and work networks, and VPNs block these ports. Turn off any VPN and try again. If it still fails, ask on Discord for Tailscale access and tick Tailscale on the Profiles page; it gets through networks that block the game.";
+                return UiText.T("Your network lets the game's login through but blocks port ") + ProfilePort + UiText.T(", which the loader uses right after \"Connected\". The loader would close at that point.\n\n") +
+                       UiText.T("Allow outgoing TCP ") + ProfilePort + UiText.T(" in your firewall or router, or ask on Discord for Tailscale access and tick Tailscale on the Profiles page.");
+            return UiText.T("Your PC could not reach the Vanadreams server on the game's login ports (") + string.Join(", ", r.Closed) + UiText.T("), so the loader would close without logging in.\n\n") +
+                   UiText.T("Some providers, school and work networks, and VPNs block these ports. Turn off any VPN and try again. If it still fails, ask on Discord for Tailscale access and tick Tailscale on the Profiles page; it gets through networks that block the game.");
         }
 
         // ---- after Play ----
@@ -306,10 +306,10 @@ namespace Vanadreams.Services
             if (c == null) return null;
             var where = c.Module + (string.IsNullOrWhiteSpace(c.ModuleVersion) ? "" : " " + c.ModuleVersion);
             if (IsRuntimeModule(c.Module))
-                return c.App + " crashed in " + where + ", part of Microsoft's 32-bit C++ runtime, which is too old on this PC.\n\n" +
-                       "Install https://aka.ms/vc14/vc_redist.x86.exe (the x86 one, even on 64-bit Windows), restart the PC, and press Play again.";
-            return c.App + " crashed in " + where + " before the game opened.\n\n" +
-                   "Press Ctrl+C on this box to copy it and post it in the Vanadreams Discord bug channel, so it can be looked at.";
+                return c.App + UiText.T(" crashed in ") + where + UiText.T(", part of Microsoft's 32-bit C++ runtime, which is too old on this PC.\n\n") +
+                       UiText.T("Install https://aka.ms/vc14/vc_redist.x86.exe (the x86 one, even on 64-bit Windows), restart the PC, and press Play again.");
+            return c.App + UiText.T(" crashed in ") + where + UiText.T(" before the game opened.\n\n") +
+                   UiText.T("Press Ctrl+C on this box to copy it and post it in the Vanadreams Discord bug channel, so it can be looked at.");
         }
 
         /// <summary>When the loader's window could not be read and nothing else explains it.</summary>

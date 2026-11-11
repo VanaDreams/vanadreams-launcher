@@ -33,7 +33,7 @@ namespace Vanadreams.Pages
             var item = state.Catalog.Find("vanafish");
             var installed = item != null && item.IsInstalled(state.AshitaRoot);
             EnabledBox.IsChecked = state.Settings.EnabledAddons.Contains("vanafish", StringComparer.OrdinalIgnoreCase);
-            State.Text = item == null ? "Not in the catalogue yet." : installed ? "✓ Installed" : "Not installed: tick it on the Addons page and press Install.";
+            State.Text = item == null ? UiText.T("Not in the catalogue yet.") : installed ? UiText.T("✓ Installed") : UiText.T("Not installed: tick it on the Addons page and press Install.");
             State.Foreground = (Brush)FindResource(installed ? "Ok" : "Warn");
             LoadLog();
         }
@@ -52,10 +52,10 @@ namespace Vanadreams.Pages
                 }
             }
             Log.ItemsSource = rows;
-            Heading.Text = rows.Count == 0 ? "✦ Catch log · nothing yet" : "✦ Catch log · " + rows.Count + " entries";
+            Heading.Text = rows.Count == 0 ? UiText.T("✦ Catch log · nothing yet") : UiText.T("✦ Catch log · ") + rows.Count + UiText.T(" entries");
             var catches = rows.Count(r => r.Kind == "catch");
             var top = rows.Where(r => r.Kind == "catch").GroupBy(r => r.What).OrderByDescending(g => g.Count()).Take(3).Select(g => g.Key + " ×" + g.Count());
-            Totals.Text = rows.Count == 0 ? "" : $"{catches} caught · {rows.Count(r => r.Kind == "lost")} lost · {rows.Count(r => r.Kind == "skillup")} skill-ups\n" + string.Join(", ", top);
+            Totals.Text = rows.Count == 0 ? "" : UiText.F("{0} caught · {1} lost · {2} skill-ups\n", catches, rows.Count(r => r.Kind == "lost"), rows.Count(r => r.Kind == "skillup")) + string.Join(", ", top);
         }
 
         private void Enabled_Click(object sender, RoutedEventArgs e)

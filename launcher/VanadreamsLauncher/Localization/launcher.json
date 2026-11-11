@@ -1,0 +1,2767 @@
+{
+  "t3bde21b9cc11": {
+    "en": "Installing FFXI for Vanadreams",
+    "ja": "Vanadreams 用 FFXI のインストール"
+  },
+  "t5fae21c82eb5": {
+    "en": "✦ Steps",
+    "ja": "✦ 手順"
+  },
+  "tf902d8995ddf": {
+    "en": "Open the link",
+    "ja": "リンクを開く"
+  },
+  "t9d60841e0a78": {
+    "en": "Check",
+    "ja": "確認"
+  },
+  "t88f5a5aad8ac": {
+    "en": "I did this",
+    "ja": "完了した"
+  },
+  "t76d442a923b6": {
+    "en": "Something's wrong",
+    "ja": "問題がある"
+  },
+  "td0cc4d250209": {
+    "en": "Next ▸",
+    "ja": "次へ ▸"
+  },
+  "t6a6c73937c24": {
+    "en": "Vanadreams Launcher",
+    "ja": "Vanadreams ランチャー"
+  },
+  "t1ffd6d1da8a9": {
+    "en": "Vanadreams",
+    "ja": "Vanadreams"
+  },
+  "t37a446f64265": {
+    "en": "LAUNCHER",
+    "ja": "ランチャー"
+  },
+  "t6daeda9e221e": {
+    "en": "Music on or off",
+    "ja": "音楽のオン／オフ"
+  },
+  "te412d8725d99": {
+    "en": "Status unknown",
+    "ja": "状態不明"
+  },
+  "t94f59ec7c65b": {
+    "en": "   ·   Launcher ",
+    "ja": "   ·   ランチャー "
+  },
+  "tdf364d92a287": {
+    "en": "   ·   Game ",
+    "ja": "   ·   ゲーム "
+  },
+  "t91f713daca06": {
+    "en": "   ·   Ashita ",
+    "ja": "   ·   Ashita "
+  },
+  "t41456c83d384": {
+    "en": "v4 beta",
+    "ja": "v4 ベータ"
+  },
+  "t3cf65c955e1c": {
+    "en": "Coming from Windower?",
+    "ja": "Windower から移行しますか？"
+  },
+  "t32717a2e3e17": {
+    "en": "Ashita look-alikes of your Windower addons, your init.txt binds, and your GearSwap sets",
+    "ja": "Windower アドオンに対応する Ashita アドオン、init.txt のキー設定、GearSwap セットを移行"
+  },
+  "tdcf21dc7a422": {
+    "en": "✦ Your addons",
+    "ja": "✦ アドオン"
+  },
+  "tdf622343962d": {
+    "en": "✦ Selected",
+    "ja": "✦ 選択中"
+  },
+  "t569ca49f4aaf": {
+    "en": "Install",
+    "ja": "インストール"
+  },
+  "t559b1cc46027": {
+    "en": "Read the docs",
+    "ja": "説明を読む"
+  },
+  "tdfa7029514da": {
+    "en": "Open config folder",
+    "ja": "設定フォルダーを開く"
+  },
+  "t27cced67785a": {
+    "en": "Switcher settings",
+    "ja": "ウィンドウ切り替え設定"
+  },
+  "t1509f561f241": {
+    "en": "Save",
+    "ja": "保存"
+  },
+  "teacba256aa8d": {
+    "en": "Save writes scripts\\vanadreams.txt and the POL plugin flags.",
+    "ja": "保存すると scripts\\vanadreams.txt と POL プラグインの設定を書き込みます。"
+  },
+  "tec33e074cfdf": {
+    "en": "Tinker tinker. Updates install themselves when you press Play.",
+    "ja": "こつこつ調整。プレイを押すと更新がインストールされるよ。"
+  },
+  "tf16443daebd9": {
+    "en": "✦ Something wrong?",
+    "ja": "✦ 問題がありますか？"
+  },
+  "t69d842d1d77f": {
+    "en": "Zips your logs and settings (no passwords) to the Desktop for #bugs-we-all-found.",
+    "ja": "ログと設定（パスワードを除く）をデスクトップの ZIP にまとめます。#bugs-we-all-found に添付してください。"
+  },
+  "t59ebc7b253a4": {
+    "en": "⚑  Send bug report",
+    "ja": "⚑  不具合レポートを作成"
+  },
+  "t6912fbefa767": {
+    "en": "Not in our Discord yet? ",
+    "ja": "Discord にまだ参加していませんか？ "
+  },
+  "t8e37445a9d05": {
+    "en": "✦ Snapshots",
+    "ja": "✦ スナップショット"
+  },
+  "t0b3473f28352": {
+    "en": "Snapshots come from the charcapture addon: load it on the character you want to bring and type /capture. Files live in config\\charcapture. Two steps: Send to Vanadreams uploads it, then Try import now asks for the import. You must first MAKE a Vanadreams character with exactly the same name (the import overwrites it) and keep it logged out.",
+    "ja": "移行元のキャラクターで charcapture アドオンを読み込み、/capture を入力します。ファイルは config\\charcapture に保存されます。「Vanadreams に送信」でアップロードし、「今すぐインポート」で取り込みを依頼します。先に Vanadreams 側で完全に同じ名前のキャラクターを作成し、ログアウトさせてください。インポートはそのキャラクターを上書きします。"
+  },
+  "t1514b18b0a14": {
+    "en": "✦ Send to Vanadreams",
+    "ja": "✦ Vanadreams に送信"
+  },
+  "td20c5a39a8a4": {
+    "en": "FIRST, MAKE A CHARACTER on Vanadreams with exactly the same name as this one, then log it out. The import overwrites that character. If it does not exist, nothing is imported.",
+    "ja": "先に Vanadreams で完全に同じ名前のキャラクターを作成し、ログアウトさせてください。インポートはそのキャラクターを上書きします。キャラクターが存在しない場合は取り込まれません。"
+  },
+  "t448595c43769": {
+    "en": "Send to Vanadreams",
+    "ja": "Vanadreams に送信"
+  },
+  "tc36e24cd0a3f": {
+    "en": "Try import now",
+    "ja": "今すぐインポート"
+  },
+  "t6a9d007303c1": {
+    "en": "Check result",
+    "ja": "結果を確認"
+  },
+  "tb702096a5565": {
+    "en": "Open snapshot folder",
+    "ja": "スナップショットフォルダーを開く"
+  },
+  "tc43600adde87": {
+    "en": "Kupo! Make a character with the same name on Vanadreams first. Then type /⁠capture in game, send it here, and press Try import now.",
+    "ja": "クポ！まず Vanadreams で同じ名前のキャラクターを作ってね。ゲーム内で /capture を入力し、ここから送信して「今すぐインポート」を押してね。"
+  },
+  "tfe486eb0db9e": {
+    "en": "✦ Catch log",
+    "ja": "✦ 釣果ログ"
+  },
+  "t090b90217e7c": {
+    "en": "✦ Fishing",
+    "ja": "✦ 釣り"
+  },
+  "t15a15edf5530": {
+    "en": "vanafish",
+    "ja": "vanafish"
+  },
+  "tddcbe649a41c": {
+    "en": "Load the fishing addon at startup",
+    "ja": "起動時に釣りアドオンを読み込む"
+  },
+  "t854dae21a2f7": {
+    "en": "In game: /⁠vanafish opens the window, /⁠vanafish start fishes. Rod in the ranged slot, bait in the ammo slot, stand at a spot. What to keep, timing and the stop rules are set in the game window and kept per character.",
+    "ja": "ゲーム内で /vanafish を入力するとウィンドウが開き、/vanafish start で釣りを開始します。遠隔武器スロットに釣り竿、矢弾スロットに餌を装備し、釣り場に立ってください。残す魚、タイミング、停止条件はゲーム内のウィンドウで設定し、キャラクターごとに保存されます。"
+  },
+  "t5df8a054e78b": {
+    "en": "Open catch log folder",
+    "ja": "釣果ログフォルダーを開く"
+  },
+  "t710ce55f1bb9": {
+    "en": "Kweh! Rod in the ranged slot, bait in ammo, then type /⁠vanafish start.",
+    "ja": "クェッ！遠隔に釣り竿、矢弾に餌を装備して、/vanafish start を入力してね。"
+  },
+  "t854d4711a2c6": {
+    "en": "Potato is fine. Goblin play on potato for years.",
+    "ja": "低スペックでも大丈夫。ゴブリンはずっとそれで遊んでる。"
+  },
+  "te70b4a7a63b3": {
+    "en": "✦ Graphics",
+    "ja": "✦ グラフィック"
+  },
+  "t87a22766c2ad": {
+    "en": "Pick a look",
+    "ja": "見た目を選ぶ"
+  },
+  "tb72abc408cd4": {
+    "en": "Each profile keeps its own graphics. They are put in place when you press Play.",
+    "ja": "グラフィック設定はプロファイルごとに保存され、プレイを押したときに適用されます。"
+  },
+  "td8fd4fc620db": {
+    "en": "✦ Install game",
+    "ja": "✦ ゲームをインストール"
+  },
+  "tc02eece034a2": {
+    "en": "Final Fantasy XI",
+    "ja": "Final Fantasy XI"
+  },
+  "tc08b7741adc7": {
+    "en": "Installs Final Fantasy XI, already updated to the version Vanadreams runs. No PlayOnline and no Square Enix account: the launcher downloads the game, checks every part, and sets it up so Play works. Windows asks for permission once at the end, to register the game.",
+    "ja": "Vanadreams に対応するバージョンの Final Fantasy XI をインストールします。PlayOnline へのログインやスクウェア・エニックス アカウントは不要です。ゲームをダウンロードして各ファイルを確認し、起動できるように設定します。最後にゲームの登録のため、Windows の許可を求めます。"
+  },
+  "tdd167905de0d": {
+    "en": "Version",
+    "ja": "バージョン"
+  },
+  "td6eafe823591": {
+    "en": "Download",
+    "ja": "ダウンロード"
+  },
+  "t419d221d2c30": {
+    "en": "Install to",
+    "ja": "インストール先"
+  },
+  "t74b2047cb3ae": {
+    "en": "Game now",
+    "ja": "現在のゲーム"
+  },
+  "t675299c2d945": {
+    "en": "Install game",
+    "ja": "ゲームをインストール"
+  },
+  "t0eb4a70f0097": {
+    "en": "Change folder",
+    "ja": "フォルダーを変更"
+  },
+  "t07b2564de845": {
+    "en": "Orc stack packs. Bottom one wins.",
+    "ja": "オークはパックを積み上げる。一番下が優先だ。"
+  },
+  "t408a4a3b8b6a": {
+    "en": "✦ Login",
+    "ja": "✦ ログイン"
+  },
+  "te3b89e9d33f8": {
+    "en": "Username",
+    "ja": "ユーザー名"
+  },
+  "te7cf3ef4f17c": {
+    "en": "Password",
+    "ja": "パスワード"
+  },
+  "ta7ecb4bf26f5": {
+    "en": "Keeps this profile's login on this PC, protected by Windows. Untick it and the launcher forgets it.",
+    "ja": "このプロファイルのログイン情報を Windows で保護してこの PC に保存します。チェックを外すと保存した情報を削除します。"
+  },
+  "tf93267aa11e8": {
+    "en": "Remember me",
+    "ja": "ログイン情報を保存"
+  },
+  "tb7ba5c1d1a1a": {
+    "en": "▶  Play",
+    "ja": "▶  プレイ"
+  },
+  "t1fb91e3af729": {
+    "en": "Profile: —",
+    "ja": "プロファイル: —"
+  },
+  "t0a7c586b5f61": {
+    "en": "✦ Vana'News",
+    "ja": "✦ Vana'News"
+  },
+  "te6773c096bc2": {
+    "en": "No news yet. Rates, rules and status are on vanadreams.org.",
+    "ja": "ニュースはまだありません。倍率、ルール、サーバーの状態は vanadreams.org をご覧ください。"
+  },
+  "tcb25d360535e": {
+    "en": "✦ Mod packs",
+    "ja": "✦ MOD パック"
+  },
+  "t5ba8fc3af321": {
+    "en": "Packs and load order",
+    "ja": "パックと読み込み順"
+  },
+  "t05b2b9f1ef97": {
+    "en": "Load earlier: packs below it win",
+    "ja": "先に読み込む：下のパックが優先されます"
+  },
+  "t338c79bf4602": {
+    "en": "Load later: it wins over packs above it",
+    "ja": "後で読み込む：上のパックより優先されます"
+  },
+  "t349afa8e0756": {
+    "en": "No packs installed yet. Install game brings the modern look and the title pack.",
+    "ja": "パックはまだインストールされていません。ゲームのインストールで外観パックとタイトルパックが追加されます。"
+  },
+  "t13edd9a6bb75": {
+    "en": "Lower packs load on top of higher ones.",
+    "ja": "下のパックが上のパックより優先されます。"
+  },
+  "t206bc7b7ecd8": {
+    "en": "✦ Profiles",
+    "ja": "✦ プロファイル"
+  },
+  "t18fdd549b2ed": {
+    "en": "New",
+    "ja": "新規"
+  },
+  "tcdb38c8dc89a": {
+    "en": "Retail",
+    "ja": "公式サーバー"
+  },
+  "te21f935f11d7": {
+    "en": "Copy",
+    "ja": "コピー"
+  },
+  "te2d0a54968ea": {
+    "en": "Delete",
+    "ja": "削除"
+  },
+  "tb45280d6f902": {
+    "en": "Kupo! Each profile keeps its own login, window size and macros.",
+    "ja": "クポ！ログイン情報、ウィンドウサイズ、マクロはプロファイルごとに保存されるよ。"
+  },
+  "t0c6173b0276b": {
+    "en": "✦ Profile",
+    "ja": "✦ プロファイル"
+  },
+  "tdcd1d5223f73": {
+    "en": "Name",
+    "ja": "名前"
+  },
+  "t8be89710b2f1": {
+    "en": "Server address",
+    "ja": "サーバーアドレス"
+  },
+  "tfc68d0cff199": {
+    "en": "Over Tailscale",
+    "ja": "Tailscale 経由"
+  },
+  "tbf1117ab696c": {
+    "en": "For when your router or internet provider blocks the game. Install Tailscale, accept the share of the Vanadreams server you were sent, then tick this and Save.",
+    "ja": "ルーターやプロバイダーが接続を制限する場合に使います。Tailscale をインストールし、送られた Vanadreams サーバーの共有を承認してから、ここにチェックを入れて保存してください。"
+  },
+  "tfdaf6244773d": {
+    "en": "Boot file",
+    "ja": "起動ファイル"
+  },
+  "t5ba13e9bd4c7": {
+    "en": "Game folder",
+    "ja": "ゲームフォルダー"
+  },
+  "t941a1dda2cd3": {
+    "en": "Extra loader args",
+    "ja": "ローダーの追加引数"
+  },
+  "t6d06791f7c70": {
+    "en": "Menu scale",
+    "ja": "メニュー倍率"
+  },
+  "t076b840600f4": {
+    "en": "How big the game draws its menus and text. 1x is the smallest; 2x is twice as big. It follows the window size on the Graphics page.",
+    "ja": "ゲーム内のメニューと文字の大きさです。1x が最小、2x はその 2 倍です。グラフィック画面のウィンドウサイズに合わせて調整されます。"
+  },
+  "tea2b8a878841": {
+    "en": "Background",
+    "ja": "背景解像度"
+  },
+  "t44bb255b9c24": {
+    "en": "The resolution the game draws the world at. Higher is sharper and asks more of your graphics card: twice or four times the window size is usual, 4096 × 4096 is common. Leave blank for the game's own default.",
+    "ja": "ゲームの描画解像度です。高くすると鮮明になりますが GPU の負荷が増えます。通常はウィンドウの 2 倍または 4 倍で、4096 × 4096 もよく使われます。空欄はゲームの既定値です。"
+  },
+  "tc1895571ecd1": {
+    "en": "blank for default",
+    "ja": "空欄で既定値"
+  },
+  "te3bed3579ecb": {
+    "en": "Close the launcher after launching",
+    "ja": "ゲーム起動後にランチャーを閉じる"
+  },
+  "tfe9ae39c8769": {
+    "en": "Run as administrator",
+    "ja": "管理者として実行"
+  },
+  "t76649a3d515a": {
+    "en": "Asks Windows' permission on every launch. Leave it off unless this game needs it: the prompt can close a game that is already running.",
+    "ja": "起動のたびに Windows の許可を求めます。必要がなければオフにしてください。許可画面で、実行中のゲームが閉じる場合があります。"
+  },
+  "tef72ffd0a037": {
+    "en": "✦ Settings",
+    "ja": "✦ 設定"
+  },
+  "t98f79fcd1e05": {
+    "en": "Menu layout",
+    "ja": "メニュー配置"
+  },
+  "tb56d4cabfb1c": {
+    "en": "The menu down the left, or tabs across the top",
+    "ja": "左側のメニュー、または上部のタブ"
+  },
+  "t727cd3a64d79": {
+    "en": "Vertical",
+    "ja": "縦"
+  },
+  "t0abba441f16e": {
+    "en": "Horizontal",
+    "ja": "横"
+  },
+  "t8662260bac58": {
+    "en": "Ashita folder",
+    "ja": "Ashita フォルダー"
+  },
+  "t2e21f1e872cc": {
+    "en": "Vanadreams game folder",
+    "ja": "Vanadreams のゲームフォルダー"
+  },
+  "teb87e698f669": {
+    "en": "Blank: the launcher picks the copy that fits the server. A FINAL FANTASY XI folder here is always the one Vanadreams plays (same as the Game folder box on a Vanadreams profile).",
+    "ja": "空欄の場合はサーバーに対応するゲームを選びます。FINAL FANTASY XI フォルダーを指定すると、Vanadreams は常にそのゲームを起動します。Vanadreams プロファイルのゲームフォルダー欄と同じ設定です。"
+  },
+  "t9fadba2dde5f": {
+    "en": "Catalogue address",
+    "ja": "カタログのアドレス"
+  },
+  "t4ddc16e09f95": {
+    "en": "Status address",
+    "ja": "状態情報のアドレス"
+  },
+  "td27521b815a6": {
+    "en": "Server's client version",
+    "ja": "サーバー対応クライアント"
+  },
+  "t0f425ec0efa7": {
+    "en": "Vanadreams plays",
+    "ja": "Vanadreams が起動するゲーム"
+  },
+  "t6eb00b4b2614": {
+    "en": "Music",
+    "ja": "音楽"
+  },
+  "t97a7ee1266ae": {
+    "en": "Play “The Lanterns Are Lit” while the launcher is open",
+    "ja": "音楽を再生する"
+  },
+  "tf935f3e4ccd6": {
+    "en": "Other game",
+    "ja": "別のゲーム"
+  },
+  "t6c19ebf074f4": {
+    "en": "Point Windows back at my other FFXI when Vanadreams closes",
+    "ja": "Vanadreams 終了後に Windows の参照先を別の FFXI に戻す"
+  },
+  "tc0e59692ad24": {
+    "en": "Windower and PlayOnline find the game through the one location Windows keeps. Play moves it to Vanadreams; this puts it back afterwards, with a Windows permission prompt.",
+    "ja": "Windower と PlayOnline は Windows に登録された場所からゲームを探します。プレイ時に参照先を Vanadreams に変更し、終了後に元に戻します。Windows の許可を求めます。"
+  },
+  "t1f8073f0bb19": {
+    "en": "Give my other game back now",
+    "ja": "今すぐ別のゲームの参照先に戻す"
+  },
+  "td3fed74dac50": {
+    "en": "✦ About",
+    "ja": "✦ このランチャーについて"
+  },
+  "t4bc465d2f66c": {
+    "en": "Refresh catalogue",
+    "ja": "カタログを更新"
+  },
+  "t24bec7410199": {
+    "en": "Open data folder",
+    "ja": "データフォルダーを開く"
+  },
+  "t7230e6fd9880": {
+    "en": "Open log",
+    "ja": "ログを開く"
+  },
+  "te13e886c7af9": {
+    "en": "Install shortcuts",
+    "ja": "ショートカットを作成"
+  },
+  "t29d9722dfc95": {
+    "en": "Settings is orc's job. Orc keep things tidy.",
+    "ja": "設定はオークの仕事。きちんと整えておくぞ。"
+  },
+  "t1fe934169ad4": {
+    "en": "✦ Setup",
+    "ja": "✦ セットアップ"
+  },
+  "te015edffe3e7": {
+    "en": "Set up Ashita for Vanadreams",
+    "ja": "Vanadreams 用に Ashita を設定"
+  },
+  "tc9b42939b615": {
+    "en": "This downloads the Ashita v4 beta and the loader, unpacks them into a folder you choose, and writes the Vanadreams profile. It never touches the FFXI client itself.",
+    "ja": "Ashita v4 ベータとローダーをダウンロードし、選択したフォルダーに展開して Vanadreams プロファイルを作成します。FFXI クライアント本体は変更しません。"
+  },
+  "t7ca41615c19b": {
+    "en": "Choose…",
+    "ja": "選択…"
+  },
+  "t819a5f51ede6": {
+    "en": "Bring my v3 profiles over",
+    "ja": "v3 のプロファイルを移行する"
+  },
+  "t274a57db7705": {
+    "en": "Copy the configs that carry over (MultiSend, Lootwhore, Ashitacast, XIPivot)",
+    "ja": "対応する設定をコピーする（MultiSend、Lootwhore、Ashitacast、XIPivot）"
+  },
+  "tf3698484db3e": {
+    "en": "Download and set up",
+    "ja": "ダウンロードして設定"
+  },
+  "t47db05e61419": {
+    "en": "Use this folder as it is",
+    "ja": "このフォルダーをそのまま使う"
+  },
+  "te193b296c62e": {
+    "en": "✦ What happens",
+    "ja": "✦ セットアップの流れ"
+  },
+  "t44904788c6b6": {
+    "en": "1. Ashita v4 beta downloads from its GitHub repository.",
+    "ja": "1. GitHub リポジトリから Ashita v4 ベータをダウンロードします。"
+  },
+  "t7ab748b58108": {
+    "en": "2. xiloader downloads from LandSandBoat's releases into the bootloader folder.",
+    "ja": "2. LandSandBoat のリリースから xiloader を bootloader フォルダーにダウンロードします。"
+  },
+  "t76a53340d890": {
+    "en": "3. The Vanadreams profile is written with the server address and the startup script.",
+    "ja": "3. サーバーアドレスと起動スクリプトを含む Vanadreams プロファイルを作成します。"
+  },
+  "t7f1c031d0038": {
+    "en": "4. If a v3 Ashita is found, profiles and configs come across.",
+    "ja": "4. Ashita v3 が見つかった場合は、プロファイルと設定を移行します。"
+  },
+  "tb460f9e39c44": {
+    "en": "5. You land on the menu with Vanadreams selected. Make your account at the loader prompt on first Play.",
+    "ja": "5. Vanadreams が選択されたメニューが開きます。初回プレイ時にローダーの画面でアカウントを作成してください。"
+  },
+  "t8afc623b117b": {
+    "en": "Me check every bolt. Run Setup again any time: only what changed comes down.",
+    "ja": "ボルトまで全部確認するぞ。いつでも再セットアップできる。変更されたものだけダウンロードするぞ。"
+  },
+  "t6ae462e46b13": {
+    "en": "✦ Game windows",
+    "ja": "✦ ゲームウィンドウ"
+  },
+  "t1b7835c55d6a": {
+    "en": "The key that brings this slot forward. Click, then press the key; Esc clears it.",
+    "ja": "このスロットを最前面にするキーです。クリックしてキーを押してください。Esc で解除します。"
+  },
+  "t7305cf032151": {
+    "en": "Move this character up a slot",
+    "ja": "このキャラクターを 1 つ上に移動"
+  },
+  "t88f279aeeb8a": {
+    "en": "Move this character down a slot",
+    "ja": "このキャラクターを 1 つ下に移動"
+  },
+  "t0df6f1cad36c": {
+    "en": "Show",
+    "ja": "表示"
+  },
+  "t5b3824024dd2": {
+    "en": "Bring this window to the front",
+    "ja": "このウィンドウを最前面に表示"
+  },
+  "tf4be743b8bc3": {
+    "en": "✦ Layouts",
+    "ja": "✦ レイアウト"
+  },
+  "t182c7291054b": {
+    "en": "Your saved layouts",
+    "ja": "保存したレイアウト"
+  },
+  "ta76e13b98392": {
+    "en": "Restore",
+    "ja": "復元"
+  },
+  "t6704500b46c4": {
+    "en": "Put every window back where this layout has it",
+    "ja": "各ウィンドウを保存した配置に戻す"
+  },
+  "t8e3e16400047": {
+    "en": "A name for the layout, e.g. Full party",
+    "ja": "レイアウト名（例: フルパーティー）"
+  },
+  "t0cda517d5961": {
+    "en": "Save windows as this layout",
+    "ja": "現在のウィンドウ配置を保存"
+  },
+  "td3cfa1479377": {
+    "en": "Put each character in its place in the layout as it logs in",
+    "ja": "ログイン時に各キャラクターをレイアウトの位置に配置する"
+  },
+  "t390a7dfe76a6": {
+    "en": "✦ Window switcher",
+    "ja": "✦ ウィンドウ切り替え"
+  },
+  "t27dada242a07": {
+    "en": "On: switch between my game windows",
+    "ja": "ゲームウィンドウの切り替えを有効にする"
+  },
+  "t1ff57a29d7c9": {
+    "en": "Next",
+    "ja": "次へ"
+  },
+  "t43c0fc23799b": {
+    "en": "Click, then press the key; Esc clears it",
+    "ja": "クリックしてキーを押してください。Esc で解除します"
+  },
+  "ta57b08a480b8": {
+    "en": "Previous",
+    "ja": "前へ"
+  },
+  "t55a11d50dba2": {
+    "en": "Pad next",
+    "ja": "パッド：次へ"
+  },
+  "tf986aa6a88c8": {
+    "en": "Pad previous",
+    "ja": "パッド：前へ"
+  },
+  "tdfbbc6c889c0": {
+    "en": "Off: the keys only work while a game window is in front, so they never get in the way elsewhere.",
+    "ja": "オフの場合はゲームが最前面のときだけキーが働き、ほかのアプリの操作を妨げません。"
+  },
+  "t51f256052e9f": {
+    "en": "Keys work from any window, not just the game",
+    "ja": "ゲーム以外のウィンドウからも切り替える"
+  },
+  "t76900f1bfd16": {
+    "en": "Back",
+    "ja": "戻る"
+  },
+  "t62a990590575": {
+    "en": "✦ What it is",
+    "ja": "✦ VanaTunes について"
+  },
+  "tcb8a24909a5b": {
+    "en": "A music player that runs inside the game. It plays the Vanadreams songs and any you add yourself, shuffled, wherever you are. While one of ours plays, the game's own music is turned down, and it comes back when ours stops.",
+    "ja": "ゲーム内で動く音楽プレイヤーです。Vanadreams の曲や追加した曲を、どこでもシャッフル再生できます。再生中はゲームの BGM を小さくし、停止すると元に戻します。"
+  },
+  "t2be652d19212": {
+    "en": "✦ How to use it",
+    "ja": "✦ 使い方"
+  },
+  "t9743b8725307": {
+    "en": "1.  In game, type /⁠vanatunes to open the player's window.",
+    "ja": "1. ゲーム内で /vanatunes を入力すると、プレイヤーのウィンドウが開きます。"
+  },
+  "tf8aca14f370d": {
+    "en": "2.  Press Play. Shuffle, Next and Volume are on the window, and a song in the list plays when you click it.",
+    "ja": "2. Play を押します。ウィンドウでシャッフル、次の曲、音量を操作できます。一覧の曲をクリックすると再生します。"
+  },
+  "t37cb851dc818": {
+    "en": "3.  Your own songs: put mp3 or wav files in the Vanadreams Music folder on your Desktop (Open my music folder, right). They join the list; /⁠vanatunes rescan picks up new ones without leaving the game.",
+    "ja": "3. 自分の曲を追加するには、デスクトップの Vanadreams Music フォルダーに mp3 または wav を入れます。右のボタンで開けます。/vanatunes rescan で、ゲームを終了せずに新しい曲を読み込めます。"
+  },
+  "tf502f7d35776": {
+    "en": "4.  My music or Game music, at the top of the window, switches back to the game's own soundtrack and pauses ours.",
+    "ja": "4. ウィンドウ上部の My music / Game music でゲーム本来の BGM に戻すと、VanaTunes は一時停止します。"
+  },
+  "t4464ebb4b728": {
+    "en": "5.  New Vanadreams songs come out now and then: Get new songs fetches them.",
+    "ja": "5. 新しい Vanadreams の曲は「新しい曲を取得」でダウンロードできます。"
+  },
+  "t1ba8bcdf19e8": {
+    "en": "✦ Music",
+    "ja": "✦ 音楽"
+  },
+  "t90f3792a66b0": {
+    "en": "vanatunes",
+    "ja": "vanatunes"
+  },
+  "t5bf8cd75c3d5": {
+    "en": "Load the music player at startup",
+    "ja": "起動時に音楽プレイヤーを読み込む"
+  },
+  "tc5a87e45b243": {
+    "en": "Open my music folder",
+    "ja": "音楽フォルダーを開く"
+  },
+  "t6ea68412d83f": {
+    "en": "Get new songs",
+    "ja": "新しい曲を取得"
+  },
+  "taa35dc30b116": {
+    "en": "La la la! Type /⁠vanatunes in game and I'll sing for you.",
+    "ja": "ラララ！ゲーム内で /vanatunes を入力してね。歌ってあげるよ。"
+  },
+  "t79b681e0d0de": {
+    "en": "✦ Window",
+    "ja": "✦ ウィンドウ"
+  },
+  "ta9e4cb28c1d1": {
+    "en": "Window and speed",
+    "ja": "ウィンドウと動作速度"
+  },
+  "t19734a1b58ca": {
+    "en": "Window",
+    "ja": "表示モード"
+  },
+  "t1af851907331": {
+    "en": "Size",
+    "ja": "サイズ"
+  },
+  "t4c2e1df4570b": {
+    "en": "Monitor",
+    "ja": "モニター"
+  },
+  "t38089552b11d": {
+    "en": "The display the game opens on",
+    "ja": "ゲームを表示するモニター"
+  },
+  "tff75ad22e04d": {
+    "en": "FPS cap",
+    "ja": "FPS 上限"
+  },
+  "t5325432e4259": {
+    "en": "✦ Coming from Windower",
+    "ja": "✦ Windower からの移行"
+  },
+  "t72f03b8c1d82": {
+    "en": "Vanadreams plays through Ashita. These three bring over what you had on Windower, so it feels like home.",
+    "ja": "Vanadreams は Ashita で動作します。次の 3 つで Windower の設定を移行できます。"
+  },
+  "ted475910d2fa": {
+    "en": "1. Your addons, Ashita's way",
+    "ja": "1. Ashita 用のアドオン"
+  },
+  "tef42de9bae45": {
+    "en": "Install and tick",
+    "ja": "インストールして有効にする"
+  },
+  "t961346d14450": {
+    "en": "2. Your binds and aliases",
+    "ja": "2. キー設定とエイリアス"
+  },
+  "tb326efcc3586": {
+    "en": "Reads Windower's scripts\\init.txt and writes its binds and aliases into your Vanadreams startup script.",
+    "ja": "Windower の scripts\\init.txt を読み取り、キー設定とエイリアスを Vanadreams の起動スクリプトに書き込みます。"
+  },
+  "t64b124e8a2cb": {
+    "en": "Import init.txt…",
+    "ja": "init.txt をインポート…"
+  },
+  "t736f20621b47": {
+    "en": "3. Your GearSwap sets",
+    "ja": "3. GearSwap セット"
+  },
+  "ta642ba8ca38f": {
+    "en": "Pick your GearSwap job files. Each job becomes a profile with all your sets in it. vanagear supplies the rules, and the gear for anything your sets leave out.",
+    "ja": "GearSwap のジョブファイルを選択します。各ジョブのセットを含むプロファイルを作成し、vanagear が動作ルールと未指定の装備を補います。"
+  },
+  "tfaf3e90bda92": {
+    "en": "Character name",
+    "ja": "キャラクター名"
+  },
+  "t3826b679f569": {
+    "en": "Used for files named only by job, like WHM.lua",
+    "ja": "WHM.lua のようなジョブ名だけのファイルに使用します"
+  },
+  "t3cf7511675f3": {
+    "en": "Import GearSwap…",
+    "ja": "GearSwap をインポート…"
+  },
+  "t45e1facbf0f2": {
+    "en": "✦ What happened",
+    "ja": "✦ 結果"
+  },
+  "t627e0530a186": {
+    "en": "Nothing yet. Each step can be run again whenever you like.",
+    "ja": "まだ実行していません。各手順はいつでもやり直せます。"
+  },
+  "te241ab00707c": {
+    "en": "Open the folder",
+    "ja": "フォルダーを開く"
+  },
+  "t48bb859616ce": {
+    "en": "Vanadreams Launcher update",
+    "ja": "Vanadreams ランチャーの更新"
+  },
+  "t970fc672f1ca": {
+    "en": "✦ Launcher update",
+    "ja": "✦ ランチャーの更新"
+  },
+  "tc599cfb790e4": {
+    "en": "Moogling in progress…",
+    "ja": "更新作業中だクポ…"
+  },
+  "t73b6e48a1b55": {
+    "en": "Later",
+    "ja": "後で"
+  },
+  "t853c6a3cc7ff": {
+    "en": "Update and restart",
+    "ja": "更新して再起動"
+  },
+  "t2a7fa0aa199d": {
+    "en": "Install the Vanadreams Launcher?\n\nIt copies itself to your apps folder and adds Start menu and desktop shortcuts. Nothing else changes. Choose No to run it from here just this once.",
+    "ja": "Vanadreams ランチャーをインストールしますか？\n\nアプリ用フォルダーにコピーし、スタートメニューとデスクトップにショートカットを作成します。ほかの設定は変更しません。「いいえ」を選ぶと、この場所から今回だけ実行します。"
+  },
+  "t0b16e0e78bc1": {
+    "en": "Couldn't install: ",
+    "ja": "インストールできませんでした: "
+  },
+  "t06dff698d23a": {
+    "en": "\n\nRunning from here instead.",
+    "ja": "\n\n代わりに、この場所から実行します。"
+  },
+  "t39e94109823d": {
+    "en": "1 · Get the client",
+    "ja": "1 · クライアントを入手"
+  },
+  "te9be47553c1f": {
+    "en": "Final Fantasy XI's client is a free download from Square Enix. You need it installed before anything else works; the launcher cannot install it for you.\n\nThe download is a few gigabytes and the installer is PlayOnline's, from 2002. Let it run. Nothing you type into PlayOnline matters for Vanadreams: no account, no login, ever.",
+    "ja": "Final Fantasy XI のクライアントはスクウェア・エニックスから無料でダウンロードできます。先にインストールしてください。このガイドでは公式インストーラーを使用します。\n\nダウンロードは数 GB あり、PlayOnline のインストーラーを使います。完了するまで待ってください。Vanadreams への接続に PlayOnline のアカウントやログインは不要です。"
+  },
+  "t76516269dd28": {
+    "en": "Square Enix download page",
+    "ja": "スクウェア・エニックスのダウンロードページ"
+  },
+  "t9119cdf86d11": {
+    "en": "Square Enix's download page. Pick the Windows installer.",
+    "ja": "スクウェア・エニックスのダウンロードページです。Windows 用インストーラーを選択してください。"
+  },
+  "t8315ce8522ff": {
+    "en": "2 · Install to a folder you own",
+    "ja": "2 · 書き込み可能なフォルダーにインストール"
+  },
+  "tc9c54f77c0e6": {
+    "en": "Run FFXISetup.exe from the extracted folder, tick all three items and press Install. Each part then runs its own wizard; when one asks where to put itself, choose a folder outside Program Files, such as C:\\Games\\PlayOnline.\n\nIt works in Program Files too, but every update and file check then asks for administrator permission, and the launcher's version check has to read files it may not be allowed to. A folder you own has neither problem.",
+    "ja": "展開したフォルダーから FFXISetup.exe を実行し、3 項目すべてにチェックを入れて Install を押します。各項目のウィザードが開いたら、Program Files 以外の場所（例: C:\\Games\\PlayOnline）を指定してください。\n\nProgram Files 内でも動作しますが、更新やファイル確認で管理者の許可を求められます。書き込み可能な場所なら、その問題を避けられます。"
+  },
+  "t5f0831e348a8": {
+    "en": "The installer: tick all three, press Install, and pick C:\\Games\\PlayOnline when a wizard asks where.",
+    "ja": "3 項目にチェックを入れて Install を押し、保存先を尋ねられたら C:\\Games\\PlayOnline などを選択します。"
+  },
+  "t1f2820c76118": {
+    "en": "No FFXI install is registered yet. Finish the installer, then check again.",
+    "ja": "FFXI がまだ登録されていません。インストールを完了してから、もう一度確認してください。"
+  },
+  "tb522d35e6e78": {
+    "en": "Installed at ",
+    "ja": "インストール先: "
+  },
+  "t6ca1474b95a6": {
+    "en": ". It works, but updates will prompt for administrator permission.",
+    "ja": "。動作しますが、更新時に管理者の許可を求めます。"
+  },
+  "tcc3a67e620f2": {
+    "en": "3 · Update it once",
+    "ja": "3 · 一度更新する"
+  },
+  "t5245c383dcde": {
+    "en": "Open PlayOnline Viewer from the Start menu. It updates itself first, then shows the FINAL FANTASY XI entry. Choose it and let it download the game update; this is the long part, often an hour.\n\nDo not log in. Close the viewer when the update finishes. Then press Check: the launcher reads the version your client will report and compares it with what Vanadreams expects.",
+    "ja": "スタートメニューから PlayOnline Viewer を開きます。Viewer 自体の更新後、FINAL FANTASY XI を選んでゲームを更新してください。時間がかかる場合があります。\n\nログインは不要です。更新が完了したら Viewer を閉じ、「確認」を押してください。クライアントのバージョンをサーバーの対応バージョンと比較します。"
+  },
+  "t675aff77ac16": {
+    "en": "PlayOnline Viewer's menu. Check Files is where the FINAL FANTASY XI update runs.",
+    "ja": "PlayOnline Viewer のメニューです。ファイルチェックから FINAL FANTASY XI を更新します。"
+  },
+  "t9a9f5962417f": {
+    "en": " Your client reports ",
+    "ja": " クライアントのバージョン: "
+  },
+  "t54cccff9b784": {
+    "en": "4 · Let it through the firewall",
+    "ja": "4 · ファイアウォールを許可"
+  },
+  "tcb5b5e5879de": {
+    "en": "The first time the loader and the game start, Windows asks whether to allow them through the firewall. Tick Private networks and press Allow access.\n\nIf that prompt was dismissed, the game may sit at 'Searching for lobby server'. Press Check: the launcher looks for the allow rules and can add them for you, which asks for administrator permission once.",
+    "ja": "ローダーとゲームの初回起動時、Windows がファイアウォールの許可を求めます。プライベートネットワークにチェックを入れ、「アクセスを許可する」を押してください。\n\n許可しなかった場合、ロビーサーバーの検索で止まることがあります。「確認」を押すと許可ルールを確認し、必要なら追加します。追加時に管理者の許可を求めます。"
+  },
+  "tfeec6cca395e": {
+    "en": "A blue-shield window titled Windows Security Alert, naming xiloader or pol. Tick Private networks, then press Allow access.",
+    "ja": "xiloader または pol と表示された Windows セキュリティの警告です。プライベートネットワークにチェックを入れ、アクセスを許可してください。"
+  },
+  "t348dd19a4e4a": {
+    "en": "Run Setup first so the loader exists to check.",
+    "ja": "先にセットアップを実行してローダーを用意してください。"
+  },
+  "t118d2b19ead4": {
+    "en": "Allow rules found for ",
+    "ja": "許可ルールあり: "
+  },
+  "te3ee915a8e8c": {
+    "en": " and ",
+    "ja": " と "
+  },
+  "t8743da1773c1": {
+    "en": "No allow rule for ",
+    "ja": "許可ルールなし: "
+  },
+  "t19399a7e8759": {
+    "en": ". Press Check again to add them; Windows will ask for permission once.|ADD",
+    "ja": "。もう一度「確認」を押すと追加します。Windows の許可を一度求めます。|ADD"
+  },
+  "t783145c6989c": {
+    "en": "5 · Make your account",
+    "ja": "5 · アカウントを作成"
+  },
+  "t6a196a9f3e1f": {
+    "en": "Press Play in the launcher. The loader's black window appears with a menu: choose Create New Account, pick a username and a password. This is your Vanadreams account, nothing to do with PlayOnline or Square Enix.\n\nAfter that, the launcher can remember the login for you on the Profiles page, and Play goes straight to character select.",
+    "ja": "ランチャーで「プレイ」を押すと黒いローダー画面が開きます。Create New Account を選び、ユーザー名とパスワードを設定してください。これは Vanadreams 用のアカウントで、PlayOnline やスクウェア・エニックスのアカウントとは別です。\n\n次回からはプロファイルにログイン情報を保存し、プレイからキャラクター選択へ進めます。"
+  },
+  "t2b4e0d09a7f2": {
+    "en": "A black console window with a five-line menu appears. Create New Account is option 2; the arrow keys and Enter drive it.",
+    "ja": "黒いローダー画面で Create New Account（項目 2）を選択します。矢印キーと Enter で操作してください。"
+  },
+  "t7c841eb4f828": {
+    "en": "6 · Play",
+    "ja": "6 · プレイ"
+  },
+  "tde80b3feba8c": {
+    "en": "That's the whole setup. Pick who you are on the menu and press Play. The bottom strip always shows whether the server is up and whether your client still matches it.\n\nIf anything above turned amber or red, the Discord is where someone can look at it with you.",
+    "ja": "セットアップは完了です。プロファイルを選んで「プレイ」を押してください。下部にはサーバーの状態とクライアントのバージョンが表示されます。\n\n黄色や赤の表示が出た場合は、Discord で相談してください。"
+  },
+  "tc0aed23046ed": {
+    "en": "From here it is the game. Press Play and you are on Vanadreams.",
+    "ja": "ここからはゲームです。「プレイ」で Vanadreams に接続できます。"
+  },
+  "tcd20305b2174": {
+    "en": "✦ Step ",
+    "ja": "✦ 手順 "
+  },
+  "ta4282e4b2298": {
+    "en": " of ",
+    "ja": " / "
+  },
+  "t084cc514e517": {
+    "en": "Permission was refused, so nothing was added.",
+    "ja": "許可されなかったため、何も追加していません。"
+  },
+  "t62e5777e08b9": {
+    "en": "Taken on trust.",
+    "ja": "完了として記録しました。"
+  },
+  "t4ed06f348689": {
+    "en": "·  Launcher ",
+    "ja": "·  ランチャー "
+  },
+  "tdce46a53b777": {
+    "en": " downloading…",
+    "ja": " をダウンロード中…"
+  },
+  "t9f2b583fa8b3": {
+    "en": " is on vanadreams.org",
+    "ja": " は vanadreams.org で入手できます"
+  },
+  "tbb7661367fad": {
+    "en": "Restart into ",
+    "ja": "再起動して更新: "
+  },
+  "t7c9e98756742": {
+    "en": "Vanadreams Launcher · window switcher",
+    "ja": "Vanadreams ランチャー · ウィンドウ切り替え"
+  },
+  "t28d396e6323d": {
+    "en": "Open the launcher",
+    "ja": "ランチャーを開く"
+  },
+  "t4f109c28abfb": {
+    "en": "Quit (the window switcher stops)",
+    "ja": "終了（ウィンドウ切り替えも停止）"
+  },
+  "tf6559e644ea0": {
+    "en": "Window switcher still on",
+    "ja": "ウィンドウ切り替えは動作中です"
+  },
+  "t85c337965228": {
+    "en": "The launcher is in the tray so your switch keys keep working. Right-click the moon to quit.",
+    "ja": "切り替えキーを使えるように、ランチャーは通知領域で動作しています。月のアイコンを右クリックすると終了できます。"
+  },
+  "tdd3cd75acf98": {
+    "en": "♪ music off",
+    "ja": "♪ 音楽オフ"
+  },
+  "tf8f5c90c76b9": {
+    "en": "♪ mute",
+    "ja": "♪ ミュート"
+  },
+  "t965314e16162": {
+    "en": "♪ play",
+    "ja": "♪ 再生"
+  },
+  "t35105b29f706": {
+    "en": " online",
+    "ja": " 人オンライン"
+  },
+  "t8c7684ffe67a": {
+    "en": " (last seen)",
+    "ja": "（前回の状態）"
+  },
+  "t152b5713653a": {
+    "en": "Couldn't reach vanadreams.org.",
+    "ja": "vanadreams.org に接続できませんでした。"
+  },
+  "t907ba78b4545": {
+    "en": "not found",
+    "ja": "見つかりません"
+  },
+  "ta6ae7ac367b0": {
+    "en": "Moogling in progress… ",
+    "ja": "更新作業中だクポ… "
+  },
+  "tf1af7a60c4d7": {
+    "en": " MB",
+    "ja": " MB"
+  },
+  "t3bfcacd16b57": {
+    "en": "A new launcher is here, kupo!",
+    "ja": "新しいランチャーが届いたクポ！"
+  },
+  "t92b2c95e99f0": {
+    "en": "Version ",
+    "ja": "バージョン "
+  },
+  "tcf44449b6b6d": {
+    "en": " is on its way (you have ",
+    "ja": " を取得中（現在: "
+  },
+  "tbfd5137d038b": {
+    "en": "A moogle is fetching it now. Restart when it's ready to stay in step with the server.",
+    "ja": "モーグリが取得中です。準備ができたら再起動して、サーバーに対応する状態に更新してください。"
+  },
+  "t3124e16c78ea": {
+    "en": "Launcher ",
+    "ja": "ランチャー "
+  },
+  "t7a27cf5ceddc": {
+    "en": " couldn't be downloaded. It is on vanadreams.org.",
+    "ja": " をダウンロードできませんでした。vanadreams.org から入手できます。"
+  },
+  "tf267c34ddb70": {
+    "en": "Delivered, kupo! Ready when you are.",
+    "ja": "届いたクポ！いつでも再起動できるよ。"
+  },
+  "t2672b0370f89": {
+    "en": "Launcher & setup",
+    "ja": "ランチャーと設定"
+  },
+  "ta3fa8a93d828": {
+    "en": "Gear & inventory",
+    "ja": "装備と所持品"
+  },
+  "t68325116e07f": {
+    "en": "Combat & targeting",
+    "ja": "戦闘とターゲット"
+  },
+  "t1977bc80f1a4": {
+    "en": "Maps & travel",
+    "ja": "マップと移動"
+  },
+  "t11779717a3d1": {
+    "en": "Interface & camera",
+    "ja": "インターフェースとカメラ"
+  },
+  "t8725949b93f2": {
+    "en": "Chat & communication",
+    "ja": "チャットと連絡"
+  },
+  "t13697681d536": {
+    "en": "Screenshots & streaming",
+    "ja": "スクリーンショットと配信"
+  },
+  "t99e9ad169ecf": {
+    "en": "Tools & automation",
+    "ja": "ツールと自動化"
+  },
+  "t882e28875887": {
+    "en": " · catalogue from cache",
+    "ja": " · キャッシュのカタログ"
+  },
+  "t326de2526c74": {
+    "en": "No catalogue yet",
+    "ja": "カタログがありません"
+  },
+  "t2b38190fc6ac": {
+    "en": "The catalogue could not be loaded. Check Settings for the catalogue address.",
+    "ja": "カタログを読み込めませんでした。設定でカタログのアドレスを確認してください。"
+  },
+  "tb468a0496300": {
+    "en": "Built into the launcher",
+    "ja": "ランチャーに内蔵"
+  },
+  "t28b5d264cc82": {
+    "en": "✓ On",
+    "ja": "✓ 有効"
+  },
+  "tb2efe9d37a49": {
+    "en": "Off · tick it and Save to turn it on",
+    "ja": "無効 · チェックを入れて保存すると有効になります"
+  },
+  "tc06d84668b12": {
+    "en": "POL plugin",
+    "ja": "POL プラグイン"
+  },
+  "t064afb8a602d": {
+    "en": "Game-file pack",
+    "ja": "ゲームファイルパック"
+  },
+  "t52e86deffb89": {
+    "en": " by ",
+    "ja": " · 作者: "
+  },
+  "tb50ad65cef7e": {
+    "en": " · built for interface ",
+    "ja": " · 対応インターフェース: "
+  },
+  "t1279aecb87f5": {
+    "en": "No v4 version exists.",
+    "ja": "v4 用はありません。"
+  },
+  "t23da30775f31": {
+    "en": " Use ",
+    "ja": " 代わりに "
+  },
+  "td360b0168e04": {
+    "en": " instead.",
+    "ja": " を使ってください。"
+  },
+  "tdb640ae551f1": {
+    "en": "✓ Ships with Ashita v4",
+    "ja": "✓ Ashita v4 に同梱"
+  },
+  "te8909355500e": {
+    "en": "Ships with Ashita v4, but the file is missing. Run Repair.",
+    "ja": "Ashita v4 に同梱されていますが、ファイルがありません。修復を実行してください。"
+  },
+  "t8fe7794d43e7": {
+    "en": "(unknown)",
+    "ja": "（不明）"
+  },
+  "td177cdc09a4e": {
+    "en": "Not installed",
+    "ja": "未インストール"
+  },
+  "t0585bc78a24f": {
+    "en": "\nLoads as ",
+    "ja": "\n読み込み名: "
+  },
+  "t237ae6367f35": {
+    "en": "POL plugin ",
+    "ja": "POL プラグイン "
+  },
+  "t0b4385797dce": {
+    "en": " (boot ini)",
+    "ja": "（起動 ini）"
+  },
+  "t68656d5f25e6": {
+    "en": "\nUnticked and greyed out while ",
+    "ja": "\n次の項目が有効なため無効になっています: "
+  },
+  "tef25ba8c8b24": {
+    "en": " is ticked: ",
+    "ja": " が有効: "
+  },
+  "tc225640d32b2": {
+    "en": " does its job, and the two cannot load together.",
+    "ja": " が同じ機能を持つため、同時に読み込めません。"
+  },
+  "t862166ab4add": {
+    "en": "\nNever written to the startup script: ",
+    "ja": "\n起動スクリプトには書き込みません: "
+  },
+  "ta0aa9ffb1997": {
+    "en": " Tick ",
+    "ja": " 有効にする項目: "
+  },
+  "te0a112b4717c": {
+    "en": "From v3: ",
+    "ja": "v3 から: "
+  },
+  "t3f3d483db6c8": {
+    "en": " carried over",
+    "ja": " を移行済み"
+  },
+  "t2f1c65e17451": {
+    "en": "Update to ",
+    "ja": "更新先: "
+  },
+  "t221242b130d0": {
+    "en": "Set the Ashita folder on Settings first.",
+    "ja": "先に設定で Ashita フォルダーを指定してください。"
+  },
+  "tf12f53bb3ba7": {
+    "en": "Looking up ",
+    "ja": "確認中: "
+  },
+  "t3a459c10ff44": {
+    "en": "Installed. It needs XIPivot to show in game: install that too, then Save.",
+    "ja": "インストールしました。表示には XIPivot も必要です。XIPivot をインストールしてから保存してください。"
+  },
+  "t73573d643a3d": {
+    "en": "Installed: ",
+    "ja": "インストール済み: "
+  },
+  "t6ccdac16fcdb": {
+    "en": "Window switcher",
+    "ja": "ウィンドウ切り替え"
+  },
+  "t9995015a2c21": {
+    "en": "For playing more than one character: a key or a controller press brings the next, the previous or a numbered game window to the front, and saved layouts put the windows back where they go.",
+    "ja": "複数キャラクター向けの機能です。キーやパッド操作で次、前、指定番号のゲームウィンドウを最前面にし、保存したレイアウトで配置を復元できます。"
+  },
+  "t5d69431ee893": {
+    "en": "Saved: scripts\\vanadreams.txt written for ",
+    "ja": "保存しました。scripts\\vanadreams.txt に書き込んだ項目数: "
+  },
+  "t9f3f14f504c5": {
+    "en": " item(s).",
+    "ja": " 件。"
+  },
+  "tb0e590fa55ee": {
+    "en": " left out while ",
+    "ja": " を除外。有効な項目: "
+  },
+  "t973fefaa1223": {
+    "en": " is ticked.",
+    "ja": "。"
+  },
+  "t7b85a98b16aa": {
+    "en": " is never loaded here",
+    "ja": " はここでは読み込みません"
+  },
+  "tb03f5da4c2ac": {
+    "en": "; tick ",
+    "ja": "；有効にする項目: "
+  },
+  "tc6d24b1d5d2a": {
+    "en": "Launcher game folder setting: ",
+    "ja": "ランチャーのゲームフォルダー設定: "
+  },
+  "t461b17126cd9": {
+    "en": "Ashita folder: ",
+    "ja": "Ashita フォルダー: "
+  },
+  "t1aef93991721": {
+    "en": "not set",
+    "ja": "未設定"
+  },
+  "ta4be89518cbb": {
+    "en": "Loader: ",
+    "ja": "ローダー: "
+  },
+  "t141d9b2794f2": {
+    "en": " (the server takes ",
+    "ja": "（サーバーの対応: "
+  },
+  "t076c34fccf84": {
+    "en": "none reported by Windows Security Center",
+    "ja": "Windows セキュリティ センターからの報告なし"
+  },
+  "t6aec153809ba": {
+    "en": "Files antivirus takes, missing now: ",
+    "ja": "ウイルス対策に削除された可能性のある不足ファイル: "
+  },
+  "t1fb0ab481693": {
+    "en": "no allow rule (outgoing logins still work; only matters if the firewall blocks outgoing)",
+    "ja": "許可ルールなし（送信ログインは可能。ファイアウォールが送信を制限する場合のみ影響します）"
+  },
+  "t585d00f58f42": {
+    "en": " did not resolve",
+    "ja": " の名前解決に失敗"
+  },
+  "ta470b3b91a3c": {
+    "en": "open ",
+    "ja": "開放 "
+  },
+  "tcc542b5ef9f3": {
+    "en": "; closed ",
+    "ja": "；遮断 "
+  },
+  "tc497c29ecb8c": {
+    "en": "checks stopped early: ",
+    "ja": "確認を途中で停止: "
+  },
+  "t2fd5d1874e8f": {
+    "en": "Gathering logs…",
+    "ja": "ログを収集中…"
+  },
+  "te78847ac822d": {
+    "en": "Checking the game, firewall and antivirus…",
+    "ja": "ゲーム、ファイアウォール、ウイルス対策を確認中…"
+  },
+  "t3fb96660cf57": {
+    "en": "Saved ",
+    "ja": "保存しました: "
+  },
+  "t1f8220899325": {
+    "en": " on your Desktop. Drop it in #bugs-we-all-found with a line on what happened.",
+    "ja": "（デスクトップ）。状況の説明を添えて #bugs-we-all-found に添付してください。"
+  },
+  "tc8675b7504ff": {
+    "en": "✦ Snapshots · none yet",
+    "ja": "✦ スナップショット · まだありません"
+  },
+  "t1a8332f06daa": {
+    "en": "✦ Snapshots · ",
+    "ja": "✦ スナップショット · "
+  },
+  "tbeba87199c47": {
+    "en": "Nothing to send",
+    "ja": "送信するものがありません"
+  },
+  "t4b20b6778428": {
+    "en": "Take a snapshot in game first.",
+    "ja": "先にゲーム内でスナップショットを作成してください。"
+  },
+  "t7583701c5e92": {
+    "en": "No Vanadreams login remembered: set one on the Profiles page, it's what the snapshot is filed under.",
+    "ja": "Vanadreams のログイン情報が未保存です。プロファイル画面で設定してください。そのアカウントにスナップショットを保存します。"
+  },
+  "t05a0a4080548": {
+    "en": "Files under Vanadreams login ",
+    "ja": "保存先の Vanadreams アカウント: "
+  },
+  "tb8ed5279e897": {
+    "en": "Sending…",
+    "ja": "送信中…"
+  },
+  "t0b832840c9ff": {
+    "en": "Asking…",
+    "ja": "依頼中…"
+  },
+  "tec963ffc911b": {
+    "en": "Checking…",
+    "ja": "確認中…"
+  },
+  "t3d72e79f1b70": {
+    "en": "Not in the catalogue yet.",
+    "ja": "カタログにまだありません。"
+  },
+  "taa8c55be8c1e": {
+    "en": "✓ Installed",
+    "ja": "✓ インストール済み"
+  },
+  "teda43eb161db": {
+    "en": "Not installed: tick it on the Addons page and press Install.",
+    "ja": "未インストールです。アドオン画面でチェックを入れ、インストールを押してください。"
+  },
+  "t92654821ccc0": {
+    "en": "✦ Catch log · nothing yet",
+    "ja": "✦ 釣果ログ · まだありません"
+  },
+  "t49b39fea72ca": {
+    "en": "✦ Catch log · ",
+    "ja": "✦ 釣果ログ · "
+  },
+  "t3b3d53ef6657": {
+    "en": " entries",
+    "ja": " 件"
+  },
+  "t7cdbd7fd7b78": {
+    "en": "Lighting and sharpening off, 30 fps. Runs on anything.",
+    "ja": "光源効果とシャープ化をオフ、30 fps。軽い動作向けです。"
+  },
+  "t7c8acbeccad2": {
+    "en": "The modern look pack, 60 fps.",
+    "ja": "外観パック、60 fps。"
+  },
+  "t01442ab20904": {
+    "en": "The look pack with lighting and sharpening, 60 fps.",
+    "ja": "外観パックに光源効果とシャープ化を追加、60 fps。"
+  },
+  "t4083f01d9643": {
+    "en": " GB",
+    "ja": " GB"
+  },
+  "t0846aaa8a120": {
+    "en": "the server hasn't published its version yet",
+    "ja": "サーバーのバージョンがまだ公開されていません"
+  },
+  "t037bacef5962": {
+    "en": " · the version the server runs",
+    "ja": " · サーバー対応バージョン"
+  },
+  "t455bd20988ca": {
+    "en": "none on this PC",
+    "ja": "この PC にはありません"
+  },
+  "tff5a99fee866": {
+    "en": "version unknown",
+    "ja": "バージョン不明"
+  },
+  "tb0e10184877f": {
+    "en": "Not installed yet.",
+    "ja": "まだインストールされていません。"
+  },
+  "t2e82930ffa2c": {
+    "en": "✓ Installed · matches the server",
+    "ja": "✓ インストール済み · サーバーに対応"
+  },
+  "t5a6392470ad6": {
+    "en": "Installed, but older than the server needs. Install game fetches the right one.",
+    "ja": "インストール済みですが、サーバー対応版より古い状態です。ゲームのインストールで対応版を取得できます。"
+  },
+  "t8a716e632ca1": {
+    "en": "Update ready · ",
+    "ja": "更新あり · "
+  },
+  "t387534021ad2": {
+    "en": ". Only these are downloaded.",
+    "ja": "。この部分だけをダウンロードします。"
+  },
+  "t60a47eacb8ad": {
+    "en": "Update game",
+    "ja": "ゲームを更新"
+  },
+  "t58c5fe293bcd": {
+    "en": "Install a fresh copy",
+    "ja": "新しくインストール"
+  },
+  "t5a3ac2715e63": {
+    "en": "known once the server's version is published",
+    "ja": "サーバーのバージョン公開後に確認できます"
+  },
+  "ta0ec28fd51bd": {
+    "en": "checking…",
+    "ja": "確認中…"
+  },
+  "td039b9df2f44": {
+    "en": " still to fetch, of ",
+    "ja": " 未取得、合計 "
+  },
+  "te56d2ee92ad3": {
+    "en": " on disk",
+    "ja": " 保存済み"
+  },
+  "t78fe695c8cd7": {
+    "en": "the download isn't available right now",
+    "ja": "現在ダウンロードできません"
+  },
+  "td31f2bb9abbc": {
+    "en": "The game download isn't available right now. Try again in a while.",
+    "ja": "現在ゲームをダウンロードできません。しばらくしてから再試行してください。"
+  },
+  "tdb047870498b": {
+    "en": " · about ",
+    "ja": " · 残り約 "
+  },
+  "tdee6a88c53f3": {
+    "en": " min left",
+    "ja": " 分"
+  },
+  "tdbad7dd34ad4": {
+    "en": "Updated. Press Play.",
+    "ja": "更新しました。プレイを押してください。"
+  },
+  "t5cc7b19321f4": {
+    "en": "Files in place. Windows will ask for permission to register the game…",
+    "ja": "ファイルの準備ができました。ゲームの登録のため Windows の許可を求めます…"
+  },
+  "t2214de37b060": {
+    "en": "Installed. Run Setup if you haven't, then press Play.",
+    "ja": "インストールしました。未実施ならセットアップを行い、プレイを押してください。"
+  },
+  "t6775036ca467": {
+    "en": "The permission prompt was refused, so the game isn't registered yet. Press Install game again to finish; nothing downloads twice.",
+    "ja": "許可されなかったため、ゲームはまだ登録されていません。もう一度ゲームのインストールを押すと完了できます。ダウンロードし直す必要はありません。"
+  },
+  "tc8df29172754": {
+    "en": "Stopped. Press Install game to carry on where it left off.",
+    "ja": "停止しました。ゲームのインストールを押すと途中から再開します。"
+  },
+  "tf2ddc65d08eb": {
+    "en": "Pick the folder the game goes in (Final Fantasy XI and PlayOnlineViewer are made inside it)",
+    "ja": "ゲームの保存先を選択してください（中に Final Fantasy XI と PlayOnlineViewer を作成します）"
+  },
+  "tc9900bc09864": {
+    "en": "Stop the install first.",
+    "ja": "先にインストールを停止してください。"
+  },
+  "t274dd63c5ea1": {
+    "en": "No profile yet · run Setup",
+    "ja": "プロファイルがありません · セットアップを実行してください"
+  },
+  "t51aa1b8bfaff": {
+    "en": "Profile: ",
+    "ja": "プロファイル: "
+  },
+  "t4ae4c2e58089": {
+    "en": "⟳  Patch",
+    "ja": "⟳  更新"
+  },
+  "t50b054326e3f": {
+    "en": "A game update is ready: ",
+    "ja": "ゲームの更新が用意されています: "
+  },
+  "t3529cdcf21ce": {
+    "en": ". Press Patch to install it.",
+    "ja": "。「更新」を押してインストールしてください。"
+  },
+  "t6638162c5c7e": {
+    "en": "The look and title packs are moving into packs you can switch on and off (about 400 MB). Press Patch.",
+    "ja": "外観パックとタイトルパックを、オン／オフを切り替えられるパックに移行します（約 400 MB）。「更新」を押してください。"
+  },
+  "t46a2f3e13bf1": {
+    "en": "The server runs ",
+    "ja": "サーバー: "
+  },
+  "tc33b62399e78": {
+    "en": " and this game is ",
+    "ja": "、このゲーム: "
+  },
+  "t9a26c0672cad": {
+    "en": ". Press Patch to bring it up to date.",
+    "ja": "。「更新」を押して対応版にしてください。"
+  },
+  "tc26ad01beed0": {
+    "en": "Patching…",
+    "ja": "更新中…"
+  },
+  "tfadc27f5be9f": {
+    "en": "Patch in progress, please wait.",
+    "ja": "更新中です。しばらくお待ちください。"
+  },
+  "tc839912594d7": {
+    "en": "Part of the patch is still to come. Press Patch again.",
+    "ja": "更新の一部が未完了です。もう一度「更新」を押してください。"
+  },
+  "t92c988cae3a2": {
+    "en": "Patch finished. You're up to date.",
+    "ja": "更新が完了しました。最新の状態です。"
+  },
+  "t45005e628552": {
+    "en": "Windows needs permission to point at the game in ",
+    "ja": "ゲームの起動には Windows の参照先を登録する許可が必要です。場所: "
+  },
+  "te4991bd02c7c": {
+    "en": " before it can start.\n\n",
+    "ja": "\n\n"
+  },
+  "tc3e17b624cd7": {
+    "en": "Press Play again and choose Yes.",
+    "ja": "もう一度プレイを押して「はい」を選択してください。"
+  },
+  "t455c70fd4dec": {
+    "en": "No login typed: the loader's window will ask for your username and password.",
+    "ja": "ログイン情報が未入力です。ローダー画面でユーザー名とパスワードを入力してください。"
+  },
+  "te88524026a5f": {
+    "en": "This profile plays retail through PlayOnline Viewer, and PlayOnline Viewer is not on this PC",
+    "ja": "このプロファイルは PlayOnline Viewer で公式サーバーに接続しますが、Viewer が見つかりません"
+  },
+  "td41329adfa37": {
+    "en": "\n\nInstall the retail client, then browse to its pol.exe on the Profiles page.",
+    "ja": "\n\n公式クライアントをインストールし、プロファイル画面でその pol.exe を選択してください。"
+  },
+  "t97a5809c9abe": {
+    "en": "\n\nInstall game, on the menu, fetches the version the server runs.",
+    "ja": "\n\nメニューのゲームのインストールから、サーバー対応版を取得できます。"
+  },
+  "t04d07deafc24": {
+    "en": "before play",
+    "ja": "プレイ前"
+  },
+  "te8613d6b0f0c": {
+    "en": "\n\nAdd the Ashita and game folders to Windows Security's exclusions now? Windows will ask for permission.",
+    "ja": "\n\nAshita とゲームのフォルダーを Windows セキュリティの除外に追加しますか？Windows の許可を求めます。"
+  },
+  "tbb43fb790899": {
+    "en": "Done. Now open Setup and press Check and update to put the missing files back, then press Play.",
+    "ja": "完了しました。セットアップを開いて「確認して更新」で不足ファイルを復元し、プレイを押してください。"
+  },
+  "tac2dc9486c01": {
+    "en": "The exclusions were not added. Add the folders by hand in Windows Security, Virus & threat protection, Exclusions.",
+    "ja": "除外を追加できませんでした。Windows セキュリティの「ウイルスと脅威の防止」から「除外」を開き、手動で追加してください。"
+  },
+  "tc308cfe5194c": {
+    "en": "\n\nPlay anyway?",
+    "ja": "\n\nそれでもプレイしますか？"
+  },
+  "t8d85e2c871ec": {
+    "en": "Load this pack, or leave it out",
+    "ja": "このパックの読み込みを切り替える"
+  },
+  "tadb8460838ef": {
+    "en": "Unpacked into the game's own files, so it is always on",
+    "ja": "ゲーム本体のファイルに展開済みのため、常に有効です"
+  },
+  "tad9e085eec6a": {
+    "en": "Overlays need XIPivot: tick it on the Addons page and press Install.",
+    "ja": "オーバーレイには XIPivot が必要です。アドオン画面でチェックを入れ、インストールを押してください。"
+  },
+  "t92e9d03fb469": {
+    "en": "A shipped example. Duplicate it, then edit the copy.",
+    "ja": "同梱のサンプルです。複製してからコピーを編集してください。"
+  },
+  "tc6f7dfa6c438": {
+    "en": "Boot file not found. Run Setup or browse to xiloader.",
+    "ja": "起動ファイルが見つかりません。セットアップを実行するか、xiloader を指定してください。"
+  },
+  "tec27711a89eb": {
+    "en": " (smallest)",
+    "ja": "（最小）"
+  },
+  "t39d1a657dbef": {
+    "en": "   menu ",
+    "ja": "   メニュー "
+  },
+  "t5fcc0ac54fdb": {
+    "en": "Custom   menu ",
+    "ja": "カスタム   メニュー "
+  },
+  "ta87c649df064": {
+    "en": "The copy of Final Fantasy XI every Vanadreams profile plays. Windows is pointed at it when you press Play.",
+    "ja": "すべての Vanadreams プロファイルが使う Final Fantasy XI です。プレイ時に Windows の参照先をここに設定します。"
+  },
+  "tcc43bb4dc300": {
+    "en": "\nLeft blank, the launcher picks the copy that fits the server; right now that is ",
+    "ja": "\n空欄の場合はサーバー対応版を選びます。現在の選択: "
+  },
+  "te983b26e55bd": {
+    "en": "\nLeft blank, the launcher picks the copy that fits the server.",
+    "ja": "\n空欄の場合はサーバーに対応するゲームを選びます。"
+  },
+  "tbad94e578856": {
+    "en": "The copy of Final Fantasy XI that works with this server. Windows is pointed at it when you press Play.",
+    "ja": "このサーバーに対応する Final Fantasy XI です。プレイ時に Windows の参照先をここに設定します。"
+  },
+  "t9262ea9605b4": {
+    "en": "\nLeft blank, this profile plays ",
+    "ja": "\n空欄の場合の起動先: "
+  },
+  "t10b465346358": {
+    "en": ", the copy Windows had before Vanadreams.",
+    "ja": "（Vanadreams 以前の Windows の参照先）。"
+  },
+  "tfdef6c7ab6e0": {
+    "en": "\nLeft blank, the game Windows already points at is used.",
+    "ja": "\n空欄の場合は、Windows に現在登録されているゲームを使用します。"
+  },
+  "ta028ada26274": {
+    "en": "Pick this server's FINAL FANTASY XI folder, or the folder that holds it and PlayOnlineViewer",
+    "ja": "このサーバー用の FINAL FANTASY XI フォルダー、またはそれと PlayOnlineViewer を含むフォルダーを選択してください"
+  },
+  "t36032ad183d6": {
+    "en": "Over Tailscale: needs Tailscale running and the Vanadreams server shared with you. Press Save.",
+    "ja": "Tailscale 経由です。Tailscale を起動し、Vanadreams サーバーの共有を受けている必要があります。保存を押してください。"
+  },
+  "t88cbeb884030": {
+    "en": "Back to the public address. Press Save.",
+    "ja": "公開アドレスに戻しました。保存を押してください。"
+  },
+  "t75363c687f2f": {
+    "en": "Duplicate this example first.",
+    "ja": "先にこのサンプルを複製してください。"
+  },
+  "t9272b12e0cee": {
+    "en": "Saved, but there is no game in that folder: pick FINAL FANTASY XI, with PlayOnlineViewer beside it.",
+    "ja": "保存しましたが、指定先にゲームがありません。PlayOnlineViewer が隣にある FINAL FANTASY XI フォルダーを選択してください。"
+  },
+  "t3cf282a431e3": {
+    "en": "No profile to copy from; run Setup first.",
+    "ja": "複製元のプロファイルがありません。先にセットアップを実行してください。"
+  },
+  "tfcf4f3f4d5f7": {
+    "en": "New profile",
+    "ja": "新しいプロファイル"
+  },
+  "t5fda57b125d4": {
+    "en": "Ashita's retail example is missing; run Repair.",
+    "ja": "Ashita の公式サーバー用サンプルがありません。修復を実行してください。"
+  },
+  "t8c283de9d0a5": {
+    "en": "New retail profile",
+    "ja": "公式サーバー用プロファイルを作成"
+  },
+  "tc8c8e4a385c7": {
+    "en": "Copy profile",
+    "ja": "プロファイルを複製"
+  },
+  "t0cc873ae7955": {
+    "en": "Profile name:",
+    "ja": "プロファイル名:"
+  },
+  "t3a778151908d": {
+    "en": "That name has characters a file name can't take.",
+    "ja": "ファイル名に使えない文字が含まれています。"
+  },
+  "td4ecfb64fe8e": {
+    "en": " already exists.",
+    "ja": " は既に存在します。"
+  },
+  "t4b1bc9feda00": {
+    "en": "PlayOnline Viewer was not found. Install the retail client (Guide) and browse to its pol.exe here.",
+    "ja": "PlayOnline Viewer が見つかりません。公式クライアントをインストールし、この画面でその pol.exe を選択してください。"
+  },
+  "t6bdd6d422705": {
+    "en": "The shipped examples stay.",
+    "ja": "同梱のサンプルは削除できません。"
+  },
+  "te8fbd3f3cfdf": {
+    "en": "Send ",
+    "ja": "次を削除しますか: "
+  },
+  "t8db164465520": {
+    "en": " to the Recycle Bin?",
+    "ja": "（ごみ箱に移動）"
+  },
+  "t47311af432a7": {
+    "en": "Delete profile",
+    "ja": "プロファイルの削除"
+  },
+  "t6f26860e82a6": {
+    "en": "Executables (*.exe)|*.exe|All files (*.*)|*.*",
+    "ja": "実行ファイル (*.exe)|*.exe|すべてのファイル (*.*)|*.*"
+  },
+  "t6e36a7b2954f": {
+    "en": "not published by the server yet",
+    "ja": "サーバーからまだ公開されていません"
+  },
+  "tb2f8760ac3f9": {
+    "en": " · lock ",
+    "ja": " · ロック "
+  },
+  "t142317438f19": {
+    "en": " · from vanadreams.org",
+    "ja": " · 情報源: vanadreams.org"
+  },
+  "tad559034fc72": {
+    "en": "made for Vanadreams with SoundBreak",
+    "ja": "SoundBreak で制作した Vanadreams の音楽"
+  },
+  "tf65c7a541a45": {
+    "en": "Vanadreams Launcher ",
+    "ja": "Vanadreams ランチャー "
+  },
+  "ta4a19c763bbb": {
+    "en": " · github.com/VanaDreams/vanadreams-launcher · no telemetry",
+    "ja": " · github.com/VanaDreams/vanadreams-launcher · 使用状況の収集なし"
+  },
+  "t587895b1e5ec": {
+    "en": "no game found yet; Play starts what Windows has",
+    "ja": "ゲーム未検出。プレイ時は Windows の現在の参照先を使用します"
+  },
+  "ta194878513c0": {
+    "en": "Windows starts now: ",
+    "ja": "Windows の現在の参照先: "
+  },
+  "tb33329aa7dd0": {
+    "en": "nothing registered by PlayOnline",
+    "ja": "PlayOnline の登録なし"
+  },
+  "tc3252e656462": {
+    "en": "\nTo always play one copy, put its FINAL FANTASY XI folder in Vanadreams game folder above.",
+    "ja": "\n常に同じゲームを使うには、上の欄にその FINAL FANTASY XI フォルダーを指定してください。"
+  },
+  "ta9143fc62345": {
+    "en": "Saved, but there is no game in that Vanadreams game folder: pick FINAL FANTASY XI, with PlayOnlineViewer beside it.",
+    "ja": "保存しましたが、指定先にゲームがありません。PlayOnlineViewer が隣にある FINAL FANTASY XI フォルダーを選択してください。"
+  },
+  "t112582e1bf99": {
+    "en": "No other game is remembered. Install or play the other client once, or pick its FINAL FANTASY XI folder on the Profiles page.",
+    "ja": "別のゲームの場所が記録されていません。そのクライアントを一度インストールまたは起動するか、プロファイル画面で FINAL FANTASY XI フォルダーを指定してください。"
+  },
+  "t44822c853752": {
+    "en": "Windows now points at ",
+    "ja": "Windows の参照先: "
+  },
+  "t1ddf68652ad8": {
+    "en": ". Play moves it back to Vanadreams when you press it.",
+    "ja": "。プレイ時に Vanadreams に戻します。"
+  },
+  "te8bd19896895": {
+    "en": "Windows did not get permission; nothing changed.",
+    "ja": "Windows の許可を得られませんでした。変更していません。"
+  },
+  "t8d0738c84d08": {
+    "en": "Fetching…",
+    "ja": "取得中…"
+  },
+  "t63563043010c": {
+    "en": "Could not fetch; using the cached copy.",
+    "ja": "取得できませんでした。キャッシュを使います。"
+  },
+  "t16d11d7aa509": {
+    "en": "Catalogue updated: ",
+    "ja": "カタログを更新しました: "
+  },
+  "t5df16e542233": {
+    "en": " items.",
+    "ja": " 項目。"
+  },
+  "t5fbaa34a2f17": {
+    "en": "Installed to ",
+    "ja": "インストール先: "
+  },
+  "tf3f8bb481a8f": {
+    "en": " with shortcuts. Use the shortcut from now on.",
+    "ja": "。ショートカットを作成しました。次回からそちらを使ってください。"
+  },
+  "t927a5f222fc8": {
+    "en": "Shortcuts made.",
+    "ja": "ショートカットを作成しました。"
+  },
+  "tbbb1be6703e6": {
+    "en": "Repair or update Ashita",
+    "ja": "Ashita を修復または更新"
+  },
+  "t53b2ffcd289c": {
+    "en": "Check and update",
+    "ja": "確認して更新"
+  },
+  "tc31f712a40f9": {
+    "en": "Ashita v3 found at ",
+    "ja": "Ashita v3 を検出: "
+  },
+  "t07e78126e924": {
+    "en": "An Ashita v4 install is already in that folder. Update it, or use it as it is.",
+    "ja": "指定先に Ashita v4 が既にあります。更新するか、そのまま使用してください。"
+  },
+  "t10d12b0df1eb": {
+    "en": "No example profile in ",
+    "ja": "複製元のサンプルプロファイルがありません: "
+  },
+  "tb01d8a3d2508": {
+    "en": " to copy from.",
+    "ja": "。"
+  },
+  "t4325ad0b38c0": {
+    "en": "Profile written. No xiloader in bootloader\\ yet: press Check and update to fetch it, or browse to yours on the Profiles page.",
+    "ja": "プロファイルを作成しましたが、bootloader\\ に xiloader がありません。「確認して更新」で取得するか、プロファイル画面で指定してください。"
+  },
+  "tf843091714d7": {
+    "en": "Using ",
+    "ja": "使用先: "
+  },
+  "t0899dfb6a8b8": {
+    "en": ". Vanadreams profile written.",
+    "ja": "。Vanadreams プロファイルを作成しました。"
+  },
+  "t9341322e1258": {
+    "en": ". Vanadreams profile already there.",
+    "ja": "。Vanadreams プロファイルは既にあります。"
+  },
+  "t4a4bf7c9d9e1": {
+    "en": "Pick or make the folder Ashita v4 lives in",
+    "ja": "Ashita v4 のフォルダーを選択または作成してください"
+  },
+  "tfa96daf2108c": {
+    "en": "Choose a folder first.",
+    "ja": "先にフォルダーを選択してください。"
+  },
+  "te2446c6eb25c": {
+    "en": "Not under Program Files: pick a folder you own, like C:\\Games\\Vanadreams.",
+    "ja": "Program Files 以外の、書き込み可能なフォルダーを選択してください。例: C:\\Games\\Vanadreams。"
+  },
+  "t242a6e0538f0": {
+    "en": "Downloading Ashita v4 beta…",
+    "ja": "Ashita v4 ベータをダウンロード中…"
+  },
+  "t0c0a5d0291b7": {
+    "en": "Ashita v4 beta",
+    "ja": "Ashita v4 ベータ"
+  },
+  "t55d1b3b94e88": {
+    "en": "Unpacking Ashita…",
+    "ja": "Ashita を展開中…"
+  },
+  "tb7547c9ac81b": {
+    "en": "Ashita-cli.exe did not appear after unpacking; the archive layout changed.",
+    "ja": "展開後に Ashita-cli.exe がありません。アーカイブの構成が変更された可能性があります。"
+  },
+  "t9f5d8a288fea": {
+    "en": "Fetching xiloader ",
+    "ja": "xiloader を取得中: "
+  },
+  "t2b15e0992d4c": {
+    "en": "Checking Microsoft's Visual C++ runtime…",
+    "ja": "Microsoft Visual C++ ランタイムを確認中…"
+  },
+  "te43514062a6f": {
+    "en": "Ashita's example profiles are missing from ",
+    "ja": "Ashita のサンプルプロファイルがありません: "
+  },
+  "t11d4f94915e2": {
+    "en": "4. From v3: ",
+    "ja": "4. v3 から移行: "
+  },
+  "tc126e5f7b34d": {
+    "en": "4. No v3 install found, nothing to bring over.",
+    "ja": "4. v3 が見つからないため、移行はありません。"
+  },
+  "td0d7cf5eb6b9": {
+    "en": "Done. Ashita is at ",
+    "ja": "完了しました。Ashita の場所: "
+  },
+  "t55e1b8b47693": {
+    "en": " Press the button again to retry; nothing already fetched is fetched twice.",
+    "ja": " もう一度ボタンを押すと再試行します。取得済みのファイルは再ダウンロードしません。"
+  },
+  "t9d9b409b82e9": {
+    "en": "Setup is still running. It finishes on its own; wait for it here.",
+    "ja": "セットアップ中です。完了するまでこの画面でお待ちください。"
+  },
+  "ta05892a52696": {
+    "en": "press a key…",
+    "ja": "キーを押してください…"
+  },
+  "t118f46ac9c20": {
+    "en": "Key: ",
+    "ja": "キー: "
+  },
+  "t294ef70d5fa1": {
+    "en": "This game was started as administrator, so the launcher cannot bring it forward. Start it with Play here, or untick Run as administrator on its profile.",
+    "ja": "このゲームは管理者として起動されているため、最前面にできません。このランチャーからプレイで起動するか、プロファイルの「管理者として実行」をオフにしてください。"
+  },
+  "t8e9908933393": {
+    "en": "✦ Game windows · none open",
+    "ja": "✦ ゲームウィンドウ · 起動していません"
+  },
+  "t200a6e292656": {
+    "en": "✦ Game windows · ",
+    "ja": "✦ ゲームウィンドウ · "
+  },
+  "tdee82cf50f32": {
+    "en": " open",
+    "ja": " 個起動中"
+  },
+  "t2567ffcd9f31": {
+    "en": "Tick On to use the keys. Windows show here as soon as each game opens; names appear once the character is in.",
+    "ja": "有効にするとキーで切り替えられます。ゲーム起動後にウィンドウが表示され、ログイン後にキャラクター名が表示されます。"
+  },
+  "t9da668bb3f39": {
+    "en": "In game, ",
+    "ja": "ゲーム内では "
+  },
+  "t8c2bbc42da7a": {
+    "en": " brings the next character forward and ",
+    "ja": " で次のキャラクター、 "
+  },
+  "t6eed4aeaf181": {
+    "en": " the one before; the keys never reach the game. The game also sees controller presses, so pick ones your pad layout leaves free.",
+    "ja": " で前のキャラクターに切り替えます。切り替えキーはゲームには送られません。パッド入力はゲームにも届くため、空いているボタンを選んでください。"
+  },
+  "t67c206b9b1fd": {
+    "en": " Closing the launcher keeps it in the tray while a game is open.",
+    "ja": " ゲームの起動中にランチャーを閉じると、通知領域で動作を続けます。"
+  },
+  "t8d7a1db0414a": {
+    "en": "Full party",
+    "ja": "フルパーティー"
+  },
+  "t10f8d4d45a11": {
+    "en": "Give the layout a name first.",
+    "ja": "先にレイアウト名を入力してください。"
+  },
+  "tc6b26dd12128": {
+    "en": "No game window is open to save.",
+    "ja": "保存するゲームウィンドウがありません。"
+  },
+  "t367ad78c897f": {
+    "en": " window",
+    "ja": " ウィンドウ"
+  },
+  "t83f979824420": {
+    "en": "No layout saved yet.",
+    "ja": "保存したレイアウトがありません。"
+  },
+  "te5e9d1ac4a2e": {
+    "en": "None of the open windows is in ",
+    "ja": "起動中のウィンドウが、このレイアウトにありません: "
+  },
+  "tb52e6e28cf3e": {
+    "en": "Put ",
+    "ja": "復元数: "
+  },
+  "t60180fc7b93e": {
+    "en": " back as in ",
+    "ja": "。使用レイアウト: "
+  },
+  "t7960c0f2ed20": {
+    "en": "Deleted ",
+    "ja": "削除しました: "
+  },
+  "td10908f82f67": {
+    "en": "Save a layout first; its places are used as characters log in.",
+    "ja": "先にレイアウトを保存してください。ログイン時にその位置に配置します。"
+  },
+  "t5648f9b8e6d4": {
+    "en": "Characters go to their places in ",
+    "ja": "ログイン時の配置先レイアウト: "
+  },
+  "t984e2c14af62": {
+    "en": " as they log in.",
+    "ja": "。"
+  },
+  "te71cb3487cd1": {
+    "en": "Not installed yet: press Get new songs.",
+    "ja": "まだインストールされていません。「新しい曲を取得」を押してください。"
+  },
+  "t7141c0b75481": {
+    "en": "Looking for new songs…",
+    "ja": "新しい曲を確認中…"
+  },
+  "te1a1751c3134": {
+    "en": "You have every song already.",
+    "ja": "すべての曲を取得済みです。"
+  },
+  "t8f965304e7e3": {
+    "en": ". In game, /vanatunes rescan picks them up.",
+    "ja": "。ゲーム内で /vanatunes rescan を入力すると読み込みます。"
+  },
+  "t0a63e3f63f23": {
+    "en": ", and ",
+    "ja": "、および "
+  },
+  "t6b8d42aa3747": {
+    "en": " more.",
+    "ja": " 件。"
+  },
+  "t077274395476": {
+    "en": "Run Setup first: these steps write into the Ashita folder.",
+    "ja": "先にセットアップを実行してください。これらの手順は Ashita フォルダーに書き込みます。"
+  },
+  "t4332d309054a": {
+    "en": "The catalogue has none of them yet. Try again once it has loaded.",
+    "ja": "カタログにまだありません。読み込み後に再試行してください。"
+  },
+  "t78374bd3a08a": {
+    "en": "Installing ",
+    "ja": "インストール中: "
+  },
+  "t99e88345447b": {
+    "en": "it ships with Ashita but its file is missing; run Repair",
+    "ja": "Ashita に同梱されていますがファイルがありません。修復を実行してください"
+  },
+  "t7a7392d8d634": {
+    "en": " (for ",
+    "ja": "（移行元: "
+  },
+  "t5f2029838893": {
+    "en": "All ticked, and they load the next time you press Play.",
+    "ja": "すべて有効にしました。次回プレイ時に読み込みます。"
+  },
+  "tb4f7c1f99b37": {
+    "en": "Ticked what installed. Press the button again to retry the rest.",
+    "ja": "インストールできた項目を有効にしました。もう一度ボタンを押すと残りを再試行します。"
+  },
+  "tcdfb6e613f01": {
+    "en": "Untick any of them on the Addons page.",
+    "ja": "アドオン画面でチェックを外すと無効になります。"
+  },
+  "tc99d0f11c450": {
+    "en": "Pick Windower's init.txt (Windower4\\scripts\\init.txt)",
+    "ja": "Windower の init.txt を選択してください（Windower4\\scripts\\init.txt）"
+  },
+  "tfb601898259f": {
+    "en": "init.txt|init.txt|Text files (*.txt)|*.txt|All files (*.*)|*.*",
+    "ja": "init.txt|init.txt|テキストファイル (*.txt)|*.txt|すべてのファイル (*.*)|*.*"
+  },
+  "t9465031def6c": {
+    "en": "Imported ",
+    "ja": "インポート済み: "
+  },
+  "tb2a1e9a68f1c": {
+    "en": " bind",
+    "ja": " キー設定"
+  },
+  "t2cf0d00bd71a": {
+    "en": " alias",
+    "ja": " エイリアス"
+  },
+  "t1fb283ff80e6": {
+    "en": " into scripts\\vanadreams.txt. They work the next time you press Play.",
+    "ja": "。scripts\\vanadreams.txt に書き込みました。次回プレイ時に有効になります。"
+  },
+  "t15baa9a8ef2a": {
+    "en": " line",
+    "ja": " 行"
+  },
+  "ta8bdfde11f24": {
+    "en": " is",
+    "ja": " は"
+  },
+  "t9cdade103bc6": {
+    "en": "s are",
+    "ja": " "
+  },
+  "te232e90ab8f0": {
+    "en": " Windower-only, so ",
+    "ja": " は Windower 専用のため、"
+  },
+  "t1aa0be9277d5": {
+    "en": "it is",
+    "ja": " "
+  },
+  "t4f616d6e36d7": {
+    "en": "they are",
+    "ja": " "
+  },
+  "t5853cc46c175": {
+    "en": " in the script as comments saying why:",
+    "ja": "理由を添えたコメントとしてスクリプトに残します:"
+  },
+  "t25e9dd35456e": {
+    "en": "  and ",
+    "ja": " ほか "
+  },
+  "t226ba18bbcdb": {
+    "en": " more",
+    "ja": " 件"
+  },
+  "t7094def95e06": {
+    "en": "Your init.txt loaded ",
+    "ja": "init.txt に指定された読み込み項目: "
+  },
+  "t815b5a628979": {
+    "en": ". Step 1 installs those.",
+    "ja": "。手順 1 でインストールできます。"
+  },
+  "ta848e8df4d58": {
+    "en": "The import failed: ",
+    "ja": "インポートに失敗しました: "
+  },
+  "t5dff97d76267": {
+    "en": "Pick your GearSwap job files (Windower4\\addons\\GearSwap\\data)",
+    "ja": "GearSwap のジョブファイルを選択してください（Windower4\\addons\\GearSwap\\data）"
+  },
+  "td3dda601577d": {
+    "en": "GearSwap files (*.lua)|*.lua|All files (*.*)|*.*",
+    "ja": "GearSwap ファイル (*.lua)|*.lua|すべてのファイル (*.*)|*.*"
+  },
+  "t6446fd0652f3": {
+    "en": ": no gear sets found in ",
+    "ja": ": 装備セットがありません: "
+  },
+  "te1b5d63e96e0": {
+    "en": " sets",
+    "ja": " セット"
+  },
+  "tdce426650e38": {
+    "en": " slot",
+    "ja": " スロット"
+  },
+  "tfaad0448077e": {
+    "en": " GearSwap fills in while playing (listed at the top of the file)",
+    "ja": "（プレイ中に GearSwap が補完。ファイルの先頭に記載）"
+  },
+  "tf5adace3d90d": {
+    "en": ". The old one is kept as ",
+    "ja": "。以前のファイルの保存先: "
+  },
+  "t8e8515709b51": {
+    "en": "Not imported, type the character name above and import again: ",
+    "ja": "未インポートです。上の欄にキャラクター名を入力し、再試行してください: "
+  },
+  "t49792e44fb11": {
+    "en": "Skipped, no job in the file name: ",
+    "ja": "ファイル名にジョブがないためスキップ: "
+  },
+  "t92ddc85689b5": {
+    "en": "vanagear loads the profile for your job when you log in, puts your sets on, and fills in what GearSwap left behind: the rules, and the best piece you carry for any slot your sets leave out. /vg help lists your commands; /gs c still works.",
+    "ja": "vanagear はログイン時にジョブのプロファイルを読み込み、セットを装備します。GearSwap に含まれないルールと未指定スロットの装備を補います。/vg help でコマンドを確認できます。/gs c も使えます。"
+  },
+  "td5ba3d81dc79": {
+    "en": "vanagear reads these profiles and fills in what GearSwap left behind, and it is not ticked yet: step 1 installs it.",
+    "ja": "vanagear はこれらのプロファイルを読み込み、不足分を補います。まだ有効ではありません。手順 1 でインストールしてください。"
+  },
+  "tccde8cf1c656": {
+    "en": "Launcher language",
+    "ja": "ランチャーの表示言語"
+  },
+  "teb9fdea00f4f": {
+    "en": "Auto (Windows display language)",
+    "ja": "自動（Windows の表示言語）"
+  },
+  "te858d8395c50": {
+    "en": "Applies next time you start the launcher. This does not change the game client language.",
+    "ja": "次回ランチャー起動時に適用します。ゲームクライアントの言語は変更しません。"
+  },
+  "t597f41accf15": {
+    "en": "Language saved. Restart the launcher to apply it.",
+    "ja": "言語を保存しました。ランチャーを再起動すると適用されます。"
+  },
+  "te0d76f31b98a": {
+    "en": "Installed at {0}",
+    "ja": "保存先: {0}"
+  },
+  "t436e61016e26": {
+    "en": "Play",
+    "ja": "プレイ"
+  },
+  "ta874fca87cdd": {
+    "en": "Graphics",
+    "ja": "グラフィック"
+  },
+  "t535e52e4a261": {
+    "en": "Profiles",
+    "ja": "プロファイル"
+  },
+  "taf3185c7197e": {
+    "en": "Addons",
+    "ja": "アドオン"
+  },
+  "t79cea8ff2ba1": {
+    "en": "Fishing",
+    "ja": "釣り"
+  },
+  "t1900b478a586": {
+    "en": "Capture",
+    "ja": "キャラクター移行"
+  },
+  "t7013af4c42fe": {
+    "en": "Setup",
+    "ja": "セットアップ"
+  },
+  "t74a883a037bc": {
+    "en": "Settings",
+    "ja": "設定"
+  },
+  "td17d84a60499": {
+    "en": "Exit",
+    "ja": "終了"
+  },
+  "t7d9eb7acb13e": {
+    "en": "Close",
+    "ja": "閉じる"
+  },
+  "tfca046ccd586": {
+    "en": "Saved.",
+    "ja": "保存しました。"
+  },
+  "tc683491047fc": {
+    "en": "Installed.",
+    "ja": "インストールしました。"
+  },
+  "t5fa7aac5375c": {
+    "en": "Ready",
+    "ja": "準備完了"
+  },
+  "t1196b6c538ec": {
+    "en": "Repair",
+    "ja": "修復"
+  },
+  "t19766ed6ccb2": {
+    "en": "Cancel",
+    "ja": "キャンセル"
+  },
+  "t21b111cbfe6e": {
+    "en": "Default",
+    "ja": "既定"
+  },
+  "tc461dbb2bab7": {
+    "en": "Fullscreen",
+    "ja": "フルスクリーン"
+  },
+  "t3f26603a2748": {
+    "en": "Windowed",
+    "ja": "ウィンドウ"
+  },
+  "tb136109a5c48": {
+    "en": "Borderless",
+    "ja": "枠なし"
+  },
+  "t0d21bd52022c": {
+    "en": "Online",
+    "ja": "オンライン"
+  },
+  "ta1794783aab7": {
+    "en": "Offline",
+    "ja": "オフライン"
+  },
+  "t17ccfa5b681e": {
+    "en": "Maintenance",
+    "ja": "メンテナンス中"
+  },
+  "tb764cdc0eab7": {
+    "en": "Unknown",
+    "ja": "不明"
+  },
+  "t4dcd0a05594f": {
+    "en": "✦ Your addons · {0} of {1} enabled",
+    "ja": "✦ アドオン · {1} 件中 {0} 件が有効"
+  },
+  "t83ee43f60edb": {
+    "en": "Installed {0} · {1} available",
+    "ja": "インストール済み {0} · 更新版 {1}"
+  },
+  "t43c1a373abe9": {
+    "en": "✓ Installed {0}",
+    "ja": "✓ インストール済み {0}"
+  },
+  "td1bc99210f3f": {
+    "en": "{0}: {1:0.0} of {2:0.0} MB",
+    "ja": "{0}: {2:0.0} MB 中 {1:0.0} MB"
+  },
+  "t965c81514574": {
+    "en": "{0} ({1} of {2})",
+    "ja": "{0}（{2} 件中 {1} 件目）"
+  },
+  "t32e050546fff": {
+    "en": "{0} downloaded, {1} already here",
+    "ja": "{0} 件取得、{1} 件は取得済み"
+  },
+  "t12dda43140ae": {
+    "en": ", {0} removed",
+    "ja": "、{0} 件削除"
+  },
+  "td8f8598ded94": {
+    "en": "{0} · {1} · {2} items · {3:N0} gil · {4} spells · {5} key items",
+    "ja": "{0} · {1} · アイテム {2} 個 · {3:N0} ギル · 魔法 {4} 種 · だいじなもの {5} 個"
+  },
+  "tc14c43b8964c": {
+    "en": "Captured on {0}, {1}. {2} KB.",
+    "ja": "記録元: {0}、{1}。{2} KB。"
+  },
+  "t807d68b406e7": {
+    "en": "{0} caught · {1} lost · {2} skill-ups\n",
+    "ja": "釣果 {0} · 逃した魚 {1} · スキルアップ {2}\n"
+  },
+  "t175e2ead69d6": {
+    "en": "{0} has {1} free and the install needs {2}. Pick another folder.",
+    "ja": "{0} の空き容量は {1}、必要な容量は {2} です。別のフォルダーを選択してください。"
+  },
+  "t18c8a7ea9adc": {
+    "en": "{0} part {1} of {2} · {3} of {4}{5}",
+    "ja": "{0} パート {1}/{2} · {3}/{4}{5}"
+  },
+  "t79c296ac42c9": {
+    "en": "{0} part {1} of {2} · {3:0.0} of {4:0.0} GB",
+    "ja": "{0} パート {1}/{2} · {3:0.0}/{4:0.0} GB"
+  },
+  "t519047537870": {
+    "en": "{0} Vanadreams songs · {1} of yours",
+    "ja": "Vanadreams の曲 {0} 曲 · 自分の曲 {1} 曲"
+  },
+  "t8b17b7586b02": {
+    "en": "{0} new or changed",
+    "ja": "新規または更新 {0} 件"
+  },
+  "t000b821603b6": {
+    "en": "Crafting",
+    "ja": "合成"
+  },
+  "tf97e9da0e3b8": {
+    "en": "Other",
+    "ja": "その他"
+  },
+  "tab1173eed1d4": {
+    "en": "Plugin",
+    "ja": "プラグイン"
+  },
+  "t25bd3377df88": {
+    "en": "Addon",
+    "ja": "アドオン"
+  },
+  "tc630a782a9eb": {
+    "en": "Reinstall",
+    "ja": "再インストール"
+  },
+  "t6d61374da4b4": {
+    "en": "Potato",
+    "ja": "軽量"
+  },
+  "t5386ea5db81c": {
+    "en": "Balanced",
+    "ja": "標準"
+  },
+  "tcf87a8289eeb": {
+    "en": "Pretty",
+    "ja": "高画質"
+  },
+  "tcae7d57bc067": {
+    "en": "Stop",
+    "ja": "停止"
+  },
+  "t222f7548b0e3": {
+    "en": "Being set up",
+    "ja": "準備中"
+  },
+  "tc1d4586f0ea3": {
+    "en": "checked ",
+    "ja": "確認時刻: "
+  },
+  "t37b345555d7e": {
+    "en": "Downloading",
+    "ja": "ダウンロード中"
+  },
+  "t88332ba58a2b": {
+    "en": "Unpacking",
+    "ja": "展開中"
+  },
+  "t0dfe1d63c9d8": {
+    "en": "Checking",
+    "ja": "確認中"
+  },
+  "window-mode": {
+    "en": "Window",
+    "ja": "ウィンドウ",
+    "context": true
+  },
+  "t2ee4e481e9cc": {
+    "en": "Your client is {0}. The server hasn't published what it expects yet.",
+    "ja": "クライアントは {0} です。サーバーの対応バージョンはまだ公開されていません。"
+  },
+  "t01b9d2bc2e19": {
+    "en": "Your client is {0}, the server expects {1}. Ready to play.",
+    "ja": "クライアントは {0}、サーバー対応版は {1} です。プレイできます。"
+  },
+  "t7268368ab18d": {
+    "en": "Your client is {0}, the server expects {1}. Update the client first.",
+    "ja": "クライアントは {0}、サーバー対応版は {1} です。先にクライアントを更新してください。"
+  },
+  "tf6ab8af6a5a9": {
+    "en": "Your client is {0}, the server only accepts {1}. Wait for the server to update.",
+    "ja": "クライアントは {0}、サーバー対応版は {1} のみです。サーバーの更新をお待ちください。"
+  },
+  "t6a3889c0a1b5": {
+    "en": "Client version unknown. Run the PlayOnline updater once, then check again.",
+    "ja": "クライアントのバージョンが不明です。PlayOnline で一度更新してから再確認してください。"
+  },
+  "t12ea12eace7d": {
+    "en": "change",
+    "ja": "変更"
+  },
+  "tae55dfa130ee": {
+    "en": "Join first",
+    "ja": "先に参加する"
+  },
+  "tb54e15e2f464": {
+    "en": "Windows' game folder (InstallFolder 0001): ",
+    "ja": "Windows のゲームフォルダー（InstallFolder 0001）: "
+  },
+  "t2173b4ad598c": {
+    "en": "Windows' PlayOnline folder (InstallFolder 1000): ",
+    "ja": "Windows の PlayOnline フォルダー（InstallFolder 1000）: "
+  },
+  "t2285f37e295e": {
+    "en": "The game xiloader starts (FFXiEntry COM server): ",
+    "ja": "xiloader が起動するゲーム（FFXiEntry COM）: "
+  },
+  "t47e5e206b5d6": {
+    "en": "not registered",
+    "ja": "未登録"
+  },
+  "ta6a690561f5e": {
+    "en": "PlayOnline's core xiloader starts (polcore COM server): ",
+    "ja": "xiloader が使用する PlayOnline コア（polcore COM）: "
+  },
+  "tcd84f6d84274": {
+    "en": "Every registered FFXI/PlayOnline COM file: ",
+    "ja": "登録済み FFXI/PlayOnline COM ファイル: "
+  },
+  "t983a0b6eba4c": {
+    "en": "The profile's copy is ",
+    "ja": "プロファイルのゲーム: "
+  },
+  "t007a6fad63d5": {
+    "en": ", and Windows points at it",
+    "ja": "。Windows の参照先も一致しています"
+  },
+  "t4a967a9670ad": {
+    "en": ", but Windows' ",
+    "ja": "。ただし Windows の参照先: "
+  },
+  "t732bea972754": {
+    "en": "The launcher knows no complete copy of the game for this profile (Game Folder blank)",
+    "ja": "このプロファイル用の完全なゲームが見つかりません（ゲームフォルダーが空欄）"
+  },
+  "t95b6afc0a775": {
+    "en": "The started copy has its main files (",
+    "ja": "起動先の主要ファイルあり（"
+  },
+  "tcf2d038a9b09": {
+    "en": "The started copy, ",
+    "ja": "起動先: "
+  },
+  "ta003d869c86b": {
+    "en": ", is missing ",
+    "ja": "、不足ファイル: "
+  },
+  "tbc767581f585": {
+    "en": "Game version (patch.cfg): ",
+    "ja": "ゲームバージョン（patch.cfg）: "
+  },
+  "t9d180229834f": {
+    "en": "Graphics DLLs that load into the game from ",
+    "ja": "ゲームが読み込むグラフィック DLL。場所: "
+  },
+  "t0d954e84a598": {
+    "en": " (Low spec on the Graphics page turns ours off)",
+    "ja": "（グラフィック画面の軽量設定で同梱分を無効にできます）"
+  },
+  "t4aa54445eb9b": {
+    "en": "DLLs beside xiloader that the launcher did not put there: ",
+    "ja": "ランチャーが配置していない xiloader の隣の DLL: "
+  },
+  "t54d6198ceedb": {
+    "en": "The modern look's d3d8to9 is on, but DirectX 9's d3dx9_43.dll is not in Windows (SysWOW64). The game cannot start its graphics without it.",
+    "ja": "外観パックの d3d8to9 が有効ですが、Windows（SysWOW64）に DirectX 9 の d3dx9_43.dll がありません。描画を開始できません。"
+  },
+  "t5b5f7cd6ad50": {
+    "en": "No other copy of the game was running",
+    "ja": "ほかのゲームは起動していませんでした"
+  },
+  "t523958e2742b": {
+    "en": "Also running: ",
+    "ja": "同時に実行中: "
+  },
+  "t0379f5b66571": {
+    "en": "Windows event: ",
+    "ja": "Windows イベント: "
+  },
+  "tef5e3e1db678": {
+    "en": "The loader stopped with this error:\n\n",
+    "ja": "ローダーは次のエラーで停止しました:\n\n"
+  },
+  "ta5f8b99e298c": {
+    "en": "You logged in and your profile loaded, so the server, your password and your firewall are fine. Then the game itself quit as it started. ",
+    "ja": "ログインとプロファイルの読み込みには成功しています。サーバー、パスワード、ファイアウォールは通過しましたが、ゲーム本体が起動直後に終了しました。"
+  },
+  "te5edc49e3a8d": {
+    "en": "The loader prints nothing for that, which is why its window only says \"Closing...\".\n\n",
+    "ja": "この場合ローダーにはエラーが表示されず、「Closing...」だけが残ります。\n\n"
+  },
+  "t328501daa687": {
+    "en": "What the launcher found:\n",
+    "ja": "ランチャーの確認結果:\n"
+  },
+  "t5e2ee589e173": {
+    "en": "Try these in order, pressing Play after each:\n",
+    "ja": "次の順に試し、各手順の後でプレイを押してください:\n"
+  },
+  "tfec755ce0884": {
+    "en": "1. Close every other copy of FFXI, PlayOnline and Windower.\n",
+    "ja": "1. ほかの FFXI、PlayOnline、Windower をすべて終了します。\n"
+  },
+  "t8db4365e62f7": {
+    "en": "2. Turn on Low spec on the Graphics page (it turns the modern look's graphics DLLs off). If that works, install DirectX 9 (https://www.microsoft.com/en-us/download/details.aspx?id=35) and turn Low spec off again.\n",
+    "ja": "2. グラフィック画面で軽量設定にします（外観パックのグラフィック DLL を無効にします）。起動できた場合は DirectX 9（https://www.microsoft.com/en-us/download/details.aspx?id=35）をインストールしてから元の設定を試してください。\n"
+  },
+  "ta730391248b0": {
+    "en": "3. Open Install game on the menu and press Repair, which checks every game file.\n\n",
+    "ja": "3. ゲームのインストール画面から修復を実行し、ゲームファイルを確認します。\n\n"
+  },
+  "t163882a64c69": {
+    "en": "If it still closes, use Send bug report on the Setup page: it now carries the loader's own text and these checks.",
+    "ja": "まだ終了する場合は、セットアップ画面で不具合レポートを作成してください。ローダーの表示と確認結果が含まれます。"
+  },
+  "t1d6f15f58617": {
+    "en": "The loader closed before the game opened.\n\n",
+    "ja": "ゲームが開く前にローダーが終了しました。\n\n"
+  },
+  "t4eccf428062c": {
+    "en": "Its last lines were:\n",
+    "ja": "最後に表示された内容:\n"
+  },
+  "tfbf2f93715e7": {
+    "en": "Use Send bug report on the Setup page and post it in the Vanadreams Discord bug channel: it carries the loader's own text and these checks.",
+    "ja": "セットアップ画面で不具合レポートを作成し、Vanadreams Discord の不具合チャンネルに投稿してください。ローダーの表示と確認結果が含まれます。"
+  },
+  "tc6c10da9499c": {
+    "en": "Check the username and password on the Profiles page. Passwords are case sensitive.",
+    "ja": "プロファイル画面のユーザー名とパスワードを確認してください。パスワードは大文字と小文字を区別します。"
+  },
+  "t2ccd1787b0fc": {
+    "en": "That account is still logged in, often from a game that closed badly. Wait a minute and press Play again.",
+    "ja": "このアカウントはまだログイン中です。ゲームの異常終了後に起こることがあります。少し待ってから、もう一度プレイを押してください。"
+  },
+  "tb1f1a03ab1bf": {
+    "en": "Open Setup and press Check and update, which puts in the loader the server takes.",
+    "ja": "セットアップを開き、「確認して更新」でサーバー対応のローダーを取得してください。"
+  },
+  "t2da477c31370": {
+    "en": "Windows has no working copy of the game registered. Open Install game on the menu and press Repair.",
+    "ja": "正常なゲームが Windows に登録されていません。ゲームのインストール画面から修復を実行してください。"
+  },
+  "t5e20e608a9b3": {
+    "en": "Your network blocks the profile server's port ",
+    "ja": "プロファイルサーバーのポートがネットワークで制限されています: "
+  },
+  "t2fc6057d8ce3": {
+    "en": ". Allow outgoing TCP ",
+    "ja": "。送信 TCP を許可してください: "
+  },
+  "tf7cf77c41561": {
+    "en": ", or ask on Discord for Tailscale access.",
+    "ja": "。または Discord で Tailscale の利用を相談してください。"
+  },
+  "t3c10f4aff286": {
+    "en": "Your antivirus blocked the loader. Add the Ashita folder to its exclusions and press Play again.",
+    "ja": "ウイルス対策がローダーを止めました。Ashita フォルダーを除外に追加し、もう一度プレイを押してください。"
+  },
+  "tc38992baa53b": {
+    "en": "Your PC could not reach the Vanadreams server. Turn off any VPN and try again, or ask on Discord for Tailscale access.",
+    "ja": "Vanadreams サーバーに接続できませんでした。VPN をオフにして再試行するか、Discord で Tailscale の利用を相談してください。"
+  },
+  "t4b56f6ad3d94": {
+    "en": "Post a screenshot of this box in the Vanadreams Discord bug channel.",
+    "ja": "この画面のスクリーンショットを Vanadreams Discord の不具合チャンネルに投稿してください。"
+  },
+  "t5074dfada840": {
+    "en": "Your antivirus",
+    "ja": "ウイルス対策ソフト"
+  },
+  "t094433781c3d": {
+    "en": " missing from ",
+    "ja": " がありません。場所: "
+  },
+  "tf839eb0428c9": {
+    "en": " most likely removed ",
+    "ja": " が削除した可能性があります。対象: "
+  },
+  "tfb54365fe8f5": {
+    "en": ". Ashita and xiloader are not signed, so some antivirus treats them as unknown programs.\n\n",
+    "ja": "。Ashita と xiloader は署名されていないため、ウイルス対策が不明なプログラムと判断する場合があります。\n\n"
+  },
+  "t45152ad575ce": {
+    "en": "your antivirus",
+    "ja": "ウイルス対策ソフト"
+  },
+  "t89a859d9bbff": {
+    "en": ", restore the file from quarantine if it is there, and add this folder as an exclusion:\n   ",
+    "ja": "を開き、隔離されていれば復元して、このフォルダーを除外に追加してください:\n   "
+  },
+  "tc3cebae89df9": {
+    "en": "2. Open Setup on the menu and press Check and update, which puts back anything missing.\n3. Press Play again.",
+    "ja": "2. セットアップ画面の「確認して更新」で不足ファイルを復元します。\n3. もう一度プレイを押してください。"
+  },
+  "tedddffc0cdd4": {
+    "en": "The Vanadreams server is ",
+    "ja": "Vanadreams サーバーは現在 "
+  },
+  "t0691c3136fc6": {
+    "en": "down for maintenance",
+    "ja": "メンテナンス中"
+  },
+  "t9f49fc021514": {
+    "en": " right now, so the loader would close straight away. Try again once the status says Online.",
+    "ja": " です。ローダーはすぐに終了します。オンラインに戻ってから再試行してください。"
+  },
+  "t8f12101dac2a": {
+    "en": "Your PC could not look up ",
+    "ja": "この PC では次の名前を解決できませんでした: "
+  },
+  "t75b39296dd48": {
+    "en": ", so the loader would close without logging in.\n\n",
+    "ja": "。ローダーはログインせずに終了します。\n\n"
+  },
+  "t92399203fb31": {
+    "en": "Check that you are online. If other sites work, your network's DNS may be blocking the name: restart your router, or set your network's DNS to 1.1.1.1.",
+    "ja": "インターネット接続を確認してください。ほかのサイトに接続できる場合は DNS が名前解決を制限している可能性があります。ルーターを再起動するか、DNS を 1.1.1.1 に設定して確認してください。"
+  },
+  "tab04a905cfb1": {
+    "en": "This profile logs in over Tailscale, and the server did not answer there (ports ",
+    "ja": "このプロファイルは Tailscale 経由ですが、サーバーから応答がありませんでした。ポート: "
+  },
+  "t5c1c4f1e42a0": {
+    "en": "Open Tailscale and make sure it is connected and that the Vanadreams server is shared with you. Or untick Tailscale on the Profiles page to use the public address.",
+    "ja": "Tailscale が接続中で、Vanadreams サーバーの共有を受けていることを確認してください。公開アドレスを使う場合は、プロファイル画面で Tailscale のチェックを外してください。"
+  },
+  "tf375c6a6ef42": {
+    "en": "Your network lets the game's login through but blocks port ",
+    "ja": "ゲームのログインは通過しますが、次のポートが制限されています: "
+  },
+  "t312ae68b4953": {
+    "en": ", which the loader uses right after \"Connected\". The loader would close at that point.\n\n",
+    "ja": "。ローダーが「Connected」の直後に使うため、そこで終了します。\n\n"
+  },
+  "ta7d46a46675e": {
+    "en": "Allow outgoing TCP ",
+    "ja": "送信 TCP を許可してください: "
+  },
+  "tc64a1f42d144": {
+    "en": " in your firewall or router, or ask on Discord for Tailscale access and tick Tailscale on the Profiles page.",
+    "ja": "。ファイアウォールやルーターで許可するか、Discord で Tailscale の利用を相談し、プロファイル画面で有効にしてください。"
+  },
+  "te2adf575340c": {
+    "en": "Your PC could not reach the Vanadreams server on the game's login ports (",
+    "ja": "ゲームのログインポートでサーバーに接続できませんでした（"
+  },
+  "t7ff122d9526d": {
+    "en": "), so the loader would close without logging in.\n\n",
+    "ja": "）。ローダーはログインせずに終了します。\n\n"
+  },
+  "t30ffe1ff42f3": {
+    "en": "Some providers, school and work networks, and VPNs block these ports. Turn off any VPN and try again. If it still fails, ask on Discord for Tailscale access and tick Tailscale on the Profiles page; it gets through networks that block the game.",
+    "ja": "プロバイダー、学校・職場のネットワーク、VPN がポートを制限する場合があります。VPN をオフにして再試行してください。改善しない場合は Discord で Tailscale の利用を相談し、プロファイル画面で有効にしてください。"
+  },
+  "t0732620aef32": {
+    "en": " crashed in ",
+    "ja": " のクラッシュ箇所: "
+  },
+  "t666c1d230801": {
+    "en": ", part of Microsoft's 32-bit C++ runtime, which is too old on this PC.\n\n",
+    "ja": "。この PC の Microsoft 32 ビット C++ ランタイムが古い状態です。\n\n"
+  },
+  "tbb263f9f3576": {
+    "en": "Install https://aka.ms/vc14/vc_redist.x86.exe (the x86 one, even on 64-bit Windows), restart the PC, and press Play again.",
+    "ja": "https://aka.ms/vc14/vc_redist.x86.exe をインストールしてください（64 ビット Windows でも x86 版）。PC を再起動し、もう一度プレイを押してください。"
+  },
+  "t58ef1076c6bd": {
+    "en": " before the game opened.\n\n",
+    "ja": "。ゲームが開く前に終了しました。\n\n"
+  },
+  "t81040422cccd": {
+    "en": "Press Ctrl+C on this box to copy it and post it in the Vanadreams Discord bug channel, so it can be looked at.",
+    "ja": "Ctrl+C でこの画面をコピーし、Vanadreams Discord の不具合チャンネルに投稿してください。"
+  },
+  "t8e2c7ac50813": {
+    "en": "offline",
+    "ja": "オフライン"
+  },
+  "t2cd01b8ba779": {
+    "en": " are",
+    "ja": " は"
+  },
+  "t2ad8a7049d7c": {
+    "en": "it",
+    "ja": "そのファイル"
+  },
+  "tc9a8dc336964": {
+    "en": "them",
+    "ja": "それらのファイル"
+  },
+  "t567f75399cdb": {
+    "en": "1. Open ",
+    "ja": "1. 次を開いてください: "
+  },
+  "tc75a059c9f65": {
+    "en": "No complete copy of FINAL FANTASY XI was found on this PC: FFXi.dll, FFXiMain.dll or PlayOnline's polcore.dll is missing everywhere the launcher looks, including the copy Windows has registered. The loader would log in and then close with no game to start.\n\nOpen Install game on the menu to install or repair it, or set your game folder in Settings if it is somewhere else.\n\nPlay anyway?",
+    "ja": "この PC で完全な FINAL FANTASY XI が見つかりません。FFXi.dll、FFXiMain.dll、または PlayOnline の polcore.dll が、Windows の登録先を含む確認対象の場所にありません。ローダーがログインしても、ゲームを起動できずに終了します。\n\nゲームのインストール画面でインストールまたは修復するか、別の場所にある場合は設定でゲームフォルダーを指定してください。\n\nそれでもプレイしますか？"
+  },
+  "te026454d81a4": {
+    "en": "The loader closed before the game opened, and its window could not be read from here.\n\nIf its last line was \"Closing...\" with no red error above it, the login worked and the game itself quit as it started: close other copies of FFXI, turn on Low spec on the Graphics page, or Repair the game from Install game. If a red line was above it, that line is the reason. Send bug report on the Setup page gathers what a helper needs.",
+    "ja": "ゲームが開く前にローダーが終了し、ローダー画面を読み取れませんでした。\n\n最後が「Closing...」で、その前に赤いエラーがなければログインは成功し、ゲーム本体が起動直後に終了した可能性があります。ほかの FFXI を終了し、グラフィックを軽量設定にするか、ゲームのインストール画面から修復を試してください。\n\n赤いエラーがあった場合は、その内容が原因です。セットアップ画面から不具合レポートを作成できます。"
+  },
+  "tec7e4fb720f1": {
+    "en": "Ashita closed without starting the loader.\n\nIf Windows asked for permission, choose Yes. If it did not ask, open Setup on the menu, press Check and update, and press Play again.",
+    "ja": "ローダーを起動せずに Ashita が終了しました。\n\nWindows が許可を求めた場合は「はい」を選択してください。許可画面が出なかった場合は、セットアップの「確認して更新」を実行し、もう一度プレイを押してください。"
+  },
+  "tcdc4f07f31a5": {
+    "en": "The server hasn't published its version yet, so there is nothing to patch to.",
+    "ja": "サーバーの対応バージョンが未公開のため、更新先を確認できません。"
+  },
+  "tb40c1bd8c7e4": {
+    "en": " GB free and the patch needs ",
+    "ja": " GB、更新に必要な容量: "
+  },
+  "ta25c5862170f": {
+    "en": " GB. Free some space, or pick another folder on Install game.",
+    "ja": " GB。空き容量を増やすか、ゲームのインストール画面で別のフォルダーを選択してください。"
+  },
+  "t89638d9322a5": {
+    "en": "The files are in, but the permission prompt was refused, so Windows doesn't know where the game is yet. Press Patch again to finish; nothing downloads twice.",
+    "ja": "ファイルの準備はできましたが、許可されなかったため Windows にゲームを登録できていません。もう一度更新を押すと完了できます。再ダウンロードは不要です。"
+  },
+  "t6fa9114a08f6": {
+    "en": " new part, ",
+    "ja": " 個の新しいパート、"
+  },
+  "ta5271ce4ccec": {
+    "en": " new parts, ",
+    "ja": " 個の新しいパート、"
+  }
+}

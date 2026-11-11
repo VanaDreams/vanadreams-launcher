@@ -1,6 +1,7 @@
 <UserControl x:Class="Vanadreams.Pages.CapturePage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
              xmlns:local="clr-namespace:Vanadreams"
              Focusable="True">
     <Grid>
@@ -12,7 +13,7 @@
         <Border Grid.Column="0" Style="{StaticResource Box}">
             <Grid>
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                <TextBlock x:Name="Heading" Style="{StaticResource Eyebrow}" Text="✦ Snapshots"/>
+                <TextBlock x:Name="Heading" Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t8e37445a9d05}"/>
                 <ListBox Grid.Row="1" x:Name="List" Background="Transparent" BorderThickness="0" SelectionChanged="List_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -42,30 +43,30 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <TextBlock Grid.Row="2" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,6,0,0" Text="Snapshots come from the charcapture addon: load it on the character you want to bring and type /capture. Files live in config\charcapture. Two steps: Send to Vanadreams uploads it, then Try import now asks for the import. You must first MAKE a Vanadreams character with exactly the same name (the import overwrites it) and keep it logged out."/>
+                <TextBlock Grid.Row="2" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,6,0,0" Text="{lang:Text Key=t0b3473f28352}"/>
             </Grid>
         </Border>
         <Border Grid.Column="2" Style="{StaticResource Box}">
             <Grid>
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Send to Vanadreams"/>
+                <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t1514b18b0a14}"/>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
                         <TextBlock x:Name="SelName" Style="{StaticResource Display40}" FontSize="29" Text="—" TextWrapping="Wrap"/>
                         <TextBlock x:Name="SelMeta" Style="{StaticResource Muted}" FontSize="14.5" TextWrapping="Wrap" Margin="0,0,0,10"/>
-                        <TextBlock x:Name="SelUser" Style="{StaticResource Mono}" TextWrapping="Wrap" Margin="0,0,0,10"/><TextBlock Foreground="{StaticResource Bad}" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,12" Text="FIRST, MAKE A CHARACTER on Vanadreams with exactly the same name as this one, then log it out. The import overwrites that character. If it does not exist, nothing is imported."/>
+                        <TextBlock x:Name="SelUser" Style="{StaticResource Mono}" TextWrapping="Wrap" Margin="0,0,0,10"/><TextBlock Foreground="{StaticResource Bad}" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,12" Text="{lang:Text Key=td20c5a39a8a4}"/>
                         <TextBlock x:Name="Result" TextWrapping="Wrap"/>
                     </StackPanel>
                 </ScrollViewer>
                 <StackPanel Grid.Row="2" Margin="0,8,0,0">
                     <WrapPanel>
-                        <Button x:Name="SendButton" Style="{StaticResource GoldButton}" Content="Send to Vanadreams" Click="Send_Click" Margin="0,0,7,7"/>
-                        <Button x:Name="ImportButton" Style="{StaticResource GoldButton}" Content="Try import now" Click="Import_Click" Margin="0,0,7,7"/>
-                        <Button x:Name="StatusButton" Style="{StaticResource GhostButton}" Content="Check result" Click="Status_Click" Margin="0,0,7,7"/>
-                        <Button Style="{StaticResource GhostButton}" Content="Open snapshot folder" Click="Folder_Click" Margin="0,0,0,7"/>
+                        <Button x:Name="SendButton" Style="{StaticResource GoldButton}" Content="{lang:Text Key=t448595c43769}" Click="Send_Click" Margin="0,0,7,7"/>
+                        <Button x:Name="ImportButton" Style="{StaticResource GoldButton}" Content="{lang:Text Key=tc36e24cd0a3f}" Click="Import_Click" Margin="0,0,7,7"/>
+                        <Button x:Name="StatusButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t6a9d007303c1}" Click="Status_Click" Margin="0,0,7,7"/>
+                        <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=tb702096a5565}" Click="Folder_Click" Margin="0,0,0,7"/>
                     </WrapPanel>
                     <local:CrewGuide Who="moogle" BubbleWidth="140"
-                                     Tip="Kupo! Make a character with the same name on Vanadreams first. Then type&#160;/&#x2060;capture in game, send it here, and press Try&#160;import&#160;now."/>
+                                     Tip="{lang:Text Key=tc43600adde87}"/>
                 </StackPanel>
             </Grid>
         </Border>

@@ -62,11 +62,11 @@ namespace Vanadreams.Pages
             BgWBox.Text = p.BackgroundWidth > 0 ? p.BackgroundWidth.ToString() : ""; BgHBox.Text = p.BackgroundHeight > 0 ? p.BackgroundHeight.ToString() : "";
             AutoCloseBox.IsChecked = p.AutoClose;
             AdminBox.IsChecked = p.RunAsAdmin;
-            if (p.IsExample) Note.Text = "A shipped example. Duplicate it, then edit the copy.";
+            if (p.IsExample) Note.Text = UiText.T("A shipped example. Duplicate it, then edit the copy.");
             else if (!string.IsNullOrEmpty(p.BootFile))
             {
                 var bf = Path.IsPathRooted(p.BootFile) ? p.BootFile : Path.Combine(App.State.AshitaRoot, p.BootFile);
-                if (!File.Exists(bf)) Note.Text = "Boot file not found. Run Setup or browse to xiloader.";
+                if (!File.Exists(bf)) Note.Text = UiText.T("Boot file not found. Run Setup or browse to xiloader.");
             }
         }
 
@@ -89,13 +89,13 @@ namespace Vanadreams.Pages
             MenuScaleChoice picked = null;
             foreach (var s in Profile.MenuScales)
             {
-                var c = new MenuScaleChoice { Scale = s, Text = s + "x" + (s == 1 ? " (smallest)" : "") + (p.Height > 0 ? "   menu " + Math.Round(p.Width / s) + " × " + Math.Round(p.Height / s) : "") };
+                var c = new MenuScaleChoice { Scale = s, Text = s + "x" + (s == 1 ? UiText.T(" (smallest)") : "") + (p.Height > 0 ? UiText.T("   menu ") + Math.Round(p.Width / s) + " × " + Math.Round(p.Height / s) : "") };
                 MenuScaleBox.Items.Add(c);
                 if (Math.Abs(s - current) < 0.02) picked = c;
             }
             if (picked == null)
             {
-                picked = new MenuScaleChoice { Scale = 0, Text = "Custom   menu " + p.MenuWidth + " × " + p.MenuHeight };
+                picked = new MenuScaleChoice { Scale = 0, Text = UiText.T("Custom   menu ") + p.MenuWidth + " × " + p.MenuHeight };
                 MenuScaleBox.Items.Add(picked);
             }
             MenuScaleBox.SelectedItem = picked;
@@ -116,21 +116,21 @@ namespace Vanadreams.Pages
             {
                 GameBox.Text = state.Settings.FfxiFolderOverride;
                 var auto = state.VanadreamsGameRoot();
-                GameBox.ToolTip = "The copy of Final Fantasy XI every Vanadreams profile plays. Windows is pointed at it when you press Play." +
-                    (auto != null ? "\nLeft blank, the launcher picks the copy that fits the server; right now that is " + ClientInstall.GameFolder(auto) + "."
-                                  : "\nLeft blank, the launcher picks the copy that fits the server.");
+                GameBox.ToolTip = UiText.T("The copy of Final Fantasy XI every Vanadreams profile plays. Windows is pointed at it when you press Play.") +
+                    (auto != null ? UiText.T("\nLeft blank, the launcher picks the copy that fits the server; right now that is ") + ClientInstall.GameFolder(auto) + "."
+                                  : UiText.T("\nLeft blank, the launcher picks the copy that fits the server."));
                 return;
             }
             GameBox.Text = p.GameFolder;
             var fallback = GameRegistration.HasGame(state.Settings.OtherGameRoot) ? ClientInstall.GameFolder(state.Settings.OtherGameRoot) : null;
-            GameBox.ToolTip = "The copy of Final Fantasy XI that works with this server. Windows is pointed at it when you press Play." +
-                (fallback != null ? "\nLeft blank, this profile plays " + fallback + ", the copy Windows had before Vanadreams."
-                                  : "\nLeft blank, the game Windows already points at is used.");
+            GameBox.ToolTip = UiText.T("The copy of Final Fantasy XI that works with this server. Windows is pointed at it when you press Play.") +
+                (fallback != null ? UiText.T("\nLeft blank, this profile plays ") + fallback + UiText.T(", the copy Windows had before Vanadreams.")
+                                  : UiText.T("\nLeft blank, the game Windows already points at is used."));
         }
 
         private void GameBrowse_Click(object sender, RoutedEventArgs e)
         {
-            var d = new System.Windows.Forms.FolderBrowserDialog { Description = "Pick this server's FINAL FANTASY XI folder, or the folder that holds it and PlayOnlineViewer", SelectedPath = GameBox.Text };
+            var d = new System.Windows.Forms.FolderBrowserDialog { Description = UiText.T("Pick this server's FINAL FANTASY XI folder, or the folder that holds it and PlayOnlineViewer"), SelectedPath = GameBox.Text };
             if (d.ShowDialog() == System.Windows.Forms.DialogResult.OK) GameBox.Text = d.SelectedPath;
         }
 
@@ -148,14 +148,14 @@ namespace Vanadreams.Pages
             c.UseTailscale(TailscaleBox.IsChecked == true);
             ServerBox.Text = c.Server;
             ExtraBox.Text = c.Extra + (c.Hairpin ? (c.Extra.Length > 0 ? " " : "") + "--hairpin" : "");
-            Note.Text = c.IsTailscale ? "Over Tailscale: needs Tailscale running and the Vanadreams server shared with you. Press Save." : "Back to the public address. Press Save.";
+            Note.Text = c.IsTailscale ? UiText.T("Over Tailscale: needs Tailscale running and the Vanadreams server shared with you. Press Save.") : UiText.T("Back to the public address. Press Save.");
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             var p = Current;
             if (p == null) return;
-            if (p.IsExample) { Note.Text = "Duplicate this example first."; return; }
+            if (p.IsExample) { Note.Text = UiText.T("Duplicate this example first."); return; }
             p.Name = NameBox.Text.Trim();
             var extra = LoaderCommand.Parse(ExtraBox.Text);
             p.Command = new LoaderCommand { Server = ServerBox.Text.Trim(), Hairpin = extra.Hairpin, Extra = extra.Extra };
@@ -179,39 +179,39 @@ namespace Vanadreams.Pages
             Reload(p.Id);
             var picked = p.IsVanadreams ? App.State.Settings.FfxiFolderOverride : p.GameFolder;
             Note.Text = !string.IsNullOrWhiteSpace(picked) && !GameRegistration.HasGame(GameRegistration.RootOf(picked))
-                ? "Saved, but there is no game in that folder: pick FINAL FANTASY XI, with PlayOnlineViewer beside it."
-                : "Saved.";
+                ? UiText.T("Saved, but there is no game in that folder: pick FINAL FANTASY XI, with PlayOnlineViewer beside it.")
+                : UiText.T("Saved.");
             App.State.Notify();
         }
 
         private void New_Click(object sender, RoutedEventArgs e)
         {
             var template = App.State.Profiles.TemplatePath();
-            if (template == null) { Note.Text = "No profile to copy from; run Setup first."; return; }
-            CreateFrom(template, "New profile");
+            if (template == null) { Note.Text = UiText.T("No profile to copy from; run Setup first."); return; }
+            CreateFrom(template, UiText.T("New profile"));
         }
 
         private void Retail_Click(object sender, RoutedEventArgs e)
         {
             var retail = App.State.Profiles.PathFor("example-retail");
-            if (!File.Exists(retail)) { Note.Text = "Ashita's retail example is missing; run Repair."; return; }
-            CreateFrom(retail, "New retail profile", retail: true);
+            if (!File.Exists(retail)) { Note.Text = UiText.T("Ashita's retail example is missing; run Repair."); return; }
+            CreateFrom(retail, UiText.T("New retail profile"), retail: true);
         }
 
         private void Duplicate_Click(object sender, RoutedEventArgs e)
         {
             if (Current == null) return;
-            CreateFrom(Current.Path, "Copy profile");
+            CreateFrom(Current.Path, UiText.T("Copy profile"));
         }
 
         private void CreateFrom(string sourcePath, string title, bool retail = false)
         {
-            var id = Prompt.Ask(_win, title, "Profile name:", "");
+            var id = Prompt.Ask(_win, title, UiText.T("Profile name:"), "");
             if (string.IsNullOrWhiteSpace(id)) return;
             id = id.Trim();
-            if (!ProfileStore.IsValidId(id)) { Note.Text = "That name has characters a file name can't take."; return; }
+            if (!ProfileStore.IsValidId(id)) { Note.Text = UiText.T("That name has characters a file name can't take."); return; }
             var store = App.State.Profiles;
-            if (store.Exists(id)) { Note.Text = id + " already exists."; return; }
+            if (store.Exists(id)) { Note.Text = id + UiText.T(" already exists."); return; }
             var copy = Profile.Load(sourcePath).DuplicateTo(store.PathFor(id), id);
             if (retail)
             {
@@ -228,7 +228,7 @@ namespace Vanadreams.Pages
                 if (viewer == null)
                 {
                     Reload(id);
-                    Note.Text = "PlayOnline Viewer was not found. Install the retail client (Guide) and browse to its pol.exe here.";
+                    Note.Text = UiText.T("PlayOnline Viewer was not found. Install the retail client (Guide) and browse to its pol.exe here.");
                     return;
                 }
                 _win.Navigate(new MenuPage(_win));   // it is the current profile now: Play is one press away
@@ -248,8 +248,8 @@ namespace Vanadreams.Pages
         {
             var p = Current;
             if (p == null) return;
-            if (p.IsExample) { Note.Text = "The shipped examples stay."; return; }
-            if (MessageBox.Show("Send " + p.FileName + " to the Recycle Bin?", "Delete profile", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+            if (p.IsExample) { Note.Text = UiText.T("The shipped examples stay."); return; }
+            if (MessageBox.Show(UiText.T("Send ") + p.FileName + UiText.T(" to the Recycle Bin?"), UiText.T("Delete profile"), MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
             Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(p.Path, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             App.State.Credentials.Remove(p.Id);
             Reload(null);

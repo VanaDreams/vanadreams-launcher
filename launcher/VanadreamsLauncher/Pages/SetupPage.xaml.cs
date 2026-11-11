@@ -24,13 +24,13 @@ namespace Vanadreams.Pages
             _win = win;
             var state = App.State;
             FolderBox.Text = string.IsNullOrWhiteSpace(state.AshitaRoot) ? @"C:\Games\Vanadreams" : state.AshitaRoot;
-            if (state.HasAshita) { Title.Text = "Repair or update Ashita"; GoButton.Content = "Check and update"; }
+            if (state.HasAshita) { Title.Text = UiText.T("Repair or update Ashita"); GoButton.Content = UiText.T("Check and update"); }
             // a snapshot for the website never shows the machine's own v3 folder, which carries a Windows user name
             _v3 = string.IsNullOrEmpty(App.SnapshotPath) ? V3Import.FindInstalls().FirstOrDefault() : null;
             if (_v3 != null)
             {
                 ImportPanel.Visibility = Visibility.Visible;
-                ImportLabel.Text = "Ashita v3 found at " + _v3;
+                ImportLabel.Text = UiText.T("Ashita v3 found at ") + _v3;
             }
             FolderBox.TextChanged += (s, e) => UpdateAdopt();
             UpdateAdopt();
@@ -49,7 +49,7 @@ namespace Vanadreams.Pages
             var root = RootFrom(FolderBox.Text);
             var existing = root.Length > 0 && File.Exists(Path.Combine(root, "Ashita-cli.exe"));
             AdoptButton.Visibility = existing && !string.Equals(root, App.State.AshitaRoot, StringComparison.OrdinalIgnoreCase) ? Visibility.Visible : Visibility.Collapsed;
-            if (existing) Say("An Ashita v4 install is already in that folder. Update it, or use it as it is.", "GoldSoft");
+            if (existing) Say(UiText.T("An Ashita v4 install is already in that folder. Update it, or use it as it is."), "GoldSoft");
         }
 
         /// <summary>Register an Ashita v4 folder the player already has, write the profile, download nothing.</summary>
@@ -74,10 +74,10 @@ namespace Vanadreams.Pages
                     p.BootFile = File.Exists(loader) ? loader : p.BootFile;
                     p.Script = "vanadreams.txt";
                     p.Save();
-                    if (!File.Exists(loader)) Say("Profile written. No xiloader in bootloader\\ yet: press Check and update to fetch it, or browse to yours on the Profiles page.", "Warn");
-                    else Say("Using " + root + ". Vanadreams profile written.", "Ok");
+                    if (!File.Exists(loader)) Say(UiText.T("Profile written. No xiloader in bootloader\\ yet: press Check and update to fetch it, or browse to yours on the Profiles page."), "Warn");
+                    else Say(UiText.T("Using ") + root + UiText.T(". Vanadreams profile written."), "Ok");
                 }
-                else Say("Using " + root + ". Vanadreams profile already there.", "Ok");
+                else Say(UiText.T("Using ") + root + UiText.T(". Vanadreams profile already there."), "Ok");
                 state.Settings.LastProfile = "vanadreams";
                 state.Settings.SetupDone = true;
                 state.Settings.Save();
@@ -85,7 +85,7 @@ namespace Vanadreams.Pages
                 state.CheckVersion();
                 state.Notify();
                 _win.RefreshStrip();
-                Title.Text = "Repair or update Ashita"; GoButton.Content = "Check and update";
+                Title.Text = UiText.T("Repair or update Ashita"); GoButton.Content = UiText.T("Check and update");
                 UpdateAdopt();
             }
             catch (Exception ex) { Log.Error("adopt", ex); Say(ex.Message, "Bad"); }
@@ -93,7 +93,7 @@ namespace Vanadreams.Pages
 
         private void Choose_Click(object sender, RoutedEventArgs e)
         {
-            var d = new System.Windows.Forms.FolderBrowserDialog { Description = "Pick or make the folder Ashita v4 lives in", SelectedPath = FolderBox.Text };
+            var d = new System.Windows.Forms.FolderBrowserDialog { Description = UiText.T("Pick or make the folder Ashita v4 lives in"), SelectedPath = FolderBox.Text };
             if (d.ShowDialog() == System.Windows.Forms.DialogResult.OK) FolderBox.Text = d.SelectedPath;
         }
 
@@ -101,31 +101,31 @@ namespace Vanadreams.Pages
         {
             if (_busy) return;
             var root = RootFrom(FolderBox.Text);
-            if (string.IsNullOrWhiteSpace(root)) { Say("Choose a folder first.", "Warn"); return; }
-            if (ClientVersion.IsUnderProgramFiles(root)) { Say("Not under Program Files: pick a folder you own, like C:\\Games\\Vanadreams.", "Warn"); return; }
+            if (string.IsNullOrWhiteSpace(root)) { Say(UiText.T("Choose a folder first."), "Warn"); return; }
+            if (ClientVersion.IsUnderProgramFiles(root)) { Say(UiText.T("Not under Program Files: pick a folder you own, like C:\\Games\\Vanadreams."), "Warn"); return; }
             _busy = true; GoButton.IsEnabled = false;
             var state = App.State;
             try
             {
                 Directory.CreateDirectory(root);
-                var progress = new Progress<DownloadProgress>(p => { Progress.Visibility = Visibility.Visible; Progress.IsIndeterminate = false; Progress.Value = p.Fraction * 100; Status.Text = $"{p.Label}: {p.Done / 1048576.0:0.0} of {(p.Total > 0 ? p.Total / 1048576.0 : 0):0.0} MB"; });
+                var progress = new Progress<DownloadProgress>(p => { Progress.Visibility = Visibility.Visible; Progress.IsIndeterminate = false; Progress.Value = p.Fraction * 100; Status.Text = UiText.F("{0}: {1:0.0} of {2:0.0} MB", p.Label, p.Done / 1048576.0, p.Total > 0 ? p.Total / 1048576.0 : 0); });
 
                 // 1. Ashita v4 beta
                 Mark(Step1);
                 var ashitaZip = Path.Combine(state.Settings.DownloadsFolder, "Ashita-v4beta-main.zip");
-                Say("Downloading Ashita v4 beta…");
-                await state.Downloader.DownloadFileAsync(AshitaZipUrl, ashitaZip, progress, "Ashita v4 beta");
-                Say("Unpacking Ashita…");
+                Say(UiText.T("Downloading Ashita v4 beta…"));
+                await state.Downloader.DownloadFileAsync(AshitaZipUrl, ashitaZip, progress, UiText.T("Ashita v4 beta"));
+                Say(UiText.T("Unpacking Ashita…"));
                 await Task.Run(() => UnpackStrippingTopFolder(ashitaZip, root));
-                if (!File.Exists(Path.Combine(root, "Ashita-cli.exe"))) throw new InvalidOperationException("Ashita-cli.exe did not appear after unpacking; the archive layout changed.");
+                if (!File.Exists(Path.Combine(root, "Ashita-cli.exe"))) throw new InvalidOperationException(UiText.T("Ashita-cli.exe did not appear after unpacking; the archive layout changed."));
                 Done(Step1);
 
                 // 2. xiloader - the one the server accepts, never "the latest" (Services\Loader.cs says why)
                 Mark(Step2);
-                Say("Fetching xiloader " + Loader.Tag + "…");
+                Say(UiText.T("Fetching xiloader ") + Loader.Tag + "…");
                 await Loader.InstallAsync(state.Downloader, state.Settings.DownloadsFolder, root, true, progress);
                 // and the Microsoft runtime it and Ashita need, without which Ashita's console hangs on its banner
-                Say("Checking Microsoft's Visual C++ runtime…");
+                Say(UiText.T("Checking Microsoft's Visual C++ runtime…"));
                 await VcRuntime.EnsureAsync(state.Downloader, state.Settings.DownloadsFolder, progress);
                 Done(Step2);
 
@@ -138,7 +138,7 @@ namespace Vanadreams.Pages
                 if (!File.Exists(vdPath))
                 {
                     var template = store.TemplatePath();
-                    if (template == null) throw new InvalidOperationException("Ashita's example profiles are missing from " + store.BootDir + ".");
+                    if (template == null) throw new InvalidOperationException(UiText.T("Ashita's example profiles are missing from ") + store.BootDir + ".");
                     var p = Profile.Load(template).DuplicateTo(vdPath, "Vanadreams");
                     p.Command = new LoaderCommand { Server = LoaderCommand.VanadreamsServer };
                     p.BootFile = Path.Combine(root, "bootloader", "xiloader.exe");
@@ -166,9 +166,9 @@ namespace Vanadreams.Pages
                     }
                     if (ImportConfigs.IsChecked == true) lines.AddRange(V3Import.ImportConfigs(_v3, root).Lines);
                     Log.Info("v3 import: " + string.Join(" | ", lines));
-                    Step4.Text = "4. From v3: " + string.Join(" ", lines.Take(4));
+                    Step4.Text = UiText.T("4. From v3: ") + string.Join(" ", lines.Take(4));
                 }
-                else Step4.Text = "4. No v3 install found, nothing to bring over.";
+                else Step4.Text = UiText.T("4. No v3 install found, nothing to bring over.");
                 Done(Step4);
 
                 // 5. addons: a new install starts with none switched on, and a repair run leaves the
@@ -187,15 +187,15 @@ namespace Vanadreams.Pages
                 state.ApplyEnabledAddons();
                 state.CheckVersion();
                 Done(Step5);
-                Say("Done. Ashita is at " + root + ".", "Ok");
+                Say(UiText.T("Done. Ashita is at ") + root + ".", "Ok");
                 state.Notify();
                 _win.RefreshStrip();
-                Title.Text = "Repair or update Ashita"; GoButton.Content = "Check and update";
+                Title.Text = UiText.T("Repair or update Ashita"); GoButton.Content = UiText.T("Check and update");
             }
             catch (Exception ex)
             {
                 Log.Error("setup", ex);
-                Say(ex.Message + " Press the button again to retry; nothing already fetched is fetched twice.", "Bad");
+                Say(ex.Message + UiText.T(" Press the button again to retry; nothing already fetched is fetched twice."), "Bad");
             }
             finally
             {
@@ -234,7 +234,7 @@ namespace Vanadreams.Pages
         public bool CanLeave()
         {
             if (!_busy) return true;
-            Say("Setup is still running. It finishes on its own; wait for it here.", "Warn");
+            Say(UiText.T("Setup is still running. It finishes on its own; wait for it here."), "Warn");
             return false;
         }
 

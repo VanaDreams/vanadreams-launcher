@@ -1,6 +1,7 @@
 <UserControl x:Class="Vanadreams.Pages.GraphicsPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
              xmlns:local="clr-namespace:Vanadreams"
              xmlns:pages="clr-namespace:Vanadreams.Pages"
              Focusable="True">
@@ -22,7 +23,7 @@
                     <pages:WindowPanel x:Name="WindowSettings" Margin="0,0,4,0"/>
                 </ScrollViewer>
                 <local:CrewGuide Grid.Row="1" Who="goblin" BubbleWidth="140"
-                                 Tip="Potato is fine. Goblin play on potato for years."/>
+                                 Tip="{lang:Text Key=t854d4711a2c6}"/>
             </Grid>
         </Border>
     </Grid>

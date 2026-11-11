@@ -41,6 +41,7 @@ namespace Vanadreams.Pages
     public sealed class AddonSection
     {
         public string Name { get; set; }
+        public string DisplayName => UiText.T(Name);
         public List<AddonRow> Rows { get; set; }
     }
 
@@ -138,7 +139,7 @@ namespace Vanadreams.Pages
                 .ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase).ToList();
             List.ItemsSource = null; List.ItemsSource = sections;
             var enabledCount = _rows.Count(r => r.Enabled && r.HasV4 && !r.IsSwitcher);
-            Heading.Text = $"✦ Your addons · {enabledCount} of {_rows.Count(r => r.HasV4 && !r.IsSwitcher)} enabled" + (state.CatalogFromCache ? " · catalogue from cache" : "");
+            Heading.Text = UiText.F("✦ Your addons · {0} of {1} enabled", enabledCount, _rows.Count(r => r.HasV4 && !r.IsSwitcher)) + (state.CatalogFromCache ? UiText.T(" · catalogue from cache") : "");
             var sel = _rows.FirstOrDefault(r => r.Item.Id == selectedId) ?? _rows.FirstOrDefault(r => !r.IsSwitcher) ?? _rows.FirstOrDefault();
             Select(sel);
         }
@@ -147,61 +148,61 @@ namespace Vanadreams.Pages
         {
             foreach (var r in _rows) r.Selected = false;
             _current = row;
-            if (row == null) { ItemName.Text = "No catalogue yet"; ItemMeta.Text = "The catalogue could not be loaded. Check Settings for the catalogue address."; return; }
+            if (row == null) { ItemName.Text = UiText.T("No catalogue yet"); ItemMeta.Text = UiText.T("The catalogue could not be loaded. Check Settings for the catalogue address."); return; }
             row.Selected = true;
             var i = row.Item;
             SwitcherButton.Visibility = row.IsSwitcher ? Visibility.Visible : Visibility.Collapsed;
             if (row.IsSwitcher)
             {
                 ItemName.Text = i.Name;
-                ItemMeta.Text = "Built into the launcher";
+                ItemMeta.Text = UiText.T("Built into the launcher");
                 ItemDesc.Text = i.Description;
-                ItemState.Text = row.Enabled ? "✓ On" : "Off · tick it and Save to turn it on";
+                ItemState.Text = row.Enabled ? UiText.T("✓ On") : UiText.T("Off · tick it and Save to turn it on");
                 ItemState.Foreground = (Brush)FindResource(row.Enabled ? "Ok" : "Mist");
                 ItemV3.Text = "";
                 InstallButton.Visibility = DocsButton.Visibility = ConfigButton.Visibility = Visibility.Collapsed;
                 return;
             }
             ItemName.Text = i.Name;
-            var kind = i.Kind == "polplugin" ? "POL plugin" : i.Kind == "plugin" ? "Plugin" : i.Kind == "overlay" ? "Game-file pack" : "Addon";
-            ItemMeta.Text = kind + (string.IsNullOrEmpty(i.Maintainer) && string.IsNullOrEmpty(i.Repo) ? "" : " by " + (i.Maintainer ?? i.Repo.Split('/')[0])) + (string.IsNullOrEmpty(i.Version) ? "" : " · " + i.Version) + (i.Source == SourceType.GithubRelease ? " · built for interface " + App.State.Catalog.Interface : "");
+            var kind = i.Kind == "polplugin" ? UiText.T("POL plugin") : i.Kind == "plugin" ? UiText.T("Plugin") : i.Kind == "overlay" ? UiText.T("Game-file pack") : UiText.T("Addon");
+            ItemMeta.Text = kind + (string.IsNullOrEmpty(i.Maintainer) && string.IsNullOrEmpty(i.Repo) ? "" : UiText.T(" by ") + (i.Maintainer ?? i.Repo.Split('/')[0])) + (string.IsNullOrEmpty(i.Version) ? "" : " · " + i.Version) + (i.Source == SourceType.GithubRelease ? UiText.T(" · built for interface ") + App.State.Catalog.Interface : "");
             ItemDesc.Text = i.Description ?? "";
             if (!i.HasV4)
             {
-                ItemState.Text = "No v4 version exists." + (string.IsNullOrEmpty(i.Replacement) ? "" : " Use " + i.Replacement + " instead.");
+                ItemState.Text = UiText.T("No v4 version exists.") + (string.IsNullOrEmpty(i.Replacement) ? "" : UiText.T(" Use ") + i.Replacement + UiText.T(" instead."));
                 ItemState.Foreground = (Brush)FindResource("Bad");
             }
             else if (i.Source == SourceType.Bundled)
             {
-                ItemState.Text = row.Installed ? "✓ Ships with Ashita v4" : "Ships with Ashita v4, but the file is missing. Run Repair.";
+                ItemState.Text = row.Installed ? UiText.T("✓ Ships with Ashita v4") : UiText.T("Ships with Ashita v4, but the file is missing. Run Repair.");
                 ItemState.Foreground = (Brush)FindResource(row.Installed ? "Ok" : "Warn");
             }
             else if (row.Installed)
             {
                 var stale = !string.IsNullOrEmpty(i.Version) && !string.Equals(row.InstalledVersion, i.Version, StringComparison.OrdinalIgnoreCase);
-                ItemState.Text = stale ? $"Installed {row.InstalledVersion ?? "(unknown)"} · {i.Version} available" : $"✓ Installed {row.InstalledVersion ?? i.Version ?? ""}";
+                ItemState.Text = stale ? UiText.F("Installed {0} · {1} available", row.InstalledVersion ?? UiText.T("(unknown)"), i.Version) : UiText.F("✓ Installed {0}", row.InstalledVersion ?? i.Version ?? "");
                 ItemState.Foreground = (Brush)FindResource(stale ? "Warn" : "Ok");
             }
             else
             {
-                ItemState.Text = "Not installed";
+                ItemState.Text = UiText.T("Not installed");
                 ItemState.Foreground = (Brush)FindResource("Mist");
             }
-            ItemState.Text += string.IsNullOrEmpty(i.Load) ? "" : "\nLoads as " + (i.LoadKind == LoadKind.PolPlugin ? "POL plugin " + i.LoadName + " (boot ini)" : i.Load);
+            ItemState.Text += string.IsNullOrEmpty(i.Load) ? "" : UiText.T("\nLoads as ") + (i.LoadKind == LoadKind.PolPlugin ? UiText.T("POL plugin ") + i.LoadName + UiText.T(" (boot ini)") : i.Load);
             if (row.BlockedBy != null)
             {
-                ItemState.Text += "\nUnticked and greyed out while " + row.BlockedBy.Name + " is ticked: " + row.BlockedBy.Name + " does its job, and the two cannot load together.";
+                ItemState.Text += UiText.T("\nUnticked and greyed out while ") + row.BlockedBy.Name + UiText.T(" is ticked: ") + row.BlockedBy.Name + UiText.T(" does its job, and the two cannot load together.");
                 ItemState.Foreground = (Brush)FindResource("Warn");
             }
             if (!string.IsNullOrEmpty(i.HeldBack))
             {
                 // shown ticked or not, so the reason is read before the box is
-                ItemState.Text += "\nNever written to the startup script: " + i.HeldBack + (string.IsNullOrEmpty(i.Replacement) ? "" : " Tick " + i.Replacement + " instead.");
+                ItemState.Text += UiText.T("\nNever written to the startup script: ") + i.HeldBack + (string.IsNullOrEmpty(i.Replacement) ? "" : UiText.T(" Tick ") + i.Replacement + UiText.T(" instead."));
                 ItemState.Foreground = (Brush)FindResource("Bad");
             }
-            ItemV3.Text = i.V3Note != null ? "From v3: " + i.V3Note : i.V3Name != null ? "From v3: " + i.V3Name + (i.V3Carry != null ? ", " + i.V3Carry + " carried over" : "") : "";
+            ItemV3.Text = i.V3Note != null ? UiText.T("From v3: ") + i.V3Note : i.V3Name != null ? UiText.T("From v3: ") + i.V3Name + (i.V3Carry != null ? ", " + i.V3Carry + UiText.T(" carried over") : "") : "";
             InstallButton.Visibility = i.HasV4 && i.Source != SourceType.Bundled ? Visibility.Visible : Visibility.Collapsed;
-            InstallButton.Content = !row.Installed ? "Install" : (!string.IsNullOrEmpty(i.Version) && !string.Equals(row.InstalledVersion, i.Version, StringComparison.OrdinalIgnoreCase)) ? "Update to " + i.Version : "Reinstall";
+            InstallButton.Content = !row.Installed ? UiText.T("Install") : (!string.IsNullOrEmpty(i.Version) && !string.Equals(row.InstalledVersion, i.Version, StringComparison.OrdinalIgnoreCase)) ? UiText.T("Update to ") + i.Version : UiText.T("Reinstall");
             DocsButton.Visibility = string.IsNullOrEmpty(i.Docs) ? Visibility.Collapsed : Visibility.Visible;
             ConfigButton.Visibility = string.IsNullOrEmpty(i.Config) ? Visibility.Collapsed : Visibility.Visible;
         }
@@ -238,14 +239,14 @@ namespace Vanadreams.Pages
             if (_current == null || _busy) return;
             var item = _current.Item;
             var state = App.State;
-            if (!state.HasAshita) { ProgressText.Visibility = Visibility.Visible; ProgressText.Text = "Set the Ashita folder on Settings first."; return; }
+            if (!state.HasAshita) { ProgressText.Visibility = Visibility.Visible; ProgressText.Text = UiText.T("Set the Ashita folder on Settings first."); return; }
             _busy = true; InstallButton.IsEnabled = false;
             Progress.Visibility = ProgressText.Visibility = Visibility.Visible;
-            Progress.IsIndeterminate = true; ProgressText.Text = "Looking up " + item.Name + "…";
+            Progress.IsIndeterminate = true; ProgressText.Text = UiText.T("Looking up ") + item.Name + "…";
             string syncNote = null;
             try
             {
-                var progress = new Progress<DownloadProgress>(p => { Progress.IsIndeterminate = false; Progress.Value = p.Fraction * 100; ProgressText.Text = $"{p.Label}: {p.Done / 1048576.0:0.0} of {p.Total / 1048576.0:0.0} MB"; });
+                var progress = new Progress<DownloadProgress>(p => { Progress.IsIndeterminate = false; Progress.Value = p.Fraction * 100; ProgressText.Text = UiText.F("{0}: {1:0.0} of {2:0.0} MB", p.Label, p.Done / 1048576.0, p.Total / 1048576.0); });
                 if (item.Source == SourceType.GithubRelease)
                 {
                     await AddonInstaller.InstallReleaseAsync(state.Downloader, state.Settings, state.AshitaRoot, item, progress, text => ProgressText.Text = text);
@@ -256,10 +257,10 @@ namespace Vanadreams.Pages
                     var plan = await AddonInstaller.InstallRepoFolderAsync(state.Downloader, state.Settings, state.AshitaRoot, item,
                         (name, n, of) => Dispatcher.Invoke(() =>
                         {
-                            ProgressText.Text = $"{name} ({n} of {of})";
+                            ProgressText.Text = UiText.F("{0} ({1} of {2})", name, n, of);
                             Progress.IsIndeterminate = false; Progress.Value = 100.0 * n / of;
                         }), state.FfxiFolder);
-                    syncNote = $"{plan.Download.Count} downloaded, {plan.Keep.Count} already here" + (plan.Delete.Count > 0 ? $", {plan.Delete.Count} removed" : "");
+                    syncNote = UiText.F("{0} downloaded, {1} already here", plan.Download.Count, plan.Keep.Count) + (plan.Delete.Count > 0 ? UiText.F(", {0} removed", plan.Delete.Count) : "");
                 }
                 // enabled, saved and applied in one motion, so Play right after Install loads it
                 _current.Enabled = true;
@@ -268,7 +269,7 @@ namespace Vanadreams.Pages
                 state.ApplyEnabledAddons();
                 Log.Info("installed " + item.Id);
                 var pivot = item.Install == InstallAction.PivotOverlay ? state.Catalog.Find("pivot") : null;
-                ProgressText.Text = pivot != null && !pivot.IsInstalled(state.AshitaRoot) ? "Installed. It needs XIPivot to show in game: install that too, then Save." : syncNote != null ? "Installed: " + syncNote + "." : "Installed.";
+                ProgressText.Text = pivot != null && !pivot.IsInstalled(state.AshitaRoot) ? UiText.T("Installed. It needs XIPivot to show in game: install that too, then Save.") : syncNote != null ? UiText.T("Installed: ") + syncNote + "." : UiText.T("Installed.");
                 Build();
             }
             catch (Exception ex)
@@ -298,10 +299,10 @@ namespace Vanadreams.Pages
         private static readonly CatalogItem SwitcherItem = new CatalogItem
         {
             Id = "vanadreams-window-switcher",
-            Name = "Window switcher",
+            Name = UiText.T("Window switcher"),
             Kind = "launcher",
             Source = SourceType.Bundled,
-            Description = "For playing more than one character: a key or a controller press brings the next, the previous or a numbered game window to the front, and saved layouts put the windows back where they go.",
+            Description = UiText.T("For playing more than one character: a key or a controller press brings the next, the previous or a numbered game window to the front, and saved layouts put the windows back where they go."),
         };
 
         private void Switcher_Click(object sender, RoutedEventArgs e) => _win.Navigate(new SwitcherPage(_win));
@@ -319,9 +320,9 @@ namespace Vanadreams.Pages
                 state.ApplyEnabledAddons();
                 var never = _rows.Where(r => r.Enabled && r.HasV4 && !string.IsNullOrEmpty(r.Item.HeldBack)).Select(r => r.Item).ToList();
                 var held = _rows.Where(r => r.Enabled && r.HasV4 && string.IsNullOrEmpty(r.Item.HeldBack)).Select(r => new { r.Item, By = state.Catalog.BlockedBy(r.Item, state.Settings.EnabledAddons) }).Where(x => x.By != null).ToList();
-                Footer.Text = "Saved: scripts\\vanadreams.txt written for " + (state.Settings.EnabledAddons.Count - held.Count - never.Count) + " item(s)."
-                    + string.Concat(held.Select(x => " " + x.Item.Name + " left out while " + x.By.Name + " is ticked."))
-                    + string.Concat(never.Select(x => " " + x.Name + " is never loaded here" + (string.IsNullOrEmpty(x.Replacement) ? "." : "; tick " + x.Replacement + " instead.")));
+                Footer.Text = UiText.T("Saved: scripts\\vanadreams.txt written for ") + (state.Settings.EnabledAddons.Count - held.Count - never.Count) + UiText.T(" item(s).")
+                    + string.Concat(held.Select(x => " " + x.Item.Name + UiText.T(" left out while ") + x.By.Name + UiText.T(" is ticked.")))
+                    + string.Concat(never.Select(x => " " + x.Name + UiText.T(" is never loaded here") + (string.IsNullOrEmpty(x.Replacement) ? "." : UiText.T("; tick ") + x.Replacement + UiText.T(" instead."))));
                 Footer.Foreground = (Brush)FindResource("Ok");
             }
             catch (Exception ex)

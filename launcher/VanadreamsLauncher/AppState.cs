@@ -16,7 +16,7 @@ namespace Vanadreams
         public long Size => Parts.Sum(c => c.Size);
         public string Megabytes => Math.Max(1, Size / 1048576) + " MB";
         /// <summary>"3 new parts, 412 MB"</summary>
-        public string Words => Parts.Count + (Parts.Count == 1 ? " new part, " : " new parts, ") + Megabytes;
+        public string Words => Parts.Count + (Parts.Count == 1 ? UiText.T(" new part, ") : UiText.T(" new parts, ")) + Megabytes;
     }
 
     /// <summary>Everything the pages share: settings, stores, the last status and version check.</summary>
@@ -223,7 +223,7 @@ namespace Vanadreams
             var m = PendingClientUpdate?.Manifest;
             if (m == null || (!string.IsNullOrEmpty(version) && m.Version != version))
             {
-                if (string.IsNullOrEmpty(version)) throw new InvalidOperationException("The server hasn't published its version yet, so there is nothing to patch to.");
+                if (string.IsNullOrEmpty(version)) throw new InvalidOperationException(UiText.T("The server hasn't published its version yet, so there is nothing to patch to."));
                 m = ClientManifest.Parse(await Downloader.GetStringAsync(ClientInstall.ManifestUrl(version)));
             }
             var ashita = HasAshita ? AshitaRoot : null;
@@ -250,8 +250,8 @@ namespace Vanadreams
             var needed = todo.Sum(c => c.Size + c.Unpacked);
             var drive = new DriveInfo(Path.GetPathRoot(root));
             if (drive.AvailableFreeSpace < needed)
-                throw new IOException(drive.Name + " has " + (drive.AvailableFreeSpace / 1073741824.0).ToString("0.0") + " GB free and the patch needs " +
-                                      (needed / 1073741824.0).ToString("0.0") + " GB. Free some space, or pick another folder on Install game.");
+                throw new IOException(drive.Name + " has " + (drive.AvailableFreeSpace / 1073741824.0).ToString("0.0") + UiText.T(" GB free and the patch needs ") +
+                                      (needed / 1073741824.0).ToString("0.0") + UiText.T(" GB. Free some space, or pick another folder on Install game."));
             await ClientInstall.InstallFilesAsync(Downloader, m, root, Settings.DownloadsFolder, progress, ct, ashita, Settings.LowSpec);
             Settings.GameInstallRoot = root;
             Settings.Save();
@@ -259,7 +259,7 @@ namespace Vanadreams
             GiveOverlays();
             string said = null;
             if (!updateOnly && !await Task.Run(() => ClientInstall.RunRegister(root, Settings.DownloadsFolder)))
-                said = "The files are in, but the permission prompt was refused, so Windows doesn't know where the game is yet. Press Patch again to finish; nothing downloads twice.";
+                said = UiText.T("The files are in, but the permission prompt was refused, so Windows doesn't know where the game is yet. Press Patch again to finish; nothing downloads twice.");
             await CheckClientUpdateAsync();
             CheckVersion();
             Notify();

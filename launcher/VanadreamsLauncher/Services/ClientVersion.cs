@@ -25,18 +25,18 @@ namespace Vanadreams.Services
             {
                 if (!ExpectedIsPublished)
                     return string.IsNullOrEmpty(Installed)
-                        ? "Client version unknown. Run the PlayOnline updater once, then check again."
-                        : $"Your client is {Installed}. The server hasn't published what it expects yet.";
+                        ? UiText.T("Client version unknown. Run the PlayOnline updater once, then check again.")
+                        : UiText.F("Your client is {0}. The server hasn't published what it expects yet.", Installed);
                 switch (Verdict)
                 {
                     case VersionVerdict.Ready:
-                        return $"Your client is {Installed}, the server expects {Expected}. Ready to play.";
+                        return UiText.F("Your client is {0}, the server expects {1}. Ready to play.", Installed, Expected);
                     case VersionVerdict.ClientTooOld:
-                        return $"Your client is {Installed}, the server expects {Expected}. Update the client first.";
+                        return UiText.F("Your client is {0}, the server expects {1}. Update the client first.", Installed, Expected);
                     case VersionVerdict.ClientNewerThanServerAllows:
-                        return $"Your client is {Installed}, the server only accepts {Expected}. Wait for the server to update.";
+                        return UiText.F("Your client is {0}, the server only accepts {1}. Wait for the server to update.", Installed, Expected);
                     default:
-                        return "Client version unknown. Run the PlayOnline updater once, then check again.";
+                        return UiText.T("Client version unknown. Run the PlayOnline updater once, then check again.");
                 }
             }
         }

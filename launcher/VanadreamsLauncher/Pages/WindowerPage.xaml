@@ -1,6 +1,7 @@
 <UserControl x:Class="Vanadreams.Pages.WindowerPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lang="clr-namespace:Vanadreams.Localization"
              Focusable="True">
     <UserControl.Resources>
         <Style x:Key="Step" TargetType="Button" BasedOn="{StaticResource GoldButton}">
@@ -19,29 +20,29 @@
         <Border Grid.Column="0" Style="{StaticResource Box}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel Margin="0,0,4,0">
-                    <TextBlock Style="{StaticResource Eyebrow}" Text="✦ Coming from Windower"/>
+                    <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t5325432e4259}"/>
                     <TextBlock Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,0,0,10"
-                               Text="Vanadreams plays through Ashita. These three bring over what you had on Windower, so it feels like home."/>
+                               Text="{lang:Text Key=t72f03b8c1d82}"/>
 
                     <!-- 1. the look-alikes -->
-                    <TextBlock Style="{StaticResource MenuItemText}" FontSize="19" Text="1. Your addons, Ashita's way"/>
+                    <TextBlock Style="{StaticResource MenuItemText}" FontSize="19" Text="{lang:Text Key=ted475910d2fa}"/>
                     <TextBlock x:Name="PresetList" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap"/>
-                    <Button x:Name="PresetButton" Style="{StaticResource Step}" Content="Install and tick" Click="Preset_Click"/>
+                    <Button x:Name="PresetButton" Style="{StaticResource Step}" Content="{lang:Text Key=tef42de9bae45}" Click="Preset_Click"/>
 
                     <!-- 2. init.txt -->
-                    <TextBlock Style="{StaticResource MenuItemText}" FontSize="19" Text="2. Your binds and aliases" Margin="0,12,0,0"/>
+                    <TextBlock Style="{StaticResource MenuItemText}" FontSize="19" Text="{lang:Text Key=t961346d14450}" Margin="0,12,0,0"/>
                     <TextBlock Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap"
-                               Text="Reads Windower's scripts\init.txt and writes its binds and aliases into your Vanadreams startup script."/>
-                    <Button x:Name="InitButton" Style="{StaticResource Step}" Content="Import init.txt…" Click="Init_Click"/>
+                               Text="{lang:Text Key=tb326efcc3586}"/>
+                    <Button x:Name="InitButton" Style="{StaticResource Step}" Content="{lang:Text Key=t64b124e8a2cb}" Click="Init_Click"/>
 
                     <!-- 3. GearSwap -->
-                    <TextBlock Style="{StaticResource MenuItemText}" FontSize="19" Text="3. Your GearSwap sets" Margin="0,12,0,0"/>
+                    <TextBlock Style="{StaticResource MenuItemText}" FontSize="19" Text="{lang:Text Key=t736f20621b47}" Margin="0,12,0,0"/>
                     <TextBlock Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap"
-                               Text="Pick your GearSwap job files. Each job becomes a profile with all your sets in it. vanagear supplies the rules, and the gear for anything your sets leave out."/>
+                               Text="{lang:Text Key=ta642ba8ca38f}"/>
                     <WrapPanel Margin="0,6,0,0">
-                        <TextBlock Style="{StaticResource Muted}" FontSize="13.5" VerticalAlignment="Center" Text="Character name" Margin="0,0,8,0"/>
-                        <TextBox x:Name="CharacterBox" Width="160" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="Used for files named only by job, like WHM.lua"/>
-                        <Button x:Name="GearSwapButton" Style="{StaticResource Step}" Content="Import GearSwap…" Click="GearSwap_Click" Margin="0"/>
+                        <TextBlock Style="{StaticResource Muted}" FontSize="13.5" VerticalAlignment="Center" Text="{lang:Text Key=tfaf3e90bda92}" Margin="0,0,8,0"/>
+                        <TextBox x:Name="CharacterBox" Width="160" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="{lang:Text Key=t3826b679f569}"/>
+                        <Button x:Name="GearSwapButton" Style="{StaticResource Step}" Content="{lang:Text Key=t3cf7511675f3}" Click="GearSwap_Click" Margin="0"/>
                     </WrapPanel>
                 </StackPanel>
             </ScrollViewer>
@@ -54,17 +55,17 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource Eyebrow}" Text="✦ What happened"/>
+                <TextBlock Style="{StaticResource Eyebrow}" Text="{lang:Text Key=t45e1facbf0f2}"/>
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                     <ProgressBar x:Name="Progress" Margin="0,0,0,8" Visibility="Collapsed"/>
                     <ScrollViewer Grid.Row="1" x:Name="ResultScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <TextBlock x:Name="Result" TextWrapping="Wrap" FontSize="14.5" Text="Nothing yet. Each step can be run again whenever you like."/>
+                        <TextBlock x:Name="Result" TextWrapping="Wrap" FontSize="14.5" Text="{lang:Text Key=t627e0530a186}"/>
                     </ScrollViewer>
                 </Grid>
                 <StackPanel Grid.Row="2" Margin="0,8,0,0">
-                    <Button x:Name="OpenButton" Style="{StaticResource GhostButton}" Content="Open the folder" Click="Open_Click" Margin="0,0,0,7" HorizontalAlignment="Left" Visibility="Collapsed"/>
-                    <Button Style="{StaticResource GhostButton}" Content="Back" HorizontalAlignment="Left" Click="Back_Click"/>
+                    <Button x:Name="OpenButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=te241ab00707c}" Click="Open_Click" Margin="0,0,0,7" HorizontalAlignment="Left" Visibility="Collapsed"/>
+                    <Button Style="{StaticResource GhostButton}" Content="{lang:Text Key=t76900f1bfd16}" HorizontalAlignment="Left" Click="Back_Click"/>
                 </StackPanel>
             </Grid>
         </Border>

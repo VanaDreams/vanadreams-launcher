@@ -14,7 +14,7 @@ namespace Vanadreams.Pages
     {
         public CaptureSummary Summary { get; set; }
         public string Title => Summary.Name + "  " + JobName(Summary.MainJob) + Summary.MainLevel;
-        public string Detail => $"{Summary.CapturedOn} · {Summary.CapturedAt} · {Summary.Items} items · {Summary.Gil:N0} gil · {Summary.Spells} spells · {Summary.KeyItems} key items";
+        public string Detail => UiText.F("{0} · {1} · {2} items · {3:N0} gil · {4} spells · {5} key items", Summary.CapturedOn, Summary.CapturedAt, Summary.Items, Summary.Gil, Summary.Spells, Summary.KeyItems);
         public static string JobName(int id)
         {
             var names = new[] { "", "WAR", "MNK", "WHM", "BLM", "RDM", "THF", "PLD", "DRK", "BST", "BRD", "RNG", "SAM", "NIN", "DRG", "SMN", "BLU", "COR", "PUP", "DNC", "SCH", "GEO", "RUN" };
@@ -46,7 +46,7 @@ namespace Vanadreams.Pages
                     catch (Exception ex) { Log.Warn("snapshot unreadable " + f + ": " + ex.Message); }
                 }
             List.ItemsSource = null; List.ItemsSource = _rows;
-            Heading.Text = _rows.Count == 0 ? "✦ Snapshots · none yet" : "✦ Snapshots · " + _rows.Count;
+            Heading.Text = _rows.Count == 0 ? UiText.T("✦ Snapshots · none yet") : UiText.T("✦ Snapshots · ") + _rows.Count;
             if (_rows.Count > 0) List.SelectedIndex = 0; else Show(null);
         }
 
@@ -55,12 +55,12 @@ namespace Vanadreams.Pages
         private void Show(CaptureRow row)
         {
             Result.Text = "";
-            if (row == null) { SelName.Text = "Nothing to send"; SelMeta.Text = "Take a snapshot in game first."; SelUser.Text = ""; SendButton.IsEnabled = false; ImportButton.IsEnabled = false; StatusButton.IsEnabled = false; return; }
+            if (row == null) { SelName.Text = UiText.T("Nothing to send"); SelMeta.Text = UiText.T("Take a snapshot in game first."); SelUser.Text = ""; SendButton.IsEnabled = false; ImportButton.IsEnabled = false; StatusButton.IsEnabled = false; return; }
             var s = row.Summary;
             SelName.Text = s.Name;
-            SelMeta.Text = $"Captured on {s.CapturedOn}, {s.CapturedAt}. {s.Bytes / 1024} KB.";
+            SelMeta.Text = UiText.F("Captured on {0}, {1}. {2} KB.", s.CapturedOn, s.CapturedAt, s.Bytes / 1024);
             var user = CurrentUser();
-            SelUser.Text = string.IsNullOrEmpty(user) ? "No Vanadreams login remembered: set one on the Profiles page, it's what the snapshot is filed under." : "Files under Vanadreams login " + user + ".";
+            SelUser.Text = string.IsNullOrEmpty(user) ? UiText.T("No Vanadreams login remembered: set one on the Profiles page, it's what the snapshot is filed under.") : UiText.T("Files under Vanadreams login ") + user + ".";
             SelUser.Foreground = (Brush)FindResource(string.IsNullOrEmpty(user) ? "Warn" : "Cream");
             SendButton.IsEnabled = !string.IsNullOrEmpty(user);
             ImportButton.IsEnabled = !string.IsNullOrEmpty(user);
@@ -86,7 +86,7 @@ namespace Vanadreams.Pages
             var row = Current;
             if (row == null) return;
             SendButton.IsEnabled = false;
-            Result.Text = "Sending…"; Result.Foreground = (Brush)FindResource("Mist");
+            Result.Text = UiText.T("Sending…"); Result.Foreground = (Brush)FindResource("Mist");
             var uploader = new CaptureUploader { Url = App.State.Settings.CaptureUrl };
             var r = await uploader.SendAsync(row.Summary.Path, CurrentUser());
             Result.Text = r.Message;
@@ -100,7 +100,7 @@ namespace Vanadreams.Pages
             var row = Current;
             if (row == null) return;
             ImportButton.IsEnabled = false;
-            Result.Text = "Asking…"; Result.Foreground = (Brush)FindResource("Mist");
+            Result.Text = UiText.T("Asking…"); Result.Foreground = (Brush)FindResource("Mist");
             var uploader = new CaptureUploader { Url = App.State.Settings.CaptureUrl };
             var r = await uploader.RequestImportAsync(row.Summary.Name, CurrentUser());
             Result.Text = r.Message;
@@ -114,7 +114,7 @@ namespace Vanadreams.Pages
             var row = Current;
             if (row == null) return;
             StatusButton.IsEnabled = false;
-            Result.Text = "Checking…"; Result.Foreground = (Brush)FindResource("Mist");
+            Result.Text = UiText.T("Checking…"); Result.Foreground = (Brush)FindResource("Mist");
             var uploader = new CaptureUploader { Url = App.State.Settings.CaptureUrl };
             var r = await uploader.StatusAsync(row.Summary.Name, CurrentUser());
             Result.Text = r.Message;

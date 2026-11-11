@@ -50,6 +50,8 @@ namespace Vanadreams.Services
         public bool RestoreOtherGame { get; set; } = true;
         public bool MusicOn { get; set; } = true;
         /// <summary>The menu down the left ("vertical", the default) or as tabs across the top ("horizontal"), the player's pick on Settings.</summary>
+        /// <summary>Launcher interface: auto (Windows display language), en, or ja. Applied on next start.</summary>
+        public string UiLanguage { get; set; } = "auto";
         public string MenuLayout { get; set; } = "vertical";
         public bool HorizontalMenu => string.Equals(MenuLayout, "horizontal", StringComparison.OrdinalIgnoreCase);
         public string NewsUrl { get; set; } = "https://raw.githubusercontent.com/VanaDreams/vanadreams-launcher/main/news.json";
@@ -101,6 +103,7 @@ namespace Vanadreams.Services
                 s.SetupDone = Json.Bool(d, "setupDone");
                 s.MusicOn = Json.Bool(d, "musicOn", true);
                 s.RestoreOtherGame = Json.Bool(d, "restoreOtherGame", true);
+                s.UiLanguage = global::Vanadreams.Services.UiLanguage.Normalize(Json.Str(d, "uiLanguage", "auto"));
                 s.MenuLayout = Json.Str(d, "menuLayout", s.MenuLayout);
                 s.NewsUrl = Json.Str(d, "newsUrl", s.NewsUrl);
                 s.LowSpec = Json.Bool(d, "lowSpec");
@@ -151,6 +154,7 @@ namespace Vanadreams.Services
                 { "setupDone", SetupDone },
                 { "musicOn", MusicOn },
                 { "restoreOtherGame", RestoreOtherGame },
+                { "uiLanguage", global::Vanadreams.Services.UiLanguage.Normalize(UiLanguage) },
                 { "menuLayout", MenuLayout ?? "vertical" },
                 { "newsUrl", NewsUrl },
                 { "lowSpec", LowSpec },
