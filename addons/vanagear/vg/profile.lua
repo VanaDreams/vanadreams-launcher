@@ -1,3 +1,4 @@
+local chat = require('vg.i18n').Chat(chat);
 --[[
     vanagear: profile files, one per job and one per trust, run the way LuAshitacast ran its own -
     vanagear carries that machinery as its own and never uses the luashitacast folder, except to pull

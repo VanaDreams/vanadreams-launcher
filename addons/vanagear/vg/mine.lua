@@ -1,3 +1,4 @@
+local chat = require('vg.i18n').Chat(chat);
 --[[
     vanagear: the player's own commands. /vg <word> runs the lines saved under that word, in order.
 

@@ -1,3 +1,4 @@
+local chat = require('vg.i18n').Chat(chat);
 --[[
     vanagear: the state the builder keeps, the zone wait, and when sets get rebuilt.
 
@@ -29,7 +30,7 @@ gVana = {
     BuiltAt = nil,
     Toggles = { DT = false, Kite = false, TH = false, Tp = 'Default', Idle = 'auto', Nuke = 'power', Burst = false,
                 Stage = false, Pet = 'tp' },
-    Prefs = { ZoneWait = 10, Weapons = false, WeaponPick = {}, Locked = {}, Underlay = {}, MoteKeys = false, Look = {} },
+    Prefs = { Language = 'auto', ZoneWait = 10, Weapons = false, WeaponPick = {}, Locked = {}, Underlay = {}, MoteKeys = false, Look = {} },
     Pieces = {},
     Built = {},
     Own = {},

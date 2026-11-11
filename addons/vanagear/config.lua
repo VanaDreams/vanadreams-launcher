@@ -1,3 +1,4 @@
+local chat = require('vg.i18n').Chat(chat);
 -- From LuAshitacast 2.14 by ThornyFFXI (https://github.com/ThornyFFXI/LuAshitacast), MIT licence,
 -- Copyright (c) 2021 ThornyFFXI; see LICENSE-LuAshitacast. Lines marked "vanagear:" are Vanadreams changes.
 --These settings aren't saved to disc at all because they aren't meant to persist.
@@ -42,8 +43,9 @@ settings.register('settings', 'settings_update', function(newSettings)
     gDefaultSettings = newSettings;
 end);
 
-local imgui = require('imgui');
-local vd = require('vdstyle');
+local locale = require('vg.i18n');
+local imgui = locale.ImGui(require('imgui'));
+local vd = locale.Style(require('vdstyle'));
 local header = vd.Gold;
 local state = { IsOpen = { false }, ContainerMenu = nil };
 local gui = {};

@@ -1,3 +1,4 @@
+local chat = require('vg.i18n').Chat(chat);
 --[[
     vanagear: gear used from the slot (Warp Ring, Empress Band, Capacity Ring, Dim. Rings).
 

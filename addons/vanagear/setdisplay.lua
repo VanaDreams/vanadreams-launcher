@@ -3,8 +3,9 @@
 local gui = {
     IsOpen = { false },
 };
-local imgui = require('imgui');
-local vd = require('vdstyle');
+local locale = require('vg.i18n');
+local imgui = locale.ImGui(require('imgui'));
+local vd = locale.Style(require('vdstyle'));
 
 function gui:Hide()
     self.IsOpen[1] = false;

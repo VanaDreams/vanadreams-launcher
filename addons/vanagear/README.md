@@ -8,6 +8,30 @@ vanagear is built on [LuAshitacast](https://github.com/ThornyFFXI/LuAshitacast) 
 separate luashitacast addon: tick one or the other, and the launcher keeps luashitacast out
 while vanagear is ticked.
 
+## Display language
+
+The Settings tab offers **Auto / 自動**, **English**, and **日本語 / Japanese**.
+You can also type `/vg language auto`, `/vg language en`, or `/vg language ja`
+(`/vg lang` is an alias). `/vg language` shows the saved choice and effective language.
+The choice is saved in VanaGear's existing `config/addons/vanagear/prefs.lua`.
+
+Auto follows **Ashita's addon/resource language**: `ashita.language` → `ashita = 1`
+means Japanese; English and unavailable/unsupported values fall back to English.
+This is separate from xiloader's `--lang` numbering. A manual choice changes VanaGear's
+display, not your client installation, loader arguments, or Ashita settings.
+
+Set names, profile keys, item IDs, command words and the lines in your own commands stay
+as written. Item/spell/ability resources continue to follow the client/Ashita resources;
+choosing Japanese labels does not change an English game into a Japanese game. Built-in
+examples keep their original command lines; use names accepted by your own game client.
+Untranslated diagnostics fall back to English. Legacy messages echoing non-ASCII player text
+of unknown encoding retain their original wording and bytes, so a name is not double-encoded.
+
+Japanese window text is UTF-8. VanaGear includes the M PLUS 1p Japanese font under the
+SIL Open Font License (`fonts/OFL.txt`); it loads the font for its own windows without
+installing a Windows font. Translated game-chat messages use the existing CP932 converter.
+See [LOCALIZATION.md](LOCALIZATION.md) for adding languages and verification requirements.
+
 ## What it does
 
 - Reads your inventory and wardrobes, and scores every piece your job, level and race can wear
