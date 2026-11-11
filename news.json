@@ -2,6 +2,12 @@
   "_about": "Vana'News on the launcher's Play page. Newest first. The launcher shows the first 8 and caches the last copy it fetched.",
   "items": [
     {
+      "date": "2026-11-11",
+      "by": "Ferrin",
+      "title": "VanaGear 0.2.9: English and Japanese",
+      "body": "VanaGear now follows Ashita's addon language, with a saved Auto, English or Japanese choice in Settings or /vg language auto|en|ja. Japanese interface text, help and common messages include a bundled font. English-configured clients stay in English; saved sets, macros and gear behavior are preserved. Update through the launcher's existing addon check, including before Play; no new launcher download is needed. Window/control state may reset once. All 28 offline tests passed; Japanese in-game rendering and wording review remain unverified."
+    },
+    {
       "date": "2026-11-09",
       "by": "Ferrin",
       "title": "Kupo RoE, training crabs and gameplay fixes",
