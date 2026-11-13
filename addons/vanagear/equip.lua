@@ -1,6 +1,7 @@
 local chat = require('vg.i18n').Chat(chat);
 -- From LuAshitacast 2.14 by ThornyFFXI (https://github.com/ThornyFFXI/LuAshitacast), MIT licence,
 -- Copyright (c) 2021 ThornyFFXI; see LICENSE-LuAshitacast. Lines marked "vanagear:" are Vanadreams changes.
+local itemguard = require('vg.itemguard');
 local Buffer = {};
 local ImmediateBuffer = {};
 local EquippedItems = {};
@@ -340,7 +341,7 @@ local FlagEquippedItems = function(set)
             local eqItem = {};
             eqItem.Container = currItem.Container;
             eqItem.Index = currItem.Item.Index;
-            eqItem.Reserved = false;
+            eqItem.Reserved = itemguard.Get(i) ~= nil;
             
             local equipTable = set[i];
             local resource = resourceManager:GetItemById(currItem.Item.Id);
@@ -512,6 +513,7 @@ end
 
 --Sends unequip packet directly.
 local Unequip = function(slot, container)
+    if not itemguard.Allows(slot, container, 0) then return; end
     local packet = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     packet[5] = 0;
     packet[6] = slot - 1;
@@ -556,7 +558,7 @@ local function ResolveArmorConflicts(set)
     local candidates, locked = {}, {};
     for slot = 5, 16 do
         local current = GetCurrentEquip(slot);
-        if (gState.Disabled[slot] or gState.Encumbrance[slot]) and current.Item ~= nil then
+        if (gState.Disabled[slot] or gState.Encumbrance[slot] or itemguard.Get(slot) ~= nil) and current.Item ~= nil then
             locked[#locked + 1] = { slot = slot, id = current.Item.Id };
         end
         local e = set[slot];
@@ -645,6 +647,11 @@ local EquipSet = function(set, style)
         gVana.LastEquipAt = os.clock();
     end
 
+    -- Every VanaGear path converges here, including forced and delayed sets.
+    -- Keep the held physical item in its slot; do not move it into the other ring/ear slot.
+    for slot, entry in pairs(set) do
+        if not itemguard.Allows(slot, entry.Container, entry.Index) then set[slot] = nil; end
+    end
     ResolveArmorConflicts(set);
 
     --Prepare table of equip packets.

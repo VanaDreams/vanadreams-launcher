@@ -8,6 +8,7 @@ ffi.cdef[[
 ]];
 
 local packethandlers = {};
+local itemguard = require('vg.itemguard');
 
 packethandlers.HandleIncoming0x0A = function(e)
     local id = struct.unpack('L', e.data, 0x04 + 1);
@@ -22,6 +23,10 @@ packethandlers.HandleIncoming0x0A = function(e)
         -- vanagear: the profile loads after the zone wait, not while the zone is coming in
         gState.PendingAutoLoad = true;
     end
+    itemguard.Reset();
+    gVanaUse.Cancel();
+    gState.PlayerAction = nil;
+    gState.DelayedEquip = {};
     gVanaCore.ZoneIn();
     gState.ZoneTimer = os.clock() + 10;
 end
@@ -50,6 +55,19 @@ packethandlers.HandleIncoming0x28 = function(e)
     local actionType = ashita.bits.unpack_be(e.data_raw, 10, 2, 4);
 
     if (userId == gState.PlayerId) then
+        -- 0x028: header param at bit 86, first target id at bit 150.
+        -- Item finish is category 5; other actions must not release used equipment.
+        if actionType == 5 or actionType == 9 then
+            local parameter = ashita.bits.unpack_be(e.data_raw, 10, 6, 32);
+            local targetId = ashita.bits.unpack_be(e.data_raw, 18, 6, 32);
+            if actionType == 5 then
+                itemguard.Finished(parameter, targetId);
+            elseif parameter == 0x74697073 then
+                itemguard.Interrupted(targetId);
+            else
+                itemguard.Started(ashita.bits.unpack_be(e.data_raw, 26, 5, 17), targetId);
+            end
+        end
         if (gData.Constants.ActionCompleteTypes:contains(actionType)) then
             if (gSettings.Debug) and (gState.PlayerAction ~= nil) then
                 print(chat.header('vanagear') .. chat.message('Action ending due to action packet of type ' .. tostring(actionType) .. '.'));
@@ -213,6 +231,7 @@ packethandlers.HandleItemPacket = function(packet, resend)
     local itemIndex = struct.unpack('B', packet, 0x0E + 0x01);
     local itemContainer = struct.unpack('B', packet, 0x10 + 0x01);
     local targetIndex = struct.unpack('H', packet, 0x0C + 0x01);
+    local targetId = struct.unpack('L', packet, 0x04 + 0x01);
     local item = AshitaCore:GetMemoryManager():GetInventory():GetContainerItem(itemContainer, itemIndex);
     
     gState.DelayedEquip = {};
@@ -227,6 +246,9 @@ packethandlers.HandleItemPacket = function(packet, resend)
         gState.PlayerAction.Completion = os.clock() + (gState.PlayerAction.Resource.CastTime * 0.25) + gSettings.ItemOffset;
     end
 
+    local resource = gState.PlayerAction.Resource;
+    itemguard.Begin(itemContainer, itemIndex, item,
+        resource and (resource.CastTime * 0.25) or 0, targetId);
     gState.HandleEquipEvent('HandleItem', 'auto');
     if (gState.PlayerAction.Block == true) then
         gState.PlayerAction = nil;
@@ -315,6 +337,10 @@ packethandlers.HandleIncomingPacket = function(e)
     if (e.id == 0x00A) then
         gPacketHandlers.HandleIncoming0x0A(e);
     elseif (e.id == 0x00B) then
+        itemguard.Reset();
+        gVanaUse.Cancel();
+        gState.PlayerAction = nil;
+        gState.DelayedEquip = {};
         gVanaCore.ZoneOut(); -- vanagear: hold from the moment the zone is left
     elseif (e.id == 0x1B) then
         gPacketHandlers.HandleIncoming0x1B(e);
