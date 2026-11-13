@@ -60,7 +60,7 @@ namespace Vanadreams.Pages
         /// <summary>The corner mute changed the setting; show it.</summary>
         public void SyncMusic() => MusicBox.IsChecked = App.State.Settings.MusicOn;
 
-        private async void Save_Click(object sender, RoutedEventArgs e)
+        private void Save_Click(object sender, RoutedEventArgs e)
         {
             var s = App.State.Settings;
             s.AshitaRoot = AshitaBox.Text.Trim(); s.FfxiFolderOverride = FfxiBox.Text.Trim(); s.CatalogUrl = CatalogBox.Text.Trim(); s.StatusUrl = StatusBox.Text.Trim();
@@ -78,7 +78,6 @@ namespace Vanadreams.Pages
                 ? UiText.T("Saved, but there is no game in that Vanadreams game folder: pick FINAL FANTASY XI, with PlayOnlineViewer beside it.")
                 : languageChanged ? UiText.T("Language saved. Restart the launcher to apply it.") : UiText.T("Saved.");
             App.State.Notify();
-            await App.State.RefreshStatusAsync();
         }
 
         /// <summary>Register the copy Windows had before ours, now: for a player whose Windower or PlayOnline is starting Vanadreams' game.</summary>

@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 using Vanadreams.Pages;
 using Vanadreams.Services;
 
@@ -48,7 +47,6 @@ namespace Vanadreams
     public partial class MainWindow : Window
     {
         public AppState State => App.State;
-        private readonly DispatcherTimer _statusTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(5) };
 
         private readonly List<NavItem> _nav = new List<NavItem>
         {
@@ -84,7 +82,6 @@ namespace Vanadreams
             State.Changed += () => Dispatcher.BeginInvoke(new Action(RefreshStrip));
             Loaded += OnLoaded;
             KeyDown += OnNavKey;
-            _statusTimer.Tick += async (s, e) => await State.RefreshStatusAsync();
         }
 
         /// <summary>The menu down the left or across the top, as Settings says; the page and footer make room for it.</summary>
@@ -185,6 +182,7 @@ namespace Vanadreams
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            Loaded -= OnLoaded;   // startup runs once, even if WPF raises Loaded again
             if (State.HasAshita) GameLauncher.Sweep(State.AshitaRoot);
             State.RepointMovedProfiles();   // a profile still on the server's old address, before the menu reads it
             State.CheckVersion();
@@ -200,7 +198,7 @@ namespace Vanadreams
             if (State.Settings.MusicOn) Dispatcher.BeginInvoke(new Action(Music.Start), System.Windows.Threading.DispatcherPriority.Background);
             // first, and alongside the rest: the update window has to be up before anyone reaches Play
             var update = CheckForUpdateAsync();
-            _statusTimer.Start();
+            // Keep this status and client-version policy until the launcher is restarted.
             await State.RefreshStatusAsync();
             await State.CheckClientUpdateAsync();
             await EnsureLoaderAsync();
