@@ -9,7 +9,7 @@
 
 addon.name      = 'vanagear';
 addon.author    = 'Vanadreams, on LuAshitacast by Thorny';
-addon.version   = '0.2.9';
+addon.version   = '0.2.10';
 addon.desc      = 'Gear sets built from your own bags for your job and level, written into a profile for each job.';
 addon.link      = 'https://github.com/VanaDreams/vanadreams-launcher/tree/main/addons/vanagear';
 
