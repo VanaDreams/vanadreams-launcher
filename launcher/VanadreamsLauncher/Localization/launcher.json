@@ -112,8 +112,8 @@
     "ja": "✦ 問題がありますか？"
   },
   "t69d842d1d77f": {
-    "en": "Zips your logs and settings (no passwords) to the Desktop for #bugs-we-all-found.",
-    "ja": "ログと設定（パスワードを除く）をデスクトップの ZIP にまとめます。#bugs-we-all-found に添付してください。"
+    "en": "Describe the problem in the report form. Submitting it creates a ticket in #bug-tickets. Diagnostic files stay on your PC.",
+    "ja": "報告フォームで問題を説明してください。送信すると #bug-tickets にチケットが作成されます。診断ファイルは PC に保存され、自動送信されません。"
   },
   "t59ebc7b253a4": {
     "en": "⚑  Send bug report",
@@ -2545,8 +2545,8 @@
     "ja": "3. ゲームのインストール画面から修復を実行し、ゲームファイルを確認します。\n\n"
   },
   "t163882a64c69": {
-    "en": "If it still closes, use Send bug report on the Setup page: it now carries the loader's own text and these checks.",
-    "ja": "まだ終了する場合は、セットアップ画面で不具合レポートを作成してください。ローダーの表示と確認結果が含まれます。"
+    "en": "If it still closes, use Send bug report on the Setup page. Export diagnostics saves the loader text and these checks locally for staff to review.",
+    "ja": "セットアップ画面の「不具合を報告」からチケットを作成してください。「診断データを保存」で診断情報を PC に保存できます。スタッフに共有する前に内容を確認してください。"
   },
   "t1d6f15f58617": {
     "en": "The loader closed before the game opened.\n\n",
@@ -2557,8 +2557,8 @@
     "ja": "最後に表示された内容:\n"
   },
   "tfbf2f93715e7": {
-    "en": "Use Send bug report on the Setup page and post it in the Vanadreams Discord bug channel: it carries the loader's own text and these checks.",
-    "ja": "セットアップ画面で不具合レポートを作成し、Vanadreams Discord の不具合チャンネルに投稿してください。ローダーの表示と確認結果が含まれます。"
+    "en": "Use Send bug report on the Setup page to create a ticket. Export diagnostics saves the loader text and these checks locally; review them before sharing with staff.",
+    "ja": "セットアップ画面の「不具合を報告」からチケットを作成してください。「診断データを保存」で診断情報を PC に保存できます。スタッフに共有する前に内容を確認してください。"
   },
   "tc6c10da9499c": {
     "en": "Check the username and password on the Profiles page. Passwords are case sensitive.",
@@ -2763,5 +2763,21 @@
   "ta5271ce4ccec": {
     "en": " new parts, ",
     "ja": " 個の新しいパート、"
+  },
+  "bugreport_export": {
+    "en": "Export diagnostics (optional)",
+    "ja": "診断データを保存（任意）"
+  },
+  "bugreport_form_open": {
+    "en": "Complete the report in your browser and press Submit. The form will show your ticket link after it is created. No logs have been uploaded.",
+    "ja": "ブラウザーで報告内容を入力して送信してください。作成後にチケットへのリンクが表示されます。ログはアップロードされていません。"
+  },
+  "bugreport_form_failed": {
+    "en": "Could not open the report form. Visit https://vanadreams.org/report/ in your browser.",
+    "ja": "報告フォームを開けませんでした。ブラウザーで https://vanadreams.org/report/ を開いてください。"
+  },
+  "bugreport_export_done": {
+    "en": "Saved {0} on your Desktop. Nothing was uploaded. Review it before sharing with staff; crash dumps may contain private data.",
+    "ja": "{0} をデスクトップに保存しました。何もアップロードしていません。クラッシュダンプには個人情報が含まれる場合があるため、スタッフに共有する前に内容を確認してください。"
   }
 }

@@ -9,8 +9,8 @@ using System.Text.RegularExpressions;
 namespace Vanadreams.Services
 {
     /// <summary>
-    /// The Setup page's "Send bug report": one zip on the Desktop holding what a helper needs to see why the game will
-    /// not start, which the player drops into #bugs-we-all-found themselves. Nothing is uploaded from here, and the
+    /// The Setup page's optional diagnostic export: one local zip holding what a helper needs to see why the game will
+    /// not start. The player reviews it before sharing privately with staff. Nothing is uploaded from here, and the
     /// launcher holds no webhook or token.
     ///   - the launcher's log and settings.json (paths and ticks, no logins);
     ///   - Ashita's newest logs and crash dumps, and Windows' crash dumps for the game, loader and Ashita;

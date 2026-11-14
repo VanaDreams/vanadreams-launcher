@@ -10,15 +10,9 @@ using Vanadreams.Services;
 
 namespace Vanadreams.Pages
 {
-    /// <summary>Makes the bug report zip, shows it in its folder and opens the Discord to post it in.</summary>
+    /// <summary>Opens authenticated ticket submission; diagnostics export is a separate, local-only action.</summary>
     public partial class BugReportPanel : UserControl
     {
-        /// <summary>
-        /// Where the player posts the zip: #bugs-we-all-found on the Vanadreams server. A player not yet in the server sees
-        /// Discord's own "no access" page there; the Discord entry on the menu has the invite.
-        /// </summary>
-        public const string BugsChannel = "https://discord.com/channels/1548823290485800970/1549477049146544209";
-
         public BugReportPanel()
         {
             InitializeComponent();
@@ -67,10 +61,28 @@ namespace Vanadreams.Pages
             return sb.ToString();
         }
 
-        private async void Send_Click(object sender, RoutedEventArgs e)
+        private void Send_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var url = BugReportSubmission.FormUrl(Updater.Normalise(Updater.Current));
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                Result.Foreground = (Brush)FindResource("Mist");
+                Result.Text = UiText.T("Complete the report in your browser and press Submit. The form will show your ticket link after it is created. No logs have been uploaded.");
+                JoinLine.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("open report form: " + ex.Message);
+                Result.Foreground = (Brush)FindResource("Bad");
+                Result.Text = UiText.T("Could not open the report form. Visit https://vanadreams.org/report/ in your browser.");
+            }
+        }
+
+        private async void Export_Click(object sender, RoutedEventArgs e)
         {
             var state = App.State;
-            SendButton.IsEnabled = false;
+            ExportButton.IsEnabled = false;
             Result.Foreground = (Brush)FindResource("Mist");
             Result.Text = UiText.T("Gathering logs…");
             try
@@ -84,9 +96,8 @@ namespace Vanadreams.Pages
                 var names = await Task.Run(() => BugReport.Build(zip, LauncherSettings.DataFolder, state.HasAshita ? state.AshitaRoot : null, dumps, version, now, checks));
                 Log.Info("bug report: " + zip + " with " + names.Count + " file(s)");
                 Result.Foreground = (Brush)FindResource("Ok");
-                Result.Text = UiText.T("Saved ") + Path.GetFileName(zip) + UiText.T(" on your Desktop. Drop it in #bugs-we-all-found with a line on what happened.");
+                Result.Text = UiText.F("Saved {0} on your Desktop. Nothing was uploaded. Review it before sharing with staff; crash dumps may contain private data.", Path.GetFileName(zip));
                 try { Process.Start(new ProcessStartInfo("explorer.exe", "/select,\"" + zip + "\"") { UseShellExecute = true }); } catch (Exception ex) { Log.Warn("show zip: " + ex.Message); }
-                MenuPage.OpenUrl(BugsChannel);
                 JoinLine.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
@@ -95,7 +106,7 @@ namespace Vanadreams.Pages
                 Result.Foreground = (Brush)FindResource("Bad");
                 Result.Text = ex.Message;
             }
-            finally { SendButton.IsEnabled = true; }
+            finally { ExportButton.IsEnabled = true; }
         }
     }
 }

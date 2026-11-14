@@ -274,7 +274,7 @@ namespace Vanadreams.Services
                               UiText.T("1. Close every other copy of FFXI, PlayOnline and Windower.\n") +
                               UiText.T("2. Turn on Low spec on the Graphics page (it turns the modern look's graphics DLLs off). If that works, install DirectX 9 (https://www.microsoft.com/en-us/download/details.aspx?id=35) and turn Low spec off again.\n") +
                               UiText.T("3. Open Install game on the menu and press Repair, which checks every game file.\n\n") +
-                              UiText.T("If it still closes, use Send bug report on the Setup page: it now carries the loader's own text and these checks."));
+                              UiText.T("If it still closes, use Send bug report on the Setup page. Export diagnostics saves the loader text and these checks locally for staff to review."));
                     break;
                 default:
                     sb.Append(UiText.T("The loader closed before the game opened.\n\n"));
@@ -290,7 +290,7 @@ namespace Vanadreams.Services
                         foreach (var p in problems.Take(5)) sb.Append("  • ").Append(p.Text).Append('\n');
                         sb.Append('\n');
                     }
-                    sb.Append(UiText.T("Use Send bug report on the Setup page and post it in the Vanadreams Discord bug channel: it carries the loader's own text and these checks."));
+                    sb.Append(UiText.T("Use Send bug report on the Setup page to create a ticket. Export diagnostics saves the loader text and these checks locally; review them before sharing with staff."));
                     break;
             }
             return sb.ToString().TrimEnd();

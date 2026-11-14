@@ -317,7 +317,7 @@ namespace Vanadreams.Services
             "The loader closed before the game opened, and its window could not be read from here.\n\n" +
             "If its last line was \"Closing...\" with no red error above it, the login worked and the game itself quit as it started: " +
             "close other copies of FFXI, turn on Low spec on the Graphics page, or Repair the game from Install game. " +
-            "If a red line was above it, that line is the reason. Send bug report on the Setup page gathers what a helper needs.";
+            "If a red line was above it, that line is the reason. Send bug report on the Setup page opens the ticket form. Export diagnostics saves support details locally.";
 
         public const string NoGameSentence =
             "No complete copy of FINAL FANTASY XI was found on this PC: FFXi.dll, FFXiMain.dll or PlayOnline's polcore.dll is missing " +
