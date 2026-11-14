@@ -13,7 +13,6 @@ local lists = require('vg.lists');
 local vdata = require('vg.data');
 
 local use = {};
-local itemguard = require('vg.itemguard');
 
 local active = nil;   -- { label, piece and slot or set, phase, at, command, kind }
 
@@ -57,12 +56,10 @@ use.Start = function(word)
         return true;
     end
     local slot = slotFor(piece);
-    local hold = itemguard.Prepare(gData.GetEquipSlot(slot), piece);
-    if hold == nil then return true; end
     gFunc.ForceEquip(slot, piece.Equip);
-    active = { label = piece.Name, piece = piece, slot = slot, phase = 'wait', at = os.clock() + piece.Server.use.delay + itemguard.Safety, hold = hold,
+    active = { label = piece.Name, piece = piece, slot = slot, phase = 'wait', at = os.clock() + piece.Server.use.delay + 0.5,
         command = '/item "' .. piece.Name .. '" <me>', kind = 'Item' };
-    print(chat.header('vanagear') .. chat.message(string.format('%s on, using it in %d s.', piece.Name, piece.Server.use.delay + itemguard.Safety)));
+    print(chat.header('vanagear') .. chat.message(string.format('%s on, using it in %d s.', piece.Name, piece.Server.use.delay)));
     return true;
 end
 
@@ -172,25 +169,7 @@ use.With = function(name, set, command)
     end
     gFunc.ForceEquipSet(set);
     local first = string.lower(string.match(command, '^(%S+)') or '');
-    local hold, wait = nil, 1;
-    if kinds[first] == 'Item' then
-        local itemName = command:match('^/%S+%s+"([^"]+)"') or command:match('^/%S+%s+(%S+)');
-        for _, piece in ipairs(gVana.Pieces) do
-            if piece.Server.use ~= nil and itemName ~= nil and piece.Name:lower() == itemName:lower() then
-                for slot = 1, 16 do
-                    local eq = gEquip.GetCurrentEquip(slot);
-                    if eq.Item ~= nil and eq.Item.Index == piece.Index and eq.Container == piece.Bag then
-                        hold = itemguard.Prepare(slot, piece);
-                        wait = piece.Server.use.delay + itemguard.Safety;
-                        break;
-                    end
-                end
-                if hold ~= nil then break; end
-            end
-        end
-    end
-    active = { label = name, set = set, phase = 'wait', at = os.clock() + wait, hold = hold,
-        command = command, kind = kinds[first] or 'Ability' };
+    active = { label = name, set = set, phase = 'wait', at = os.clock() + 1, command = command, kind = kinds[first] or 'Ability' };
     say(string.format('%s on, then %s', name, command));
 end
 
@@ -267,9 +246,6 @@ use.Worn = function()
     return worn and worn.name;
 end
 
--- Zone changes cancel queued uses rather than carrying old commands into a new zone.
-use.Cancel = function() active = nil; end
-
 -- Runs after the sets and the profile on every equip pass, so the slot stays held.
 use.Tick = function(event)
     if (worn ~= nil) and ((event == nil) or (event == 'HandleDefault') or (event == 'HandleItem') or (event == 'HandleAbility')) then
@@ -281,24 +257,13 @@ use.Tick = function(event)
         return;
     end
     local now = os.clock();
-    local action = (u.hold == nil) and gData.GetAction() or nil;
-    if u.hold ~= nil and not itemguard.Active(u.hold) then
-        active = nil;
-        if u.hold.phase == 'settle' then
-            say(u.label .. ' finished; gear safety wait ended.');
-        else
-            say(u.label .. ' use was not confirmed; gear safety wait timed out.');
-        end
-        return;
-    end
+    local action = gData.GetAction();
     if (u.phase == 'wait') then
         if (now >= u.at) then
             AshitaCore:GetChatManager():QueueCommand(1, u.command);
             u.phase = 'sent';
             u.at = now;
         end
-    elseif u.hold ~= nil then
-        -- Item helpers follow the independent slot hold, not the cast estimate.
     elseif (u.phase == 'sent') then
         if (action ~= nil) and (action.ActionType == u.kind) then
             u.phase = 'active';

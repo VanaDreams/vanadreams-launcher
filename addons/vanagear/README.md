@@ -66,18 +66,6 @@ See [LOCALIZATION.md](LOCALIZATION.md) for adding languages and verification req
 - Waits after every zone: nothing is equipped, loaded or sent to the game until you have been
   standing in the zone for 10 seconds (`/vg wait <seconds>` changes it).
 
-## Equipped-item safety
-
-Usable equipment stays protected while VanaGear uses it. The `/vg` item commands wait
-through the item's equip cooldown plus two seconds before sending `/item`, then keep the
-physical item in its slot until its matching use-completion packet and another two seconds.
-The protection also applies to equipped items used directly with `/item`, including profile,
-forced and delayed gear swaps. Ordinary unrelated slots remain available.
-
-Interrupted uses keep a two-second safety wait. If the server never confirms a use, a bounded
-timeout releases the temporary protection; zoning cancels queued uses. This does not change
-saved slot locks or stop another independent addon from sending its own gear packets.
-
 ## Your own profiles
 
 Profiles in `config\addons\luashitacast\` keep working, `/lac` included. A profile with sets of
