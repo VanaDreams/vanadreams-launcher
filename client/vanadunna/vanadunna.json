@@ -1,0 +1,14 @@
+{
+  "id": "vanadunna",
+  "type": "database",
+  "description": "VanaDunna custom handbell. Server acquisition: Login Moogle, 500 login points.",
+  "server": {"emit": false},
+  "edits": [{
+    "table": "weapons", "id": 22999, "copy_from": 21460,
+    "set": {"jobs": "all", "level": 1},
+    "strings": {
+      "en": {"name": "VanaDunna", "logName": "VanaDunna", "logPlural": "VanaDunnas", "description": "MP+100% Magic accuracy+20\nGeomancy +15\n\"Fast Cast\"+10%"},
+      "jp": {"name": "VanaDunna", "description": "MP+100% 魔命+20\n風水魔法+15\nファストキャスト+10%"}
+    }
+  }]
+}

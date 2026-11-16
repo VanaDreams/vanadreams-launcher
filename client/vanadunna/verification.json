@@ -1,0 +1,27 @@
+{
+  "item": 22999,
+  "donor": 21460,
+  "login_points": 500,
+  "files": {
+    "ROM/118/108.DAT": {
+      "input_sha256": "e7d2f40e0e3acc08f9378b6d9392f305648695795b1581f67fe18a5d7931456e",
+      "stride": 5120,
+      "blank_target": true,
+      "output_sha256": "5166083a08f7c71c58bec73843f36d90dc1c5b41e4cecfd8deefe956960a58e6"
+    },
+    "ROM/0/6.DAT": {
+      "input_sha256": "5010d157aff6ac4ec24ad8ef6799aea625fe42f32621b500c8d7bce2ffc935ac",
+      "stride": 5120,
+      "blank_target": true,
+      "output_sha256": "3296c40f6ddd7d7b04c3fa386e03991a8b7a0e726c126082fffd89d1d1b80282"
+    }
+  },
+  "checks": [
+    "EN and JP target blank before creation",
+    "all 22 jobs level 1",
+    "ranged slot handbell skill 45",
+    "Matre Bell icon preserved",
+    "every other record byte-identical including Dunna",
+    "input files unchanged"
+  ]
+}
