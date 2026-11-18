@@ -2184,6 +2184,24 @@
       "docs": "https://github.com/VanaDreams/vanadreams-player-addons/tree/main/addons/nolock",
       "description": "Engage or disengage while spells or enemy moves would normally lock the animation. Does not let you move during animations. Original Ashita v4 addon by WinterSolstice8, with atom0s's patch, supplied unchanged under GPLv3. May briefly show cosmetic weapon/hand misalignment.",
       "category": "Combat & targeting"
+    },
+    {
+      "id": "easyth",
+      "name": "easyTH",
+      "kind": "addon",
+      "maintainer": "Arielfy (upstream); VanaDreams fixes",
+      "source": {
+        "type": "repo-folder",
+        "repo": "VanaDreams/vanadreams-player-addons",
+        "path": "addons/easyTH",
+        "branch": "main"
+      },
+      "version": "0.4.1-vd",
+      "install": "copy-to-addons",
+      "load": "/addon load easyTH",
+      "docs": "https://github.com/VanaDreams/vanadreams-player-addons/tree/main/addons/easyTH",
+      "description": "Tracks observed Treasure Hunter procs per enemy across all 18 alliance slots. Shows Unknown until a proc is received, not an estimated gear or trait baseline. /easyth anyjob enables non-THF observers; /easyth reset clears observations. Ashita v4.",
+      "category": "Combat & targeting"
     }
   ]
 }
