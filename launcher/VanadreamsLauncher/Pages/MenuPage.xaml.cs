@@ -24,6 +24,7 @@ namespace Vanadreams.Pages
         private string _loginFor;   // the profile whose login the boxes hold, so a refresh never wipes what is being typed
         private System.Threading.CancellationTokenSource _patching;
         private bool _patchedNow;
+        private bool _playing;
 
         public MenuPage(MainWindow win)
         {
@@ -308,7 +309,14 @@ namespace Vanadreams.Pages
 
         private async void Play()
         {
-            if (_profile == null) return;
+            if (_profile == null || _playing) return;
+            _playing = true;
+            try { await PlayCoreAsync(); }
+            finally { _playing = false; }
+        }
+
+        private async System.Threading.Tasks.Task PlayCoreAsync()
+        {
             var state = App.State;
             var login = TakeLogin();
             // Ashita reads the profile's file itself, so one still on an address the server moved from is put right on disk
@@ -357,7 +365,23 @@ namespace Vanadreams.Pages
             }
             // The effects are only a rename in bootloader\, so they are put right on every Play, in case an update put a
             // wrapper back; with the profile's frame rate and display from the Graphics page (Services\Graphics.cs)
-            if (state.HasAshita) Graphics.ApplyForLaunch(state.AshitaRoot, _profile, state.Settings);
+            if (state.HasAshita)
+            {
+                var requested = _profile;
+                if (EffectsRepair.Needed(requested, state.Settings, state.AshitaRoot))
+                {
+                    var previousNote = PlayNote.Text;
+                    PlayNote.Text = UiText.T("Checking missing ReShade files…");
+                    PlayNote.Visibility = Visibility.Visible;
+                    var repaired = await EffectsRepair.TryAsync(state.AshitaRoot, state.Status.ClientVer,
+                        state.PendingClientUpdate?.Manifest, null, TimeSpan.FromSeconds(7));
+                    if (_profile != requested) return;
+                    PlayNote.Text = repaired.HasValue
+                        ? repaired.Value > 0 ? UiText.T("Restored missing ReShade files.") : previousNote
+                        : UiText.T("Could not restore missing ReShade files. You can still play.");
+                }
+                Graphics.ApplyForLaunch(state.AshitaRoot, _profile, state.Settings);
+            }
             // The game reads its own location from Windows, not from this launcher, and Windows holds one
             // such location for the whole machine. When it does not point at the copy this profile belongs to,
             // the wrong game starts: an older copy kept for another server, which Vanadreams turns away, or
