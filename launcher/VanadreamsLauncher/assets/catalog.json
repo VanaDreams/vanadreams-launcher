@@ -2225,6 +2225,25 @@
       "docs": "https://github.com/cybrgnzr77-spec/VanaBlu/tree/eb43c35eee81b64b4cbaec1e0bc20fea917353c4",
       "description": "Aerun’s interactive Blue Magic guide for Ashita v4. Find monsters that teach spells, look up traits and skillchains, and save or load spell sets. Type /vb to open. Based on Anissa’s original bluGuide.",
       "category": "VanaDreams"
+    },
+    {
+      "id": "roehelper",
+      "name": "RoE Helper Lite",
+      "kind": "addon",
+      "maintainer": "Submitted by Arkine",
+      "source": {
+        "type": "repo-folder",
+        "repo": "VanaDreams/vanadreams-player-addons",
+        "path": "addons/roehelper",
+        "branch": "main"
+      },
+      "version": "1.12.3-lite",
+      "install": "copy-to-addons",
+      "load": "/addon load roehelper",
+      "config": "config\\addons\\roehelper\\",
+      "docs": "https://github.com/VanaDreams/vanadreams-player-addons/tree/main/addons/roehelper",
+      "description": "Browse Records of Eminence objectives, organize them into profiles, and activate saved profiles. Type /roehelper to open. Ashita v4. Thanks to Arkine for sharing the Lite build. Original by Cair, ported by Commandobill, with UI credit to Adamantking.",
+      "category": "VanaDreams"
     }
   ]
 }
