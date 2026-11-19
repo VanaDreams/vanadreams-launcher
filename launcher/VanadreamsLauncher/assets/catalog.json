@@ -2202,6 +2202,29 @@
       "docs": "https://github.com/VanaDreams/vanadreams-player-addons/tree/main/addons/easyTH",
       "description": "Tracks observed Treasure Hunter procs per enemy across all 18 alliance slots. Shows Unknown until a proc is received, not an estimated gear or trait baseline. /easyth anyjob enables non-THF observers; /easyth reset clears observations. Ashita v4.",
       "category": "Combat & targeting"
+    },
+    {
+      "id": "vanablu",
+      "name": "VanaBlu",
+      "kind": "addon",
+      "maintainer": "Aerun (VanaBlu); Anissa (original bluGuide)",
+      "source": {
+        "type": "repo-folder",
+        "repo": "cybrgnzr77-spec/VanaBlu",
+        "path": "",
+        "branch": "eb43c35eee81b64b4cbaec1e0bc20fea917353c4",
+        "skip": [
+          ".gitignore",
+          "tests/*"
+        ]
+      },
+      "version": "1.0.3",
+      "install": "copy-to-addons",
+      "load": "/addon load vanablu",
+      "config": "config\\addons\\vanablu\\",
+      "docs": "https://github.com/cybrgnzr77-spec/VanaBlu/tree/eb43c35eee81b64b4cbaec1e0bc20fea917353c4",
+      "description": "Aerun’s interactive Blue Magic guide for Ashita v4. Find monsters that teach spells, look up traits and skillchains, and save or load spell sets. Type /vb to open. Based on Anissa’s original bluGuide.",
+      "category": "VanaDreams"
     }
   ]
 }
