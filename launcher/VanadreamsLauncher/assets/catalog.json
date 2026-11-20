@@ -1976,13 +1976,9 @@
       "name": "Zonename",
       "kind": "addon",
       "maintainer": "onimitch",
-      "source": {
-        "type": "github-release",
-        "repo": "onimitch/ffxi-zonename",
-        "asset": "Zonename_*.zip"
-      },
-      "version": "2.3",
-      "install": "unzip-to-addons",
+      "source": { "type": "repo-folder", "repo": "VanaDreams/vanadreams-launcher", "path": "addons/Zonename", "branch": "main" },
+      "version": "2.3.1",
+      "install": "copy-to-addons",
       "load": "/addon load Zonename",
       "docs": "https://github.com/onimitch/ffxi-zonename",
       "description": "Shows the zone and region name for a moment when you zone. A port of the Windower addon.",
