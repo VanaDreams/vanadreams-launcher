@@ -368,6 +368,7 @@ namespace Vanadreams.Pages
             if (state.HasAshita)
             {
                 var requested = _profile;
+                // Repair resources for an existing effects install, never add graphics hooks on Play.
                 if (EffectsRepair.Needed(requested, state.Settings, state.AshitaRoot))
                 {
                     var previousNote = PlayNote.Text;

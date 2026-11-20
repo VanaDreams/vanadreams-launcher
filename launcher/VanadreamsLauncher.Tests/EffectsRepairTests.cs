@@ -24,6 +24,8 @@ namespace Vanadreams.Tests
         {
             root = Path.Combine(Path.GetTempPath(), "vdl-effects-repair-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(Boot);
+            foreach (var wrapper in Effects.Wrappers)
+                File.WriteAllText(Path.Combine(Boot, wrapper), "original " + wrapper);
             foreach (var rel in EffectsRepair.Missing(root))
             {
                 var path = Path.Combine(Boot, rel);
@@ -85,7 +87,7 @@ namespace Vanadreams.Tests
         }
 
         [TestMethod]
-        public async Task ExactPackage_RestoresOnlyMissingFiles()
+        public async Task ExactPackage_RestoresAssetsWithoutInstallingWrappers()
         {
             File.Delete(Path.Combine(Boot, "d3d9.dll"));
             var shader = "reshade-shaders/Shaders/MultiLUT.fx";
@@ -98,11 +100,12 @@ namespace Vanadreams.Tests
                 using (var client = new HttpClient(handler))
                 {
                     var result = await EffectsRepair.TryAsync(root, Version, Manifest(bytes), client, TimeSpan.FromSeconds(2), () => false);
-                    Assert.AreEqual((int?)2, result);
+                    Assert.AreEqual((int?)1, result);
                     Assert.AreEqual(1, handler.Count);
                 }
             }
-            Assert.AreEqual("published d3d9.dll", File.ReadAllText(Path.Combine(Boot, "d3d9.dll")));
+            Assert.IsFalse(File.Exists(Path.Combine(Boot, "d3d9.dll")));
+            Assert.IsFalse(File.Exists(Path.Combine(Boot, "d3d9.dll.off")));
             Assert.AreEqual("published " + shader, File.ReadAllText(Path.Combine(Boot, shader)));
             Assert.AreEqual("original ReShade.ini", File.ReadAllText(Path.Combine(Boot, "ReShade.ini")));
             Assert.AreEqual("original d3d8.dll", File.ReadAllText(Path.Combine(Boot, "d3d8.dll.off")));
@@ -113,9 +116,9 @@ namespace Vanadreams.Tests
         [TestMethod]
         public async Task HashMismatch_WritesNothing()
         {
-            var dll = Path.Combine(Boot, "d3d9.dll");
-            File.Delete(dll);
-            using (var pack = Zip("d3d9.dll"))
+            var ini = Path.Combine(Boot, "ReShade.ini");
+            File.Delete(ini);
+            using (var pack = Zip("ReShade.ini"))
             {
                 var bytes = pack.ToArray();
                 var manifest = Manifest(bytes);
@@ -126,18 +129,18 @@ namespace Vanadreams.Tests
                     Assert.IsNull(await EffectsRepair.TryAsync(root, Version, manifest, client, TimeSpan.FromSeconds(2), () => false));
                 }
             }
-            Assert.IsFalse(File.Exists(dll));
+            Assert.IsFalse(File.Exists(ini));
         }
 
         [TestMethod]
         public void InvalidArchiveOrPath_WritesNothing()
         {
-            var required = new List<string> { "d3d9.dll" };
+            var required = new List<string> { "ReShade.ini" };
             foreach (var names in new[]
             {
-                new[] { "d3d9.dll", "../outside.dll" },
-                new[] { "d3d9.dll", "D3D9.DLL" },
-                new[] { "d3d9.dll", "C:/outside.dll" },
+                new[] { "ReShade.ini", "../outside.dll" },
+                new[] { "ReShade.ini", "RESHADE.INI" },
+                new[] { "ReShade.ini", "C:/outside.dll" },
                 new[] { "d3d8.dll" },
             })
                 using (var pack = Zip(names))
@@ -148,9 +151,9 @@ namespace Vanadreams.Tests
         [TestMethod]
         public async Task OfflineTimeout_DoesNotInstallEvenIfResponseArrivesLater()
         {
-            var dll = Path.Combine(Boot, "d3d9.dll");
-            File.Delete(dll);
-            using (var pack = Zip("d3d9.dll"))
+            var ini = Path.Combine(Boot, "ReShade.ini");
+            File.Delete(ini);
+            using (var pack = Zip("ReShade.ini"))
             {
                 var bytes = pack.ToArray();
                 var gate = new TaskCompletionSource<HttpResponseMessage>();
@@ -164,13 +167,66 @@ namespace Vanadreams.Tests
                     await Task.Delay(50);
                 }
             }
-            Assert.IsFalse(File.Exists(dll));
+            Assert.IsFalse(File.Exists(ini));
+        }
+
+        [TestMethod]
+        public async Task PrettyWithoutWrappers_DoesNotDownloadOrRecreateDlls()
+        {
+            foreach (var wrapper in Effects.Wrappers)
+                File.Delete(Path.Combine(Boot, wrapper));
+            File.Delete(Path.Combine(Boot, "ReShade.ini"));
+            var profile = new Profile
+            {
+                Command = new LoaderCommand { Server = LoaderCommand.VanadreamsServer },
+                GfxPreset = "pretty",
+            };
+            var settings = new LauncherSettings { LowSpec = false };
+            var handler = new Handler { Send = (r, c) => throw new Exception("Unexpected request.") };
+            using (var client = new HttpClient(handler))
+            {
+                Assert.IsFalse(EffectsRepair.Needed(null, settings, root));
+                Assert.AreEqual((int?)0, await EffectsRepair.TryAsync(null, Version, null, client, TimeSpan.FromSeconds(1), () => false));
+                for (int i = 0; i < 2; i++)
+                {
+                    Assert.IsFalse(EffectsRepair.Needed(profile, settings, root));
+                    Assert.AreEqual((int?)0, await EffectsRepair.TryAsync(root, Version, null, client, TimeSpan.FromSeconds(1), () => false));
+                    Graphics.ApplyForLaunch(root, profile, settings);
+                }
+            }
+            Assert.AreEqual(0, handler.Count);
+            foreach (var wrapper in Effects.Wrappers)
+            {
+                Assert.IsFalse(File.Exists(Path.Combine(Boot, wrapper)));
+                Assert.IsFalse(File.Exists(Path.Combine(Boot, wrapper + Effects.OffSuffix)));
+            }
+            Assert.IsFalse(File.Exists(Path.Combine(Boot, "ReShade.ini")));
+        }
+
+        [TestMethod]
+        public void Balanced_DisablesAlreadyRestoredWrappersAndKeepsSixtyFps()
+        {
+            var profile = new Profile
+            {
+                Command = new LoaderCommand { Server = LoaderCommand.VanadreamsServer },
+            };
+            Graphics.Choose(profile, GfxPreset.Balanced);
+            var settings = new LauncherSettings { LowSpec = false };
+            Assert.AreEqual(60, profile.Fps);
+            Assert.IsFalse(EffectsRepair.Needed(profile, settings, root));
+            Graphics.ApplyForLaunch(root, profile, settings);
+            foreach (var wrapper in Effects.Wrappers)
+            {
+                Assert.IsFalse(File.Exists(Path.Combine(Boot, wrapper)));
+                Assert.AreEqual("original " + wrapper, File.ReadAllText(Path.Combine(Boot, wrapper + Effects.OffSuffix)));
+            }
+            CollectionAssert.Contains(File.ReadAllLines(Graphics.ScriptPath(root)), "/fps 1");
         }
 
         [TestMethod]
         public void PotatoBalancedAndOtherServers_DoNotTriggerRepair()
         {
-            File.Delete(Path.Combine(Boot, "d3d9.dll"));
+            File.Delete(Path.Combine(Boot, "ReShade.ini"));
             var settings = new LauncherSettings { LowSpec = false };
             var profile = new Profile { Command = new LoaderCommand { Server = LoaderCommand.VanadreamsServer }, GfxPreset = "potato" };
             Assert.IsFalse(EffectsRepair.Needed(profile, settings, root));

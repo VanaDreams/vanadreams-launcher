@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Vanadreams.Services
 {
-    /// <summary>Restore only missing files in the launcher's bundled x86 ReShade pack.</summary>
+    /// <summary>Restore missing ReShade presets and shaders, never bootloader DLLs.</summary>
     public static class EffectsRepair
     {
         private const string Package = "looks-effects.zip";
@@ -20,7 +20,7 @@ namespace Vanadreams.Services
         private static readonly Regex VersionStamp = new Regex(@"\A[0-9]{8}_[0-9]{1,3}\z", RegexOptions.CultureInvariant);
         private static readonly string[] Required =
         {
-            "d3d8.dll", "d3d9.dll", "ReShade.ini",
+            "ReShade.ini",
             "Vanadreams-Look.ini", "Vanadreams-Standard.ini", "Vanadreams-Ultra.ini",
             "reshade-shaders/Shaders/AdaptiveSharpen.fx", "reshade-shaders/Shaders/MagicBloom.fx",
             "reshade-shaders/Shaders/MultiLUT.fx", "reshade-shaders/Shaders/ReShade.fxh",
@@ -33,19 +33,14 @@ namespace Vanadreams.Services
         public static bool Needed(Profile profile, LauncherSettings settings, string root)
         {
             return profile != null && profile.IsVanadreams && Graphics.EffectsFor(profile, settings)
-                && !string.IsNullOrWhiteSpace(root) && Directory.Exists(Effects.Folder(root))
+                && Effects.Installed(root)
                 && Missing(root).Count > 0;
         }
 
         public static List<string> Missing(string root) =>
             Required.Where(rel => !Present(Effects.Folder(root), rel)).ToList();
 
-        private static bool Present(string boot, string rel)
-        {
-            var path = Under(boot, rel);
-            return File.Exists(path)
-                || (Effects.Wrappers.Contains(rel, StringComparer.OrdinalIgnoreCase) && File.Exists(path + Effects.OffSuffix));
-        }
+        private static bool Present(string boot, string rel) => File.Exists(Under(boot, rel));
 
         private static string Under(string boot, string rel) => Path.Combine(boot, rel.Replace('/', Path.DirectorySeparatorChar));
 
@@ -55,8 +50,9 @@ namespace Vanadreams.Services
             try
             {
                 gameRunning = gameRunning ?? GameRunning;
+                if (!Effects.Installed(root)) return 0;
                 var missing = Missing(root);
-                if (missing.Count == 0) return 0; // healthy, including wrappers held as .off
+                if (missing.Count == 0) return 0;
                 if (!VersionStamp.IsMatch(version ?? "")) throw new IOException("No published game package version.");
                 if (gameRunning()) throw new IOException("A game is already running.");
                 var boot = Effects.Folder(root);
