@@ -50,7 +50,7 @@ namespace Vanadreams.Services
             var result = new List<ModPack>();
             if (string.IsNullOrWhiteSpace(ashitaRoot)) return result;
             var root = PivotConfig.OverlaysRoot(ashitaRoot);
-            var folders = Directory.Exists(root) ? Directory.GetDirectories(root).Select(Path.GetFileName).ToList() : new List<string>();
+            var folders = Directory.Exists(root) ? Directory.GetDirectories(root).Select(Path.GetFileName).Where(f => !ChapterOnePatch.IsManagedOverlay(f)).ToList() : new List<string>();
             var listed = PivotConfig.ReadOverlays(ashitaRoot).Where(n => folders.Contains(n, StringComparer.OrdinalIgnoreCase)).ToList();
             foreach (var f in folders.Where(f => !listed.Contains(f, StringComparer.OrdinalIgnoreCase)).OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
                 result.Add(new ModPack { Id = f, Name = NameOf(f), Detail = "Off", On = false, CanSwitch = true });

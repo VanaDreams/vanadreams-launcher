@@ -449,7 +449,7 @@ namespace Vanadreams.Pages
             var launchedAt = DateTime.UtcNow;
             try
             {
-                GameLauncher.Launch(state.AshitaRoot, _profile, login, NeedsAdmin(_profile, root ?? GameRegistration.CurrentRoot(reg)));
+                GameLauncher.Launch(state.AshitaRoot, _profile, login, NeedsAdmin(_profile, root ?? GameRegistration.CurrentRoot(reg)), root ?? GameRegistration.CurrentRoot(reg));
                 Music.FadeOut(3);
                 state.Settings.LastProfile = _profile.Id;
                 state.Settings.LastPlayed[_profile.Id] = DateTime.Now.ToString("o");

@@ -13,6 +13,38 @@ namespace Vanadreams.Services
     public static class XIPivotBundle
     {
         public const string Version = "4.3.001";
+        internal const string ChapterPlugin = "pivot_chapter_i";
+
+        /// <summary>A side-by-side plugin used only by a generated VanaDreams Chapter I boot profile.</summary>
+        internal static void EnsureChapter(string target)
+        {
+            var res = Application.GetResourceStream(new Uri("pack://application:,,,/assets/xipivot/" + ChapterPlugin + ".dll"));
+            if (res == null) throw new IOException("The launcher's Chapter I compatibility plugin is missing.");
+            byte[] expected;
+            using (var stream = res.Stream)
+            using (var ms = new MemoryStream())
+            {
+                stream.CopyTo(ms);
+                expected = ms.ToArray();
+            }
+            if (expected.Length == 0 || expected.Length > 4 * 1024 * 1024)
+                throw new IOException("The bundled Chapter I compatibility plugin is invalid.");
+            if (!File.Exists(target))
+            {
+                var temp = target + "." + Guid.NewGuid().ToString("N") + ".tmp";
+                try
+                {
+                    File.WriteAllBytes(temp, expected);
+                    try { File.Move(temp, target); }
+                    catch (IOException) { if (!File.Exists(target)) throw; }
+                }
+                finally { if (File.Exists(temp)) File.Delete(temp); }
+            }
+            // Preserve a preexisting unknown plugin and do not execute it.
+            if ((File.GetAttributes(target) & FileAttributes.ReparsePoint) != 0 ||
+                new FileInfo(target).Length != expected.Length || !File.ReadAllBytes(target).SequenceEqual(expected))
+                throw new IOException("The existing Chapter I compatibility plugin differs from this launcher. It was not changed or loaded.");
+        }
 
         private static readonly Tuple<string, string>[] Files =
         {

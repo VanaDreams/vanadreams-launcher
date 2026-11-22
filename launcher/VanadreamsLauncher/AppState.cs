@@ -12,6 +12,7 @@ namespace Vanadreams
     {
         public string Root { get; set; }
         public ClientManifest Manifest { get; set; }
+        public bool ChapterOnlyExternal { get; set; }
         public System.Collections.Generic.List<ClientChunk> Parts { get; set; }
         public long Size => Parts.Sum(c => c.Size);
         public string Megabytes => Math.Max(1, Size / 1048576) + " MB";
@@ -227,6 +228,15 @@ namespace Vanadreams
                 m = ClientManifest.Parse(await Downloader.GetStringAsync(ClientInstall.ManifestUrl(version)));
             }
             var ashita = HasAshita ? AshitaRoot : null;
+            if (PendingClientUpdate?.ChapterOnlyExternal == true)
+            {
+                // An independently installed client receives only the overlay, never a fresh game or Windows registration.
+                await ClientInstall.InstallFilesAsync(Downloader, m, PendingClientUpdate.Root, Settings.DownloadsFolder, progress, ct, ashita, chapterOnly: true);
+                GiveOverlays();
+                await CheckClientUpdateAsync();
+                Notify();
+                return null;
+            }
             // decided before the move: a Patch pressed only for the packs must never become an install
             var updateWanted = PendingClientUpdate != null || (Version.ExpectedIsPublished && Version.Verdict == VersionVerdict.ClientTooOld);
             // the packs out of the game folder into their overlays first, so nothing below sees them as missing
@@ -278,6 +288,18 @@ namespace Vanadreams
                 var packs = PacksRoot(m.Version);
                 OverlayMigrationDue = LookOverlays.Due(m, packs, HasAshita ? AshitaRoot : null);
                 if (OverlayMigrationDue) Log.Info("the look and title packs in " + packs + " are to move into their overlays");
+                var playRoot = VanadreamsGameRoot();
+                if (HasAshita && GameRegistration.HasGame(playRoot) &&
+                    (!GameRegistration.HasGame(root) || !GameRegistration.SameFolder(playRoot, root) || ClientInstall.Done(root, m.Version).Count == 0))
+                {
+                    var chapter = ClientInstall.Remaining(m, ClientInstall.Done(playRoot, m.Version, AshitaRoot)).Where(x => x.ChapterOne).ToList();
+                    if (chapter.Count > 0)
+                    {
+                        PendingClientUpdate = new ClientUpdate { Root = playRoot, Manifest = m, Parts = chapter, ChapterOnlyExternal = true };
+                        Notify();
+                        return;
+                    }
+                }
                 if (!GameRegistration.HasGame(root)) { PendingClientUpdate = null; Notify(); return; }
                 var todo = ClientInstall.Updates(m, root, HasAshita ? AshitaRoot : null);
                 PendingClientUpdate = todo.Count == 0 ? null : new ClientUpdate { Root = root, Manifest = m, Parts = todo };

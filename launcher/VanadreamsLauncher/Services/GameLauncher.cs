@@ -15,7 +15,7 @@ namespace Vanadreams.Services
     {
         private const string TempPrefix = ".launch-";
 
-        public static Process Launch(string ashitaRoot, Profile profile, Credential credential, bool asAdmin)
+        public static Process Launch(string ashitaRoot, Profile profile, Credential credential, bool asAdmin, string gameRoot = null)
         {
             var cli = Path.Combine(ashitaRoot, "Ashita-cli.exe");
             if (!File.Exists(cli)) throw new FileNotFoundException("Ashita-cli.exe is missing from " + ashitaRoot + "; run Repair.", cli);
@@ -27,16 +27,19 @@ namespace Vanadreams.Services
 
             var iniName = profile.FileName;
             string temp = null;
-            if (credential != null && (!string.IsNullOrEmpty(credential.User) || !string.IsNullOrEmpty(credential.Password)))
+            var savedLogin = credential != null && (!string.IsNullOrEmpty(credential.User) || !string.IsNullOrEmpty(credential.Password));
+            var mayHaveChapter = profile.IsVanadreams && !string.IsNullOrWhiteSpace(gameRoot);
+            var ini = savedLogin || mayHaveChapter ? IniFile.Load(profile.Path) : null;
+            var chapter = mayHaveChapter && ChapterOnePatch.ConfigureLaunch(ashitaRoot, ClientInstall.GameFolder(gameRoot), ini);
+            if (savedLogin || chapter)
             {
                 var launchCmd = new LoaderCommand
                 {
                     Server = profile.Command.Server, Hairpin = profile.Command.Hairpin, Extra = profile.Command.Extra,
-                    User = credential.User, Password = credential.Password
+                    User = credential?.User, Password = credential?.Password
                 };
                 temp = Path.Combine(Path.GetDirectoryName(profile.Path), TempPrefix + profile.Id + "-" + Guid.NewGuid().ToString("N").Substring(0, 8) + ".ini");
-                var ini = IniFile.Load(profile.Path);
-                ini.Set("ashita.boot", "command", launchCmd.ToLaunchCommand());
+                if (savedLogin) ini.Set("ashita.boot", "command", launchCmd.ToLaunchCommand());
                 ini.Save(temp);
                 iniName = Path.GetFileName(temp);
             }

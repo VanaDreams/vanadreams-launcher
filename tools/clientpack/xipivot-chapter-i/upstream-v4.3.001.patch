@@ -1,0 +1,324 @@
+diff --git a/XIPivot.Ashita_v4/XIPivot.Ashita_v4.vcxproj b/XIPivot.Ashita_v4/XIPivot.Ashita_v4.vcxproj
+index ceebc5c..4f64ca8 100644
+--- a/XIPivot.Ashita_v4/XIPivot.Ashita_v4.vcxproj
++++ b/XIPivot.Ashita_v4/XIPivot.Ashita_v4.vcxproj
+@@ -92,7 +92,7 @@
+     <LinkIncremental>true</LinkIncremental>
+     <OutDir>$(SolutionDir)build\_lib\$(Configuration)\</OutDir>
+     <IntDir>$(SolutionDir)build\_tmp\$(ProjectName)\$(Configuration)\</IntDir>
+-    <TargetName>pivot</TargetName>
++    <TargetName>pivot_chapter_i</TargetName>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+     <LinkIncremental>true</LinkIncremental>
+@@ -101,7 +101,7 @@
+     <LinkIncremental>false</LinkIncremental>
+     <OutDir>$(SolutionDir)build\_lib\$(Configuration)\</OutDir>
+     <IntDir>$(SolutionDir)build\_tmp\$(ProjectName)\$(Configuration)\</IntDir>
+-    <TargetName>pivot</TargetName>
++    <TargetName>pivot_chapter_i</TargetName>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+     <LinkIncremental>false</LinkIncremental>
+diff --git a/XIPivot.Ashita_v4/polplugin/AshitaInterface.cpp b/XIPivot.Ashita_v4/polplugin/AshitaInterface.cpp
+index 5f26e14..0d1bc73 100644
+--- a/XIPivot.Ashita_v4/polplugin/AshitaInterface.cpp
++++ b/XIPivot.Ashita_v4/polplugin/AshitaInterface.cpp
+@@ -51,7 +51,7 @@ namespace XiPivot
+ 			}
+ 			if (m_pluginArgs.empty())
+ 			{
+-					m_pluginArgs = { "pivot" };
++					m_pluginArgs = { "" };
+ 			}
+ 		}
+ 
+@@ -79,24 +79,25 @@ namespace XiPivot
+ 			// we support only a single argument which is the config file basename and defaults to 'pivot'
+ 			auto configFileName = std::filesystem::path(m_pluginArgs.at(0)).stem().replace_extension(".ini").string();
+ 
+-			m_settingsRelPath = std::filesystem::path("pivot") / configFileName;
++			const auto prefix = std::string("vd-chapter-i-");
++            if (configFileName.compare(0, prefix.size(), prefix) != 0)
++                return false;
++            m_settingsRelPath = std::filesystem::path("pivot") / configFileName;
+ 			m_settingsPath = std::filesystem::path(m_ashitaCore->GetInstallPath()) / "config" / m_settingsRelPath;
+ 
+ 			logMessageF(LogLevel::Info, "Using config file: '%s'", m_settingsPath.string().c_str());
+ 
+ 			auto config = m_ashitaCore->GetConfigurationManager();
+-			if (config != nullptr)
++			if (config == nullptr) return false; else
+ 			{
+-				if (!CreateConfigPath(m_settingsPath,
+-									  std::filesystem::path(m_ashitaCore->GetInstallPath()) / "config" / "pivot.ini"))
++				if (!std::filesystem::is_regular_file(m_settingsPath))
+ 				{
+ 					return false;
+ 				}
+ 
+ 				if (!m_settings.load(config, m_settingsRelPath))
+ 				{
+-					logMessageF(LogLevel::Warn, "Failed to load config file, saving defaults instead");
+-					m_settings.save(config, m_settingsRelPath, m_settingsPath);
++					return false;
+ 				}
+ 				m_settings.dump(this);
+ 
+@@ -104,12 +105,24 @@ namespace XiPivot
+ 				redirector.setRootPath(m_settings.rootPath.string());
+ 				redirector.setRedirectFOpenS(m_settings.redirectFOpenS);
+ 
++                const auto* pathValue = config->GetString(PluginName, "chapter_i", "game_root");
++                const std::string game = pathValue ? pathValue : "";
++                const auto* overlayValue = config->GetString(PluginName, "chapter_i", "overlay");
++                const std::string overlay = overlayValue ? overlayValue : "";
++                if (game.empty() || overlay.empty() ||
++                    std::find(m_settings.overlays.begin(), m_settings.overlays.end(), overlay) == m_settings.overlays.end() ||
++                    !redirector.setChapterReadPaths(game, overlay))
++                {
++                    logMessageF(LogLevel::Error, "Chapter I startup paths are missing or invalid");
++                    return false;
++                }
++
+ 				for (const auto& path : m_settings.overlays)
+ 				{
+ 					redirector.addOverlay(path);
+ 				}
+ 
+-				m_settings.save(config, m_settingsRelPath, m_settingsPath);
++				// Do not rewrite the launcher-owned private boot configuration.
+ 			}
+ 			initialized &= redirector.setupHooks();
+ 
+@@ -154,7 +167,7 @@ namespace XiPivot
+ 
+ 					m_settings.redirectFOpenS = Core::Redirector::instance().getRedirectFOpenS();
+ 
+-					m_settings.save(m_ashitaCore->GetConfigurationManager(), m_settingsRelPath, m_settingsPath);
++					m_settings.dirty = false; // This generated per-launch profile is not the player settings.
+ 					m_settings.dump(this);
+ 				}
+ 
+diff --git a/XIPivot.Ashita_v4/polplugin/AshitaInterface.h b/XIPivot.Ashita_v4/polplugin/AshitaInterface.h
+index 431e279..beb0ec4 100644
+--- a/XIPivot.Ashita_v4/polplugin/AshitaInterface.h
++++ b/XIPivot.Ashita_v4/polplugin/AshitaInterface.h
+@@ -38,7 +38,7 @@ namespace XiPivot
+ {
+ 	namespace Pol
+ 	{
+-		static constexpr auto PluginName = "pivot";
++		static constexpr auto PluginName = "pivot_chapter_i";
+ 		static constexpr auto PluginAuthor = "Heals";
+ 		static constexpr auto PluginVersion = 4.3001;
+ 		static constexpr auto PluginUrl = "https://github.com/HealsCodes/XIPivot";
+diff --git a/XIPivot.Ashita_v4/polplugin/exports.def b/XIPivot.Ashita_v4/polplugin/exports.def
+index 1bd4ba8..3b9e42c 100644
+--- a/XIPivot.Ashita_v4/polplugin/exports.def
++++ b/XIPivot.Ashita_v4/polplugin/exports.def
+@@ -1,4 +1,4 @@
+-LIBRARY "pivot.dll"
++LIBRARY "pivot_chapter_i.dll"
+ EXPORTS
+ 	expCreatePolPlugin @1
+ 	expGetInterfaceVersion @2
+diff --git a/XIPivot.Core/src/Redirector.cpp b/XIPivot.Core/src/Redirector.cpp
+index a6892d7..fd24a35 100644
+--- a/XIPivot.Core/src/Redirector.cpp
++++ b/XIPivot.Core/src/Redirector.cpp
+@@ -180,7 +180,7 @@ namespace XiPivot
+ 
+ 				DetourAttach(&(PVOID&)Redirector::s_procCreateFileA, Redirector::dCreateFileA);
+ 				DetourAttach(&(PVOID&)Redirector::s_procFindFirstFileA, Redirector::dFindFirstFileA);
+-				if (m_hookFOpenEnabled)
++				if (m_hookFOpenEnabled || m_chapter.enabled())
+ 				{
+ 					m_delegate->logMessage(IDelegate::LogLevel::Info, "enabling fopen_s hook");
+ 					DetourAttach(&(PVOID&)Redirector::s_procFOpenS, Redirector::dFOpenS);
+@@ -205,7 +205,7 @@ namespace XiPivot
+ 
+ 				DetourDetach(&(PVOID&)Redirector::s_procCreateFileA, Redirector::dCreateFileA);
+ 				DetourDetach(&(PVOID&)Redirector::s_procFindFirstFileA, Redirector::dFindFirstFileA);
+-				if (m_hookFOpenEnabled)
++				if (m_hookFOpenEnabled || m_chapter.enabled())
+ 				{
+ 					DetourDetach(&(PVOID&)Redirector::s_procFOpenS, Redirector::dFOpenS);
+ 				}
+@@ -368,7 +368,15 @@ namespace XiPivot
+ 		HANDLE __stdcall
+ 			Redirector::interceptCreateFileA(LPCSTR a0, DWORD a1, DWORD a2, LPSECURITY_ATTRIBUTES a3, DWORD a4, DWORD a5, HANDLE a6)
+ 		{
+-			if (shouldInterceptPath(a0))
++			if (ChapterReadPaths::readOnly(a1, a4, a5))
++            {
++                if (const auto* chapter = m_chapter.lookup(a0))
++                {
++                    m_delegate->logMessageF(m_logDebug, "Chapter I readonly CreateFileA: '%s' -> '%s'", a0, chapter);
++                    return Redirector::s_procCreateFileA(chapter, a1, a2, a3, a4, a5, a6);
++                }
++            }
++            if (shouldInterceptPath(a0))
+ 			{
+ 				//m_delegate->logMessageF(m_logDebug, "lpFileName = '%s'", static_cast<const char*>(a0));
+ 
+@@ -383,7 +391,9 @@ namespace XiPivot
+ 		HANDLE __stdcall
+ 			Redirector::interceptFindFirstFileA(LPCSTR a0, LPWIN32_FIND_DATAA a1)
+ 		{
+-			if (shouldInterceptPath(a0))
++            if (const auto* chapter = m_chapter.lookup(a0))
++                return Redirector::s_procFindFirstFileA(chapter, a1);
++            if (shouldInterceptPath(a0))
+ 			{
+ 				m_delegate->logMessageF(m_logDebug, "lpFileName = '%s'", static_cast<const char*>(a0));
+ 
+@@ -398,7 +408,15 @@ namespace XiPivot
+ 		errno_t
+ 			Redirector::interceptFOpenS(FILE** a0, const char* a1, const char* a2)
+ 		{
+-			if (shouldInterceptFOpenS(a1))
++			if (ChapterReadPaths::readOnly(a2))
++            {
++                if (const auto* chapter = m_chapter.lookup(a1))
++                {
++                    m_delegate->logMessageF(m_logDebug, "Chapter I readonly fopen_s: '%s' -> '%s'", a1, chapter);
++                    return Redirector::s_procFOpenS(a0, chapter, a2);
++                }
++            }
++            if (shouldInterceptFOpenS(a1))
+ 			{
+ 				m_delegate->logMessageF(m_logDebug, "lpFileName = [fopen_s] '%s'", a1);
+ 				const char* path = findDenormalisedRedirect(a1);
+diff --git a/XIPivot.Core/src/Redirector.h b/XIPivot.Core/src/Redirector.h
+index c376331..8175837 100644
+--- a/XIPivot.Core/src/Redirector.h
++++ b/XIPivot.Core/src/Redirector.h
+@@ -27,6 +27,7 @@
+  */
+ 
+ #pragma once
++#include "ChapterReadPaths.h"
+ 
+ #include "Delegate.h"
+ 
+@@ -81,6 +82,10 @@ namespace XiPivot
+ 
+ 			/* toggle debug logging on/off */
+ 			void setDebugLog(bool state);
++            bool setChapterReadPaths(const std::string& gameRoot, const std::string& namedOverlay)
++            {
++                return m_chapter.set(gameRoot, m_rootPath, namedOverlay);
++            }
+ 
+ 			/* get the current state for debug logging */
+ 			bool getDebugLog(void) const { return m_logDebug != IDelegate::LogLevel::Discard; }
+@@ -220,6 +225,7 @@ namespace XiPivot
+ 			bool                                     m_hookFOpenEnabled; // the actual internal active but after setupHooks()
+ 
+ 			std::string                              m_rootPath;
++            ChapterReadPaths                         m_chapter;
+ 			std::vector<std::string>                 m_overlayPaths;
+ 			std::unordered_map<int32_t, std::string> m_resolvedPaths;
+ 
+diff --git a/XIPivot.Core/src/ChapterReadPaths.h b/XIPivot.Core/src/ChapterReadPaths.h
+new file mode 100644
+index 0000000..ed2cd55
+--- /dev/null
++++ b/XIPivot.Core/src/ChapterReadPaths.h
+@@ -0,0 +1,94 @@
++#pragma once
++// VanaDreams Chapter I opt-in. Scope: exactly three game-root read aliases.
++#include <array>
++#include <cstring>
++#include <utility>
++#include <filesystem>
++#include <string>
++#include <Windows.h>
++
++namespace XiPivot::Core
++{
++    class ChapterReadPaths final
++    {
++        struct Alias { std::string gamePath, overlayPath; };
++        std::array<Alias, 3> m_aliases {};
++        bool m_enabled = false;
++
++        static bool usablePath(const char* path)
++        {
++            if (!path || !*path) return false;
++            // Never alias device or extended-namespace paths.
++            if ((path[0] == '\\' || path[0] == '/') && (path[1] == '\\' || path[1] == '/')) return false;
++            return true;
++        }
++
++        static std::string absolute(const char* path)
++        {
++            if (!usablePath(path)) return {};
++            char normal[MAX_PATH];
++            auto n = GetFullPathNameA(path, MAX_PATH, normal, nullptr);
++            if (!n || n >= MAX_PATH) return {};
++            return normal;
++        }
++
++    public:
++        bool enabled() const noexcept { return m_enabled; }
++
++        void clear() noexcept { m_enabled = false; }
++
++        bool set(const std::string& gameRoot, const std::string& datRoot, const std::string& overlay)
++        {
++            clear();
++            if (overlay != "vanadreams-chapter-i" && overlay != "vanadreams-chapter-i-hair" &&
++                overlay != "vanadreams-chapter-i-official") return false;
++            const std::filesystem::path game(gameRoot), dat(datRoot);
++            if (!game.is_absolute() || !dat.is_absolute()) return false;
++            const std::array<const char*, 3> files = { "FTABLE.DAT", "VTABLE.DAT", "ROM/118/114.DAT" };
++            for (size_t i = 0; i < files.size(); ++i)
++            {
++                const auto src = (game / files[i]).string();
++                const auto dst = (dat / overlay / files[i]).string();
++                auto srcAbs = absolute(src.c_str());
++                auto dstAbs = absolute(dst.c_str());
++                std::error_code ec;
++                if (srcAbs.empty() || dstAbs.empty() || _stricmp(srcAbs.c_str(), dstAbs.c_str()) == 0 ||
++                    !std::filesystem::is_regular_file(srcAbs, ec) || ec ||
++                    !std::filesystem::is_regular_file(dstAbs, ec) || ec) return false;
++                m_aliases[i] = { std::move(srcAbs), std::move(dstAbs) };
++            }
++            m_enabled = true;
++            return true;
++        }
++
++        const char* lookup(const char* path) const
++        {
++            if (!m_enabled || !usablePath(path)) return nullptr;
++            // Fast reject every path that cannot contain one of the three exact basenames.
++            const auto n = strlen(path);
++            if ((n < 10 || _stricmp(path + n - 10, "FTABLE.DAT") != 0) &&
++                (n < 10 || _stricmp(path + n - 10, "VTABLE.DAT") != 0) &&
++                (n < 7  || _stricmp(path + n - 7,  "114.DAT") != 0)) return nullptr;
++            char key[MAX_PATH];
++            auto keyLength = GetFullPathNameA(path, MAX_PATH, key, nullptr);
++            if (keyLength > 0 && keyLength < MAX_PATH)
++                for (const auto& alias : m_aliases)
++                    if (_stricmp(key, alias.gamePath.c_str()) == 0) return alias.overlayPath.c_str();
++            return nullptr;
++        }
++
++        static bool readOnly(DWORD access, DWORD creation, DWORD flags)
++        {
++            constexpr DWORD writes = GENERIC_WRITE | GENERIC_ALL | DELETE | FILE_WRITE_DATA |
++                FILE_APPEND_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | WRITE_DAC | WRITE_OWNER |
++                MAXIMUM_ALLOWED;
++            return creation == OPEN_EXISTING && !(access & writes) && !(flags & FILE_FLAG_DELETE_ON_CLOSE);
++        }
++
++        static bool readOnly(const char* mode)
++        {
++            // Strict plain _fopen_s() read flavours. Do not intercept update or write access.
++            return mode && (!strcmp(mode, "r") || !strcmp(mode, "rb") || !strcmp(mode, "rt"));
++        }
++    };
++}
+\ No newline at end of file

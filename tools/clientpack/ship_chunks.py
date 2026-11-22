@@ -8,6 +8,7 @@ is what ships it. Layout:
 
     client/chunks/<client_ver>/<name>.zip           the pack, unpacked over the game folder
     client/chunks/<client_ver>/<name>.zip.json      optional: {"dest": "{ashita}/...", "sha256": "..."}
+    Chapter I delta packages additionally set "manifest_slot": "chapter_i", invisible to legacy launchers.
 
 A pack already in the live manifest with the same name and hash is left alone. A changed pack replaces its entry.
 Each zip is uploaded and read back before the manifest changes; the old manifest is kept beside it as
@@ -85,7 +86,11 @@ def ship_version(ver, folder, tmp, dry_run):
         entry = chunk_entry(path, side.get("dest"))
         if side.get("sha256") and side["sha256"].lower() != entry["sha256"]:
             sys.exit(f"{ver}/{name}: sha256 {entry['sha256']} does not match its .json ({side['sha256']})")
-        packs.append((path, entry))
+        slot = side.get("manifest_slot")
+        if slot is not None and (slot != "chapter_i" or name != "vanadreams-chapter-i-01.zip" or
+                                 entry.get("dest") != "{ashita}/polplugins/DATs/vanadreams-chapter-i"):
+            sys.exit(f"{ver}/{name}: unsupported special manifest slot or destination")
+        packs.append((path, entry, slot))
     if not packs:
         return
 
@@ -99,15 +104,16 @@ def ship_version(ver, folder, tmp, dry_run):
     have = {c["name"]: c for c in manifest["chunks"]}
 
     todo = []
-    for path, e in packs:
-        if have.get(e["name"], {}).get("sha256") == e["sha256"]:
+    for path, e, slot in packs:
+        current = (manifest.get(slot) or {}) if slot else have.get(e["name"], {})
+        if current.get("sha256") == e["sha256"]:
             summary(f"- `{ver}/{e['name']}` already live, unchanged")
         else:
-            todo.append((path, e))
+            todo.append((path, e, slot))
     if not todo:
         return
 
-    for path, e in todo:
+    for path, e, slot in todo:
         summary(f"- `{ver}/{e['name']}` {e['size']:,} bytes, {e['files']} files, sha256 `{e['sha256']}`")
         if dry_run:
             continue
@@ -118,8 +124,11 @@ def ship_version(ver, folder, tmp, dry_run):
             sys.exit(f"{ver}/{e['name']}: the uploaded copy reads back with a different hash; manifest left unchanged")
         os.remove(back)
 
-    names = {e["name"] for _, e in todo}
-    manifest["chunks"] = [c for c in manifest["chunks"] if c["name"] not in names] + [e for _, e in todo]
+    names = {e["name"] for _, e, _ in todo}
+    manifest["chunks"] = [c for c in manifest["chunks"] if c["name"] not in names] + [e for _, e, slot in todo if not slot]
+    for _, e, slot in todo:
+        if slot:
+            manifest[slot] = e
     manifest["total_size"] = sum(c["size"] for c in manifest["chunks"])
     manifest["total_unpacked"] = sum(c["unpacked"] for c in manifest["chunks"])
     new = os.path.join(tmp, f"{ver}-manifest.json")

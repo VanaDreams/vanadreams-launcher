@@ -20,6 +20,7 @@ namespace Vanadreams.Services
         public string Dest { get; set; }
         public bool ToAshita => ClientInstall.IsAshitaDest(Dest);
         public long Unpacked { get; set; }
+        public bool ChapterOne { get; set; }
     }
 
     public sealed class ClientManifest
@@ -51,6 +52,9 @@ namespace Vanadreams.Services
                 });
             }
             if (string.IsNullOrEmpty(m.Version) || m.Chunks.Count == 0) throw new InvalidDataException("The game's download list is empty.");
+            // Older launchers intentionally ignore this format rather than extracting deltas as DATs.
+            if (d.TryGetValue(ChapterOnePatch.ManifestSlot, out var chapter) && chapter != null)
+                m.Chunks.Add(ChapterOnePatch.ParseChunk(chapter));
             return m;
         }
     }
@@ -167,11 +171,11 @@ namespace Vanadreams.Services
         /// <summary>Unpacks every zip still to do. Ashita chunks are left for later when no Ashita folder is set; the
         /// start-up check offers them once there is one. Low spec is put back on the effects after they unpack.</summary>
         public static async Task InstallFilesAsync(Downloader downloader, ClientManifest m, string root, string downloads,
-            IProgress<InstallProgress> progress, CancellationToken ct, string ashitaRoot = null, bool lowSpec = false)
+            IProgress<InstallProgress> progress, CancellationToken ct, string ashitaRoot = null, bool lowSpec = false, bool chapterOnly = false)
         {
             Directory.CreateDirectory(root);
             var hasAshita = !string.IsNullOrWhiteSpace(ashitaRoot) && Directory.Exists(ashitaRoot);
-            var todo = Remaining(m, Done(root, m.Version, ashitaRoot)).Where(c => !c.ToAshita || hasAshita).ToList();
+            var todo = Remaining(m, Done(root, m.Version, ashitaRoot)).Where(c => (!c.ToAshita || hasAshita) && (!chapterOnly || c.ChapterOne)).ToList();
             var touchedAshita = false;
             var total = m.TotalSize;
             var before = total - todo.Sum(c => c.Size);
@@ -192,15 +196,19 @@ namespace Vanadreams.Services
                     throw new IOException(c.Name + " came down damaged and was thrown away. Press Install game again to fetch it.");
                 }
                 var dest = DestFolder(c, root, ashitaRoot);
-                await Task.Run(() => Downloader.ExtractZipOverwrite(zip, dest), ct).ConfigureAwait(false);
+                if (c.ChapterOne)
+                    await Task.Run(() => ChapterOnePatch.Install(zip, GameFolder(root), ashitaRoot, ct), ct).ConfigureAwait(false);
+                else
+                    await Task.Run(() => Downloader.ExtractZipOverwrite(zip, dest), ct).ConfigureAwait(false);
                 var record = RecordPath(RecordFolder(c, root, ashitaRoot));
                 Directory.CreateDirectory(Path.GetDirectoryName(record));
                 File.AppendAllText(record, $"{m.Version} {c.Name} {c.Sha256}{Environment.NewLine}");
                 File.Delete(zip);
                 before += c.Size;
-                touchedAshita |= c.ToAshita;
+                touchedAshita |= c.ToAshita && !c.ChapterOne;
             }
             if (touchedAshita) Effects.Apply(ashitaRoot, lowSpec);
+            if (chapterOnly) return;
             foreach (var d in m.CreateDirs) Directory.CreateDirectory(Path.Combine(GameFolder(root), d));
             foreach (var d in m.ViewerCreateDirs) Directory.CreateDirectory(Path.Combine(ViewerFolder(root), d.Replace('/', '\\')));
         }
