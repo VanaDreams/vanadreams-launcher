@@ -85,33 +85,13 @@ namespace Vanadreams
             get
             {
                 var root = VanadreamsGameRoot();
-                return root != null ? ClientInstall.GameFolder(root)
-                    : !string.IsNullOrWhiteSpace(Settings.FfxiFolderOverride) ? Settings.FfxiFolderOverride
-                    : ClientVersion.FindFfxiFolder();
+                return root == null ? null : ClientInstall.GameFolder(root);
             }
         }
 
-        /// <summary>
-        /// The copy of the game a Vanadreams profile starts, looked for across every copy this PC is known to hold:
-        /// the one Windows starts now, the one this launcher installed, one beside Ashita or in the default folder,
-        /// the folder set in Settings, and the copy the registration was once taken from. GameRegistration.Choose
-        /// picks the one that fits the server, unless the player picked a Vanadreams game folder (Profiles or
-        /// Settings): that one is always started while it holds a game. Play passes the registered root read from the COM servers; the
-        /// pages that only show a version use the registered folder, which is quicker to read.
-        /// 4 Oct 2026: 0.2.27 always took the launcher's copy when one was there, whatever state it was in, and
-        /// a player whose game had been starting from another copy logged in and watched the console close.
-        /// </summary>
-        public string VanadreamsGameRoot(string registeredRoot = null)
-        {
-            if (registeredRoot == null) registeredRoot = GameRegistration.RootOf(ClientVersion.FindFfxiFolder());
-            var expected = ExpectedClientVer;
-            var lockMode = VerLock;
-            return GameRegistration.Choose(registeredRoot,
-                new[] { Settings.GameInstallRoot, Settings.AshitaRoot, ClientInstall.DefaultRoot, GameRegistration.RootOf(Settings.FfxiFolderOverride), Settings.OtherGameRoot },
-                GameRegistration.HasGame,
-                root => ClientVersion.Fits(InstalledVersion(root), expected, lockMode),
-                GameRegistration.RootOf(Settings.FfxiFolderOverride));
-        }
+        /// <summary>Only the activated managed generation; never falls back to retail or Windows registration.</summary>
+        public string VanadreamsGameRoot(string registeredRoot = null) =>
+            ManagedClient.IsGeneration(Settings.GameInstallRoot) ? Settings.GameInstallRoot : null;
 
         private string ExpectedClientVer => !string.IsNullOrEmpty(Status.ClientVer) ? Status.ClientVer : Settings.ExpectedClientVer;
         private VersionLock VerLock => Status.Lock ?? (Enum.IsDefined(typeof(VersionLock), Settings.VerLock) ? (VersionLock)Settings.VerLock : VersionLock.MatchingOrNewer);
@@ -171,8 +151,7 @@ namespace Vanadreams
         /// The Play button reads Patch while this is true: an update found at start, or a game older than the version the
         /// server runs. Unknown (no game found) is not a patch; Play explains that one and Install game handles it.
         /// </summary>
-        public bool PatchNeeded => PendingClientUpdate != null || OverlayMigrationDue ||
-                                   (Version.ExpectedIsPublished && Version.Verdict == VersionVerdict.ClientTooOld);
+        public bool PatchNeeded => PendingClientUpdate != null;
 
         /// <summary>List the shipped overlays on disk in pivot.ini, once each (LookOverlays.GiveOnce). True when it listed any.</summary>
         public bool GiveOverlays()
@@ -218,72 +197,45 @@ namespace Vanadreams
         /// </summary>
         public async Task<string> PatchClientAsync(IProgress<InstallProgress> progress, System.Threading.CancellationToken ct)
         {
-            var root = GameInstallTarget;
-            var version = Version.ExpectedIsPublished ? Version.Expected : Status.ClientVer;
-            var m = PendingClientUpdate?.Manifest;
-            if (m == null || (!string.IsNullOrEmpty(version) && m.Version != version))
-            {
-                if (string.IsNullOrEmpty(version)) throw new InvalidOperationException(UiText.T("The server hasn't published its version yet, so there is nothing to patch to."));
-                m = ClientManifest.Parse(await Downloader.GetStringAsync(ClientInstall.ManifestUrl(version)));
-            }
-            var ashita = HasAshita ? AshitaRoot : null;
-            // decided before the move: a Patch pressed only for the packs must never become an install
-            var updateWanted = PendingClientUpdate != null || (Version.ExpectedIsPublished && Version.Verdict == VersionVerdict.ClientTooOld);
-            // the packs out of the game folder into their overlays first, so nothing below sees them as missing
-            var packs = PacksRoot(m.Version);
-            if (LookOverlays.Due(m, packs, ashita))
-            {
-                XIPivotBundle.Ensure(ashita);
-                await LookOverlays.MigrateAsync(Http.Shared, m, packs, ashita, progress, ct);
-                ApplyEnabledAddons();
-                GiveOverlays();
-                if (!updateWanted)
-                {
-                    await CheckClientUpdateAsync();
-                    CheckVersion();
-                    Notify();
-                    return null;
-                }
-            }
-            var todo = ClientInstall.Remaining(m, ClientInstall.Done(root, m.Version, ashita));
-            var updateOnly = todo.Count < m.Chunks.Count && ClientInstall.IsRegistered(root);
-            var needed = todo.Sum(c => c.Size + c.Unpacked);
-            var drive = new DriveInfo(Path.GetPathRoot(root));
-            if (drive.AvailableFreeSpace < needed)
-                throw new IOException(drive.Name + " has " + (drive.AvailableFreeSpace / 1073741824.0).ToString("0.0") + UiText.T(" GB free and the patch needs ") +
-                                      (needed / 1073741824.0).ToString("0.0") + UiText.T(" GB. Free some space, or pick another folder on Install game."));
-            await ClientInstall.InstallFilesAsync(Downloader, m, root, Settings.DownloadsFolder, progress, ct, ashita, Settings.LowSpec);
+            var m = ClientManifest.Parse(await Downloader.GetStringAsync(ClientInstall.ManifestUrl(ManagedClient.Version)));
+            await InstallManagedClientAsync(m, GameInstallTarget, progress, ct);
+            return null;
+        }
+
+        public async Task InstallManagedClientAsync(ClientManifest manifest, string target,
+            IProgress<InstallProgress> progress, System.Threading.CancellationToken ct)
+        {
+            var oldRoot = Settings.GameInstallRoot;
+            bool Own(string r) => ManagedClient.IsGeneration(r) || !string.IsNullOrWhiteSpace(r) &&
+                ClientInstall.Done(r, ManagedClient.Version).Count != 0;
+            var prior = new[] { oldRoot, GameInstallTarget, Settings.AshitaRoot }.FirstOrDefault(Own);
+            var root = await ManagedClient.InstallAsync(Downloader, manifest, target, prior, Settings.DownloadsFolder, progress, ct);
+            // Save the active pointer only after the entire new generation was verified and renamed.
             Settings.GameInstallRoot = root;
-            Settings.Save();
-            XIPivotBundle.Ensure(ashita);
-            GiveOverlays();
-            string said = null;
-            if (!updateOnly && !await Task.Run(() => ClientInstall.RunRegister(root, Settings.DownloadsFolder)))
-                said = UiText.T("The files are in, but the permission prompt was refused, so Windows doesn't know where the game is yet. Press Patch again to finish; nothing downloads twice.");
+            try { Settings.Save(); }
+            catch { Settings.GameInstallRoot = oldRoot; throw; }
             await CheckClientUpdateAsync();
             CheckVersion();
             Notify();
-            return said;
         }
 
         public async Task CheckClientUpdateAsync()
         {
-            var root = Settings.GameInstallRoot;
-            var version = Status.ClientVer;
-            if (string.IsNullOrEmpty(version)) { PendingClientUpdate = null; Notify(); return; }
             try
             {
-                var m = ClientManifest.Parse(await Downloader.GetStringAsync(ClientInstall.ManifestUrl(version)));
-                // the packs belong to the copy Vanadreams plays, which is not always the recorded install
-                var packs = PacksRoot(m.Version);
-                OverlayMigrationDue = LookOverlays.Due(m, packs, HasAshita ? AshitaRoot : null);
-                if (OverlayMigrationDue) Log.Info("the look and title packs in " + packs + " are to move into their overlays");
-                if (!GameRegistration.HasGame(root)) { PendingClientUpdate = null; Notify(); return; }
-                var todo = ClientInstall.Updates(m, root, HasAshita ? AshitaRoot : null);
-                PendingClientUpdate = todo.Count == 0 ? null : new ClientUpdate { Root = root, Manifest = m, Parts = todo };
-                if (PendingClientUpdate != null) Log.Info("game update ready: " + string.Join(", ", todo.Select(c => c.Name)));
+                var m = ClientManifest.Parse(await Downloader.GetStringAsync(ClientInstall.ManifestUrl(ManagedClient.Version)));
+                var root = Settings.GameInstallRoot;
+                OverlayMigrationDue = false;
+                PendingClientUpdate = ManagedClient.HasManifest(root, m) ? null :
+                    new ClientUpdate { Root = GameInstallTarget, Manifest = m, Parts = m.Chunks };
             }
             catch (Exception ex) { Log.Warn("game update check: " + ex.Message); }
+            Notify();
+        }
+
+        public void RequireManagedRepair()
+        {
+            PendingClientUpdate = new ClientUpdate { Root = GameInstallTarget, Parts = new System.Collections.Generic.List<ClientChunk>() };
             Notify();
         }
 

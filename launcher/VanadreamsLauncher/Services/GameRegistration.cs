@@ -30,7 +30,7 @@ namespace Vanadreams.Services
     public static class GameRegistration
     {
         /// <summary>The COM servers that decide which game xiloader starts.</summary>
-        public static readonly string[] DecidingComServers = { "FFXi.dll", "FFXiMain.dll", "polcore.dll" };
+        public static readonly string[] DecidingComServers = { "FFXi.dll", "FFXiMain.dll", "polcore.dll", "polcoreeu.dll" };
 
         /// <summary>
         /// A root holds a game we can point Windows at: the two things xiloader creates are on disk, the game's
@@ -134,18 +134,29 @@ namespace Vanadreams.Services
         /// closes after Play. Polls by id: the loader runs elevated, and Get-Process can see an elevated process
         /// that Wait-Process cannot open.
         /// </summary>
-        public static string WatcherScript(IEnumerable<int> loaderIds, string registerScript)
+        public static string WatcherScript(IEnumerable<int> loaderIds, string registerScript, string startedRoot = null, int lang = 1)
         {
             var ids = string.Join(",", (loaderIds ?? Enumerable.Empty<int>()).Distinct());
             var s = registerScript.Replace("'", "''");
+            var names = string.Join(",", RetailClientIsolation.GameProcessNames.Select(n => "'" + n + "'"));
+            var guards = $"if (Get-Process -Name {names} -ErrorAction SilentlyContinue) {{ exit 0 }}\r\n";
+            if (!string.IsNullOrWhiteSpace(startedRoot))
+            {
+                var key = ClientInstall.VendorKey(lang);
+                var game = ClientInstall.GameFolder(startedRoot).Replace("'", "''");
+                var viewer = ClientInstall.ViewerFolder(startedRoot).Replace("'", "''");
+                guards += $"$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry32').OpenSubKey('SOFTWARE\\{key}\\InstallFolder')\r\n" +
+                          $"if (!$key -or (([string]$key.GetValue('0001')).TrimEnd('\\') -ine '{game}') -or (([string]$key.GetValue('1000')).TrimEnd('\\') -ine '{viewer}')) {{ exit 0 }}\r\n";
+            }
             return (ids.Length > 0 ? $"while (Get-Process -Id {ids} -ErrorAction SilentlyContinue) {{ Start-Sleep -Seconds 3 }}\r\n" : "") +
-                   $"Start-Process -FilePath cmd.exe -ArgumentList '/c','\"{s}\"' -Verb RunAs -WindowStyle Hidden -Wait\r\n";
+                   "try {\r\n" + guards + $"Start-Process -FilePath cmd.exe -ArgumentList '/c','\"{s}\"' -Verb RunAs -WindowStyle Hidden -Wait\r\n" +
+                   $"}} finally {{ Remove-Item -LiteralPath '{s}',$PSCommandPath -Force -ErrorAction SilentlyContinue }}\r\n";
         }
 
         /// <summary>Read the registration as a 32-bit process sees it, which is how xiloader and the game see it.</summary>
-        public static RegisteredGame Read(int lang = 1)
+        public static RegisteredGame Read(int lang = 1, bool exactVendor = false)
         {
-            var reg = new RegisteredGame { GameFolder = ClientVersion.FindFfxiFolder(lang), ViewerFolder = ReadViewerFolder(lang) };
+            var reg = exactVendor ? ReadExactFolders(lang) : new RegisteredGame { GameFolder = ClientVersion.FindFfxiFolder(lang), ViewerFolder = ReadViewerFolder(lang) };
             try
             {
                 using (var hkcr = RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView.Registry32))
@@ -174,6 +185,22 @@ namespace Vanadreams.Services
             }
             catch (Exception ex) { Log.Warn("COM registration unreadable: " + ex.Message); }
             return reg;
+        }
+
+        private static RegisteredGame ReadExactFolders(int lang)
+        {
+            var result = new RegisteredGame();
+            try
+            {
+                using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+                using (var key = hklm.OpenSubKey(@"SOFTWARE\" + ClientInstall.VendorKey(lang) + @"\InstallFolder"))
+                {
+                    result.GameFolder = key?.GetValue("0001") as string;
+                    result.ViewerFolder = key?.GetValue("1000") as string;
+                }
+            }
+            catch (Exception ex) { Log.Warn("region-specific game registration unreadable: " + ex.Message); }
+            return result;
         }
 
         private static string ReadViewerFolder(int lang)

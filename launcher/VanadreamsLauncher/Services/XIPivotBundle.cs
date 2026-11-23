@@ -13,6 +13,42 @@ namespace Vanadreams.Services
     public static class XIPivotBundle
     {
         public const string Version = "4.3.001";
+        internal const string ChapterPlugin = "pivot_chapter_i";
+
+        /// <summary>A side-by-side plugin used only by a generated VanaDreams Chapter I boot profile.</summary>
+        internal static void EnsureChapter(string target)
+        {
+            // Read the embedded data from this assembly, not the current process's WPF
+            // resource assembly (which is host-dependent in tests and alternate entry points).
+            var assembly = typeof(XIPivotBundle).Assembly;
+            var resources = new System.Resources.ResourceManager(assembly.GetName().Name + ".g", assembly);
+            byte[] expected;
+            using (var stream = resources.GetStream("assets/xipivot/" + ChapterPlugin + ".dll", System.Globalization.CultureInfo.InvariantCulture))
+            using (var ms = new MemoryStream())
+            {
+                if (stream == null) throw new IOException("The launcher's Chapter I compatibility plugin is missing.");
+                stream.CopyTo(ms);
+                expected = ms.ToArray();
+            }
+            if (expected.Length == 0 || expected.Length > 4 * 1024 * 1024)
+                throw new IOException("The bundled Chapter I compatibility plugin is invalid.");
+            if (!File.Exists(target))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(target));
+                var temp = target + "." + Guid.NewGuid().ToString("N") + ".tmp";
+                try
+                {
+                    File.WriteAllBytes(temp, expected);
+                    try { File.Move(temp, target); }
+                    catch (IOException) { if (!File.Exists(target)) throw; }
+                }
+                finally { if (File.Exists(temp)) File.Delete(temp); }
+            }
+            // Preserve a preexisting unknown plugin and do not execute it.
+            if ((File.GetAttributes(target) & FileAttributes.ReparsePoint) != 0 ||
+                new FileInfo(target).Length != expected.Length || !File.ReadAllBytes(target).SequenceEqual(expected))
+                throw new IOException("The existing Chapter I compatibility plugin differs from this launcher. It was not changed or loaded.");
+        }
 
         private static readonly Tuple<string, string>[] Files =
         {

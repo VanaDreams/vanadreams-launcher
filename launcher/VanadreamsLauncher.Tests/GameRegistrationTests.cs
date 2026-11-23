@@ -243,7 +243,10 @@ namespace Vanadreams.Tests
             StringAssert.StartsWith(ps, "while (Get-Process -Id 12,34 ");
             StringAssert.Contains(ps, "-Verb RunAs");
             StringAssert.Contains(ps, "O''Neil");
-            StringAssert.StartsWith(GameRegistration.WatcherScript(new int[0], "x.cmd"), "Start-Process");
+            var withoutPid = GameRegistration.WatcherScript(new int[0], "x.cmd");
+            StringAssert.Contains(withoutPid, "Get-Process -Name");
+            StringAssert.Contains(withoutPid, "Start-Process");
+            Assert.IsTrue(withoutPid.IndexOf("Get-Process -Name", StringComparison.Ordinal) < withoutPid.IndexOf("Start-Process", StringComparison.Ordinal));
         }
     }
 }
