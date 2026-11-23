@@ -81,41 +81,54 @@ namespace Vanadreams.Services
             {
                 if (!rows.MoveNext() || !string.Equals(rows.Current, key, StringComparison.Ordinal))
                     throw new IOException("The managed VanaDreams version needs Patch.");
-                var seen = new HashSet<string>(Names);
+                var expected = new Dictionary<string, string>(Names);
                 while (rows.MoveNext())
                 {
                     ct.ThrowIfCancellationRequested();
                     var row = rows.Current.Split(new[] { '\t' }, 2);
-                    if (row.Length != 2 || !ChapterOnePatch.IsDigest(row[0]) || !seen.Add(row[1]))
+                    if (row.Length != 2 || !ChapterOnePatch.IsDigest(row[0]) || expected.ContainsKey(row[1]))
                         throw new InvalidDataException("Invalid managed-client file inventory.");
-                    var path = SafePath(root, row[1]);
-                    if (!File.Exists(path) || !Names.Equals(ClientInstall.Sha256Of(path), row[0]))
-                        throw new IOException("The managed VanaDreams files changed (" + row[1] + "). Press Patch to create a clean copy.");
+                    expected.Add(row[1], row[0]);
                 }
-                if (!seen.Contains(ClientInstall.GameFolderName + "/FTABLE.DAT") ||
-                    !seen.Contains(ClientInstall.GameFolderName + "/VTABLE.DAT") ||
-                    !seen.Contains(Payload + "/polplugins/DATs/" + ChapterOnePatch.Overlay + "/FTABLE.DAT"))
+                if (!expected.ContainsKey(ClientInstall.GameFolderName + "/FTABLE.DAT") ||
+                    !expected.ContainsKey(ClientInstall.GameFolderName + "/VTABLE.DAT") ||
+                    !expected.ContainsKey(Payload + "/polplugins/DATs/" + ChapterOnePatch.Overlay + "/FTABLE.DAT"))
                     throw new InvalidDataException("Incomplete managed-client file inventory.");
 
-                // Extra files must never influence the fixed data selection. USER is deliberately outside it;
-                // non-DAT screenshots/settings may be made by the game without invalidating all players.
+                // Enumerate and validate a component at a time, rather than restatting every
+                // ancestor for every one of the tens of thousands of published DATs.
                 foreach (var area in new[] { ClientInstall.GameFolderName, ClientInstall.ViewerFolderName, Payload })
-                    RejectExtraData(root, area, seen);
+                    VerifyTree(SafePath(root, area), area, expected, ct, false);
+                if (expected.Count != 0)
+                    throw new IOException("A managed VanaDreams file is missing (" + expected.Keys.First() + "). Press Patch.");
             }
         }
 
-        private static void RejectExtraData(string root, string rel, HashSet<string> seen)
+        private static void VerifyTree(string path, string rel, IDictionary<string, string> expected, CancellationToken ct, bool user)
         {
-            if (Names.Equals(rel, ClientInstall.GameFolderName + "/USER") ||
-                Names.Equals(rel, ClientInstall.ViewerFolderName + "/USER")) return;
-            var path = SafePath(root, rel);
+            user |= Names.Equals(rel, ClientInstall.GameFolderName + "/USER") ||
+                Names.Equals(rel, ClientInstall.ViewerFolderName + "/USER");
             foreach (var child in Directory.EnumerateFileSystemEntries(path))
             {
+                ct.ThrowIfCancellationRequested();
                 var item = rel + "/" + Path.GetFileName(child);
                 var attrs = File.GetAttributes(child);
-                if ((attrs & FileAttributes.ReparsePoint) != 0) throw new IOException("A managed-client path uses a link.");
-                if ((attrs & FileAttributes.Directory) != 0) RejectExtraData(root, item, seen);
-                else if (DataExtensions.Contains(Path.GetExtension(child), Names) && !seen.Contains(item))
+                if ((attrs & FileAttributes.ReparsePoint) != 0)
+                {
+                    if (user) continue; // USER links are never transferred or followed.
+                    throw new IOException("A managed-client path uses a link.");
+                }
+                if ((attrs & FileAttributes.Directory) != 0)
+                    VerifyTree(child, item, expected, ct, user);
+                else if (expected.TryGetValue(item, out var hash))
+                {
+                    using (var sha = SHA256.Create())
+                    using (var file = new FileStream(child, FileMode.Open, FileAccess.Read, FileShare.Read, 64 * 1024, FileOptions.SequentialScan))
+                        if (!Names.Equals(Hex(sha.ComputeHash(file)), hash))
+                            throw new IOException("The managed VanaDreams files changed (" + item + "). Press Patch to create a clean copy.");
+                    expected.Remove(item);
+                }
+                else if (!user && DataExtensions.Contains(Path.GetExtension(child), Names))
                     throw new IOException("An extra game file was found. Press Patch for a clean VanaDreams copy.");
             }
         }
