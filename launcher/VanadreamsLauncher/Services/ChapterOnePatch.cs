@@ -201,12 +201,12 @@ namespace Vanadreams.Services
 
 
         // The launcher loads these only in a transient VanaDreams boot profile, not global pivot.ini.
-        public static bool ConfigureLaunch(string ashitaRoot, string gameFolder, IniFile boot)
+        public static bool ConfigureLaunch(string ashitaRoot, string gameFolder, IniFile boot, string managedPayload = null)
         {
             if (string.IsNullOrWhiteSpace(gameFolder)) return false;
-            var retail = Under(ashitaRoot, "polplugins/DATs/" + Overlay);
-            var hair = Under(ashitaRoot, "polplugins/DATs/" + HairOverlay);
-            var official = Under(ashitaRoot, "polplugins/DATs/" + PublicOverlay);
+            var retail = Under(managedPayload ?? ashitaRoot, "polplugins/DATs/" + Overlay);
+            var hair = Under(managedPayload ?? ashitaRoot, "polplugins/DATs/" + HairOverlay);
+            var official = Under(managedPayload ?? ashitaRoot, "polplugins/DATs/" + PublicOverlay);
             if (!Directory.Exists(retail) || !Directory.Exists(hair) || !Directory.Exists(official)) return false;
             var fp = Under(gameFolder, "FTABLE.DAT");
             var vp = Under(gameFolder, "VTABLE.DAT");
@@ -221,7 +221,7 @@ namespace Vanadreams.Services
             else if (pair == "cccb9cbf6aecb456f447ea74634b41fbfc9eed3a7cdab9e5da89b9824449bc53cb5a6cc150420ec70a098e40d8d0d1f9c6f3ae2cbd7b484d16f130b04f36efe7")
                 overlay = PublicOverlay;
             else return false;
-            var folder = Under(ashitaRoot, "polplugins/DATs/" + overlay);
+            var folder = Under(managedPayload ?? ashitaRoot, "polplugins/DATs/" + overlay);
             if (Replaced.Concat(Added).Any(p => !File.Exists(Under(folder, p)))) return false;
 
             var settingsName = boot.Get("ashita.polplugins.args", "pivot", "pivot").Trim();
@@ -231,7 +231,7 @@ namespace Vanadreams.Services
             var sourcePath = Under(configDir, settingsName + ".ini");
             var profilePivot = File.Exists(sourcePath) ? IniFile.Load(sourcePath) : IniFile.FromText("[settings]\ndebug_log = false");
             var rootPath = profilePivot.Get("settings", "root_path");
-            if (!string.IsNullOrWhiteSpace(rootPath) &&
+            if (managedPayload == null && !string.IsNullOrWhiteSpace(rootPath) &&
                 !string.Equals(Path.GetFullPath(rootPath).TrimEnd('\\', '/'), Path.GetFullPath(Path.GetDirectoryName(folder)).TrimEnd('\\', '/'), StringComparison.OrdinalIgnoreCase))
                 throw new IOException("The current Ashita profile uses a custom XIPivot DAT root; it was left unchanged.");
 
@@ -243,7 +243,13 @@ namespace Vanadreams.Services
             // Preserve enabled overlays and their relative order. If Pivot was off, avoid enabling any prior packs.
             var enabled = boot.Get("ashita.polplugins", "pivot") == "1";
             var overlays = new List<string>();
-            if (enabled)
+            if (managedPayload != null)
+            {
+                // Server text/item packs are part of the common baseline. Old overlay folders are not.
+                var textPack = Path.Combine(dataRoot, "vanadreams-text");
+                if (Directory.Exists(textPack)) overlays.Add("vanadreams-text");
+            }
+            else if (enabled)
                 for (var i = 0; ; i++)
                 {
                     var name = profilePivot.Get("overlays", i.ToString(System.Globalization.CultureInfo.InvariantCulture));

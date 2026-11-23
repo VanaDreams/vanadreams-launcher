@@ -177,7 +177,14 @@ namespace Vanadreams.Services
                 { "lastPlayed", LastPlayed.ToDictionary(k => k.Key, k => (object)k.Value) },
             };
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(Path));
-            File.WriteAllText(Path, Json.Stringify(d), new UTF8Encoding(false));
+            var tmp = Path + "." + Guid.NewGuid().ToString("N") + ".tmp";
+            try
+            {
+                File.WriteAllText(tmp, Json.Stringify(d), new UTF8Encoding(false));
+                if (File.Exists(Path)) File.Replace(tmp, Path, null);
+                else File.Move(tmp, Path);
+            }
+            finally { if (File.Exists(tmp)) File.Delete(tmp); }
         }
 
         public bool HasAshita => !string.IsNullOrWhiteSpace(AshitaRoot) && File.Exists(System.IO.Path.Combine(AshitaRoot, "Ashita-cli.exe"));

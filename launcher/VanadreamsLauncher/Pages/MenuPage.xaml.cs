@@ -90,7 +90,7 @@ namespace Vanadreams.Pages
         /// The look and title packs' move is about the game copy, not the server, so it is offered on any profile:
         /// 16 Oct 2026, Ferrin's profile pointed at the server's LAN address and the Patch for the move never showed.
         private bool PatchFirst => _profile != null && !_patchedNow &&
-                                   ((_profile.IsVanadreams && App.State.PatchNeeded) || App.State.OverlayMigrationDue);
+                                   (_profile.IsVanadreams && (App.State.PatchNeeded || App.State.VanadreamsGameRoot() == null));
 
         /// <summary>Play or Patch on the button, and the line and bar under the news.</summary>
         private void ShowPatch()
@@ -236,24 +236,7 @@ namespace Vanadreams.Pages
             var state = App.State;
             if (!profile.IsVanadreams) return state.OtherGameRootFor(profile);
 
-            var registered = GameRegistration.CurrentRoot(reg);
-            var root = state.VanadreamsGameRoot(registered ?? "");
-            Log.Info("play: the copy to start is " + (root ?? "whatever Windows has") +
-                     (root == null ? "" : ", version " + (state.InstalledVersion(root) ?? "unknown")) +
-                     "; Windows starts " + (registered ?? "nothing") + "; installed here " +
-                     (string.IsNullOrWhiteSpace(state.Settings.GameInstallRoot) ? "not recorded" : state.Settings.GameInstallRoot));
-            // Nothing recorded? Anyone who installed before the folder was remembered has this empty, and his game
-            // may be sitting beside his Ashita. Record it so the Install page opens on the real folder.
-            if (root != null && !GameRegistration.HasGame(state.Settings.GameInstallRoot) &&
-                (GameRegistration.SameFolder(root, state.Settings.AshitaRoot) || GameRegistration.SameFolder(root, ClientInstall.DefaultRoot)))
-            {
-                state.Settings.GameInstallRoot = root;
-                state.Settings.Save();
-                Log.Info("found the game beside " + root + " and recorded it");
-            }
-            // Null: nothing found to point at - which is not the same as nothing being there. A game put somewhere
-            // this launcher does not know to look is still a game, so the launch goes ahead with what Windows has.
-            return root;
+            return state.VanadreamsGameRoot();
         }
 
         /// <summary>Roots whose registration did not take even after the prompt; asked once per run, not on every Play.</summary>
@@ -266,7 +249,7 @@ namespace Vanadreams.Pages
         private bool EnsureGameIsRegistered(string root, RegisteredGame reg, int lang = 1)
         {
             var state = App.State;
-            if (GameRegistration.PointsAt(reg, root) || _registerDidNotTake.Contains(root))
+            if (GameRegistration.PointsAt(reg, root) || !_profile.IsVanadreams && _registerDidNotTake.Contains(root))
                 return true;   // nothing to do, which is almost every launch
 
             // Remember the copy we are taking it from, so a profile for its server can have it back.
@@ -291,6 +274,12 @@ namespace Vanadreams.Pages
                         _registerDidNotTake.Add(root);
                         Log.Warn("registration still differs after registering " + root + ": game " + after.GameFolder +
                                  ", viewer " + after.ViewerFolder + ", COM " + string.Join("; ", after.ComServers));
+                    }
+                    if (_profile.IsVanadreams && !GameRegistration.PointsAt(after, root))
+                    {
+                        MessageBox.Show(UiText.T("Windows did not register the verified VanaDreams folder. Nothing was started."),
+                            UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return false;
                     }
                     return true;
                 }
@@ -318,6 +307,26 @@ namespace Vanadreams.Pages
         private async System.Threading.Tasks.Task PlayCoreAsync()
         {
             var state = App.State;
+            string verifiedRoot = null;
+            if (_profile.IsVanadreams)
+            {
+                var requested = _profile;
+                verifiedRoot = state.VanadreamsGameRoot();
+                try
+                {
+                    PlayNote.Text = UiText.T("Verifying the managed VanaDreams game files.");
+                    PlayNote.Visibility = Visibility.Visible;
+                    await ManagedClient.VerifyForPlayAsync(verifiedRoot, state.Downloader, System.Threading.CancellationToken.None);
+                    if (_profile != requested) return;
+                }
+                catch (Exception ex)
+                {
+                    _patchedNow = false;
+                    state.RequireManagedRepair();
+                    MessageBox.Show(ex.Message, UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+            }
             var login = TakeLogin();
             // Ashita reads the profile's file itself, so one still on an address the server moved from is put right on disk
             state.RepointMovedProfiles();
@@ -396,13 +405,12 @@ namespace Vanadreams.Pages
             var lang = _profile.Command.Lang;
             var reg = GameRegistration.Read(lang);
             var root = GameRootFor(_profile, reg);
+            if (_profile.IsVanadreams && (verifiedRoot == null || !GameRegistration.SameFolder(root, verifiedRoot))) return;
             var previousRoot = GameRegistration.CurrentRoot(reg);
             if (root != null && !EnsureGameIsRegistered(root, reg, lang)) return;
             // 12 Oct 2026: Mogsy's loader logged in and closed, because neither pol.exe nor FFXiMain.dll was where
             // Windows pointed. When no copy we know of is a whole game, the launch is all but sure to do the same.
-            if (_profile.IsVanadreams && root == null &&
-                MessageBox.Show(UiText.T(PlayCheck.NoGameSentence), UiText.T("Vanadreams Launcher"), MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
-                return;
+            if (_profile.IsVanadreams && root == null) return;
 
             state.CheckVersion();
             if (_profile.IsVanadreams && state.Version.BlocksPlay)   // the Vanadreams version rule has no say over other servers
@@ -458,7 +466,7 @@ namespace Vanadreams.Pages
                 // the launcher waits to close until the game is open, so it can still say why if it never opens
                 var autoClose = _profile.AutoClose;
                 var opened = await WatchLaunch(state, _profile, loaderName, before, launchedAt, root, lang);
-                GiveOtherGameBack(state, root, previousRoot, loaderName, before, lang);
+                if (!_profile.IsVanadreams) GiveOtherGameBack(state, root, previousRoot, loaderName, before, lang);
                 // with the window switcher on, "close" means the tray: the switcher has to keep running for the game
                 if (autoClose && opened && !_win.HideToTray()) Application.Current.Shutdown();
             }

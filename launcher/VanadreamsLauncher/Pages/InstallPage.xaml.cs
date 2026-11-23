@@ -34,7 +34,7 @@ namespace Vanadreams.Pages
         }
 
         private static string Gb(long bytes) => (bytes / 1073741824.0).ToString("0.0") + " GB";
-        private string Expected => App.State.Version.ExpectedIsPublished ? App.State.Version.Expected : null;
+        private string Expected => ManagedClient.Version;
         /// <summary>The update found at start, when it is for the folder this page installs to.</summary>
         private ClientUpdate Pending
         {
@@ -59,7 +59,7 @@ namespace Vanadreams.Pages
             State.Foreground = (Brush)FindResource(found == null ? "Warn" : matches ? "Ok" : "Warn");
             if (Pending != null && _cancel == null)
             {
-                State.Text = UiText.T("Update ready · ") + Pending.Words + UiText.T(". Only these are downloaded.");
+                State.Text = UiText.T("Update ready · ") + Pending.Words + UiText.T(". A separate VanaDreams copy will be prepared.");
                 State.Foreground = (Brush)FindResource("Warn");
             }
             InstallButton.Content = _cancel != null ? UiText.T("Stop") : Pending != null ? UiText.T("Update game") : found == null ? UiText.T("Install game") : UiText.T("Install a fresh copy");
@@ -73,10 +73,7 @@ namespace Vanadreams.Pages
             try
             {
                 _manifest = ClientManifest.Parse(await App.State.Downloader.GetStringAsync(ClientInstall.ManifestUrl(Expected)));
-                var left = ClientInstall.Remaining(_manifest, ClientInstall.Done(_root, _manifest.Version, AshitaFolder));
-                SizeText.Text = left.Count > 0 && left.Count < _manifest.Chunks.Count
-                    ? Gb(left.Sum(c => c.Size)) + UiText.T(" still to fetch, of ") + Gb(_manifest.TotalSize)
-                    : Gb(_manifest.TotalSize) + " · " + Gb(_manifest.TotalUnpacked) + UiText.T(" on disk");
+                SizeText.Text = Gb(_manifest.TotalSize) + UiText.T(" download; ") + Gb(_manifest.TotalUnpacked) + UiText.T(" in a separate game folder.");
             }
             catch (Exception ex)
             {
@@ -89,13 +86,6 @@ namespace Vanadreams.Pages
         {
             if (_cancel != null) { _cancel.Cancel(); return; }
             if (_manifest == null) { await LoadManifestAsync(); if (_manifest == null) { ProgressText.Text = UiText.T("The game download isn't available right now. Try again in a while."); return; } }
-
-            var drive = new DriveInfo(Path.GetPathRoot(_root));
-            var todo = ClientInstall.Remaining(_manifest, ClientInstall.Done(_root, _manifest.Version, AshitaFolder));
-            var needed = todo.Sum(c => c.Size + c.Unpacked);
-            // only new parts for a copy that is already registered: no permission prompt at the end
-            var updateOnly = todo.Count < _manifest.Chunks.Count && ClientInstall.IsRegistered(_root);
-            if (drive.AvailableFreeSpace < needed) { ProgressText.Text = UiText.F("{0} has {1} free and the install needs {2}. Pick another folder.", drive.Name, Gb(drive.AvailableFreeSpace), Gb(needed)); return; }
 
             var state = App.State;
             _cancel = new CancellationTokenSource();
@@ -113,26 +103,12 @@ namespace Vanadreams.Pages
             });
             try
             {
-                await ClientInstall.InstallFilesAsync(state.Downloader, _manifest, _root, state.Settings.DownloadsFolder, progress, _cancel.Token,
-                    AshitaFolder, state.Settings.LowSpec);
-                state.Settings.GameInstallRoot = _root;
-                state.Settings.Save();
-                // the look and title packs land as XIPivot overlays: XIPivot in place and the overlays listed, once
-                XIPivotBundle.Ensure(AshitaFolder);
-                if (state.GiveOverlays()) state.ApplyEnabledAddons();
-                if (updateOnly) ProgressText.Text = UiText.T("Updated. Press Play.");
-                else
-                {
-                    ProgressText.Text = UiText.T("Files in place. Windows will ask for permission to register the game…");
-                    var ok = await Task.Run(() => ClientInstall.RunRegister(_root, state.Settings.DownloadsFolder));
-                    ProgressText.Text = ok ? UiText.T("Installed. Run Setup if you haven't, then press Play.")
-                                           : UiText.T("The permission prompt was refused, so the game isn't registered yet. Press Install game again to finish; nothing downloads twice.");
-                }
-                await state.CheckClientUpdateAsync();
-                state.CheckVersion();
-                state.Notify();
+                await state.InstallManagedClientAsync(_manifest, _root, progress, _cancel.Token);
+                _root = state.Settings.GameInstallRoot;
+                ProgressText.Text = UiText.T("Verified VanaDreams copy ready. Press Play.");
+
             }
-            catch (OperationCanceledException) { ProgressText.Text = UiText.T("Stopped. Press Install game to carry on where it left off."); }
+            catch (OperationCanceledException) { ProgressText.Text = UiText.T("Stopped. Press Install game again; verified downloads are kept."); }
             catch (Exception ex) { Log.Error("client install", ex); ProgressText.Text = ex.Message; }
             finally
             {
@@ -150,8 +126,6 @@ namespace Vanadreams.Pages
             var d = new System.Windows.Forms.FolderBrowserDialog { Description = UiText.T("Pick the folder the game goes in (Final Fantasy XI and PlayOnlineViewer are made inside it)"), SelectedPath = _root };
             if (d.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
             _root = d.SelectedPath;
-            App.State.Settings.GameInstallRoot = _root;
-            App.State.Settings.Save();
             Refresh();
         }
 

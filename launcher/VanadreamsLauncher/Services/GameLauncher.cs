@@ -30,7 +30,10 @@ namespace Vanadreams.Services
             var savedLogin = credential != null && (!string.IsNullOrEmpty(credential.User) || !string.IsNullOrEmpty(credential.Password));
             var mayHaveChapter = profile.IsVanadreams && !string.IsNullOrWhiteSpace(gameRoot);
             var ini = savedLogin || mayHaveChapter ? IniFile.Load(profile.Path) : null;
-            var chapter = mayHaveChapter && ChapterOnePatch.ConfigureLaunch(ashitaRoot, ClientInstall.GameFolder(gameRoot), ini);
+            var chapter = mayHaveChapter && ChapterOnePatch.ConfigureLaunch(ashitaRoot, ClientInstall.GameFolder(gameRoot), ini,
+                ManagedClient.PayloadRoot(gameRoot));
+            if (profile.IsVanadreams && !chapter)
+                throw new IOException("The managed Chapter I data did not pass launch preparation. Use Patch; no game was started.");
             if (savedLogin || chapter)
             {
                 var launchCmd = new LoaderCommand
