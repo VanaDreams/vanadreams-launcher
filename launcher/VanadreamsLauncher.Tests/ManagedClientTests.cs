@@ -64,6 +64,49 @@ namespace Vanadreams.Tests
             Assert.ThrowsException<InvalidDataException>(() => ManagedClient.Key(m));
         }
 
+        [TestMethod]
+        public void VerifyChecksPhysicalDataAndLeavesUserFilesOut()
+        {
+            var game = ClientInstall.GameFolderName + "/";
+            var paths = new[] { game + "FFXi.dll", game + "FFXiMain.dll", game + "FTABLE.DAT", game + "VTABLE.DAT",
+                ClientInstall.ViewerFolderName + "/viewer/com/polcore.dll",
+                ManagedClient.Payload + "/polplugins/DATs/" + ChapterOnePatch.Overlay + "/FTABLE.DAT" };
+            var key = new string('a', 64);
+            var inventory = new List<string> { key };
+            foreach (var rel in paths)
+            {
+                var path = ManagedClient.SafePath(root, rel);
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                File.WriteAllText(path, rel);
+                inventory.Add(ClientInstall.Sha256Of(path) + "\t" + rel);
+            }
+            File.WriteAllLines(Path.Combine(root, ManagedClient.Inventory), inventory);
+            var user = ManagedClient.SafePath(root, game + "USER");
+            Directory.CreateDirectory(user);
+            File.WriteAllText(Path.Combine(user, "user.dat"), "macro");
+            ManagedClient.Verify(root, key, CancellationToken.None);
+            var ftable = ManagedClient.SafePath(root, game + "FTABLE.DAT");
+            File.WriteAllText(ftable, "wrong player client");
+            Assert.ThrowsException<IOException>(() => ManagedClient.Verify(root, key, CancellationToken.None));
+            File.WriteAllText(ftable, game + "FTABLE.DAT");
+            File.WriteAllText(ManagedClient.SafePath(root, game + "unknown.DAT"), "not a published DAT");
+            Assert.ThrowsException<IOException>(() => ManagedClient.Verify(root, key, CancellationToken.None));
+        }
+
+        [TestMethod, TestCategory("PublishedFixture")]
+        public void PrepareChapterLaunchProfileFromPublishedGeneration()
+        {
+            var fixture = Environment.GetEnvironmentVariable("VD_MANAGED_TEST_FIXTURE");
+            if (string.IsNullOrWhiteSpace(fixture)) { Assert.Inconclusive("Set an isolated published client archive fixture."); return; }
+            var generation = Path.Combine(fixture, "launch-profile");
+            var ashita = Path.Combine(root, "ashita");
+            Directory.CreateDirectory(ashita);
+            var boot = IniFile.FromText("[ashita.polplugins]\npivot = 1");
+            Assert.IsTrue(ChapterOnePatch.ConfigureLaunch(ashita, ClientInstall.GameFolder(generation), boot, ManagedClient.PayloadRoot(generation)));
+            Assert.AreEqual("1", boot.Get("ashita.polplugins", XIPivotBundle.ChapterPlugin));
+            Assert.IsFalse(Directory.Exists(Path.Combine(ashita, "polplugins", "DATs")));
+        }
+
         [TestMethod, TestCategory("PublishedFixture")]
         public async Task PublishedManifestFreshAndDriftedGenerations()
         {
