@@ -286,8 +286,7 @@ namespace Vanadreams.Services
         }
 
         /// <summary>The rest of what Square Enix's installer writes under PlayOnlineUS (read from Ferrin's retail
-        /// install, 12 Oct 2026), so the Retail profile can start the package's own pol.exe on a PC that never had
-        /// FFXI. Each is only added where missing, so a player's own PlayOnline settings are kept. Key, name, type, data
+        /// install, 12 Oct 2026). Each is only added where missing, so a player's own PlayOnline settings are kept. Key, name, type, data
         /// (null data writes an empty value). Sign-in data is never written.</summary>
         public static readonly string[][] RetailDefaults =
         {
@@ -345,6 +344,7 @@ namespace Vanadreams.Services
         /// <summary>Runs the register script with one administrator prompt. False if the prompt was refused.</summary>
         public static bool RunRegister(string root, string downloads, int lang = 1)
         {
+            if (RetailClientIsolation.GameProcessActive()) throw new InvalidOperationException(RetailClientIsolation.CloseGames);
             Directory.CreateDirectory(downloads);
             var script = Path.Combine(downloads, "register-game.cmd");
             File.WriteAllText(script, RegisterScript(root, lang));

@@ -90,7 +90,7 @@ namespace Vanadreams.Pages
         /// The look and title packs' move is about the game copy, not the server, so it is offered on any profile:
         /// 16 Oct 2026, Ferrin's profile pointed at the server's LAN address and the Patch for the move never showed.
         private bool PatchFirst => _profile != null && !_patchedNow &&
-                                   (_profile.IsVanadreams && (App.State.PatchNeeded || App.State.VanadreamsGameRoot() == null));
+                                   (!_profile.IsRetail && _profile.IsVanadreams && (App.State.PatchNeeded || App.State.VanadreamsGameRoot() == null));
 
         /// <summary>Play or Patch on the button, and the line and bar under the news.</summary>
         private void ShowPatch()
@@ -307,6 +307,7 @@ namespace Vanadreams.Pages
         private async System.Threading.Tasks.Task PlayCoreAsync()
         {
             var state = App.State;
+            if (_profile.IsRetail) { await PlayRetailAsync(state, _profile); return; }
             string verifiedRoot = null;
             if (_profile.IsVanadreams)
             {
@@ -477,6 +478,77 @@ namespace Vanadreams.Pages
             }
         }
 
+        private async System.Threading.Tasks.Task PlayRetailAsync(AppState state, Profile profile)
+        {
+            void Say(string text) =>
+                MessageBox.Show(UiText.T(text), UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
+
+            // Reject invalid configurations before repair, graphics changes, profile rewrites, addon updates,
+            // registration, or process start. PlayOnline receives no private-server login or managed game root.
+            var protectedRoots = RetailClientIsolation.ProtectedRoots(state.Settings);
+            var candidate = await System.Threading.Tasks.Task.Run(() =>
+                RetailClientIsolation.TryResolve(profile.GameFolder, profile.BootFile, protectedRoots,
+                    out var root, out var error, checkTree: true) ? Tuple.Create(root, (string)null) : Tuple.Create((string)null, error));
+            if (_profile != profile || !IsLoaded) return;
+            if (candidate.Item1 == null) { Say(candidate.Item2); return; }
+            var retailRoot = candidate.Item1;
+            if (!File.Exists(Path.Combine(state.AshitaRoot, "Ashita-cli.exe")))
+            {
+                Say("Ashita-cli.exe is missing. Run Repair before launching retail.");
+                return;
+            }
+
+            try
+            {
+                if (RetailClientIsolation.GameProcessActive()) { Say(RetailClientIsolation.CloseGames); return; }
+                var lang = profile.Command.Lang;
+                if (!RetailClientIsolation.RegistrationMatches(GameRegistration.Read(lang, exactVendor: true), retailRoot))
+                {
+                    var prompt = UiText.T("Windows currently points to a different or incomplete FFXI copy. Switch Windows registration to this separate retail install before opening PlayOnline?") +
+                        "\n\n" + retailRoot + "\n\n" + UiText.T("This leaves the Vanadreams files untouched. Windows may ask for administrator permission.");
+                    if (MessageBox.Show(prompt, UiText.T("Vanadreams Launcher"), MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+                        return;
+                    if (RetailClientIsolation.GameProcessActive()) { Say(RetailClientIsolation.CloseGames); return; }
+                    if (!RetailClientIsolation.TryResolve(profile.GameFolder, profile.BootFile, protectedRoots, out retailRoot, out var error))
+                    {
+                        Say(error);
+                        return;
+                    }
+                    if (!ClientInstall.RunRegister(retailRoot, state.Settings.DownloadsFolder, lang) ||
+                        !RetailClientIsolation.RegistrationMatches(GameRegistration.Read(lang, exactVendor: true), retailRoot))
+                    {
+                        Say(RetailClientIsolation.WrongRegistration);
+                        return;
+                    }
+                }
+                if (RetailClientIsolation.GameProcessActive()) { Say(RetailClientIsolation.CloseGames); return; }
+                if (!RetailClientIsolation.TryResolve(profile.GameFolder, profile.BootFile, protectedRoots, out retailRoot, out var finalError))
+                {
+                    Say(finalError);
+                    return;
+                }
+
+                // Do not schedule a registry restore while PlayOnline can update or hand off to another process.
+                // The next private launch will re-point registration when no game is using it.
+                var loaderName = PlayCheck.LoaderProcessName(profile.BootFile);
+                var before = PlayCheck.RunningIds(loaderName);
+                var launchedAt = DateTime.UtcNow;
+                GameLauncher.Launch(state.AshitaRoot, profile, null, true, retailRoot);
+                Music.FadeOut(3);
+                state.Settings.LastProfile = profile.Id;
+                state.Settings.LastPlayed[profile.Id] = DateTime.Now.ToString("o");
+                state.Settings.Save();
+                if (!profile.AutoClose) LoadProfile();
+                var opened = await WatchLaunch(state, profile, loaderName, before, launchedAt, retailRoot, lang);
+                if (profile.AutoClose && opened && !_win.HideToTray()) Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("retail launch failed", ex);
+                Say(ex.Message);
+            }
+        }
+
         /// <summary>
         /// Windows' one Final Fantasy XI location was moved to the copy this profile starts. Windower and PlayOnline read
         /// that same location, so a player who keeps an older client elsewhere would find them starting ours (18 Oct 2026).
@@ -493,10 +565,11 @@ namespace Vanadreams.Pages
                 ids.ExceptWith(before ?? new HashSet<int>());
                 var downloads = state.Settings.DownloadsFolder;
                 Directory.CreateDirectory(downloads);
-                var cmd = Path.Combine(downloads, "restore-other-game.cmd");
-                var ps1 = Path.Combine(downloads, "restore-other-game.ps1");
+                var tag = Guid.NewGuid().ToString("N");
+                var cmd = Path.Combine(downloads, "restore-other-game-" + tag + ".cmd");
+                var ps1 = Path.Combine(downloads, "restore-other-game-" + tag + ".ps1");
                 File.WriteAllText(cmd, ClientInstall.RegisterScript(back, lang));
-                File.WriteAllText(ps1, GameRegistration.WatcherScript(ids, cmd));
+                File.WriteAllText(ps1, GameRegistration.WatcherScript(ids, cmd, root, lang));
                 Process.Start(new ProcessStartInfo("powershell.exe", "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File \"" + ps1 + "\"")
                     { UseShellExecute = false, CreateNoWindow = true });
                 Log.Info("when the loader closes, Windows is pointed back at " + back);

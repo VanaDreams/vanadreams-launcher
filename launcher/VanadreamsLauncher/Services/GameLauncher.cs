@@ -17,6 +17,12 @@ namespace Vanadreams.Services
 
         public static Process Launch(string ashitaRoot, Profile profile, Credential credential, bool asAdmin, string gameRoot = null)
         {
+            if (profile.IsRetail && (RetailClientIsolation.GameProcessActive() ||
+                !RetailClientIsolation.TryResolve(profile.GameFolder, profile.BootFile,
+                    RetailClientIsolation.ProtectedRoots(App.State.Settings), out var selected, out _) ||
+                !GameRegistration.SameFolder(gameRoot, selected) ||
+                !RetailClientIsolation.RegistrationMatches(GameRegistration.Read(profile.Command.Lang, exactVendor: true), selected)))
+                throw new InvalidOperationException(RetailClientIsolation.WrongRegistration);
             var cli = Path.Combine(ashitaRoot, "Ashita-cli.exe");
             if (!File.Exists(cli)) throw new FileNotFoundException("Ashita-cli.exe is missing from " + ashitaRoot + "; run Repair.", cli);
             // Ashita-cli closes in a blink, with nothing on screen, when the profile's boot file is not there
@@ -27,15 +33,22 @@ namespace Vanadreams.Services
 
             var iniName = profile.FileName;
             string temp = null;
-            var savedLogin = credential != null && (!string.IsNullOrEmpty(credential.User) || !string.IsNullOrEmpty(credential.Password));
+            var savedLogin = !profile.IsRetail && credential != null && (!string.IsNullOrEmpty(credential.User) || !string.IsNullOrEmpty(credential.Password));
             var mayHaveChapter = profile.IsVanadreams && !string.IsNullOrWhiteSpace(gameRoot);
-            var ini = savedLogin || mayHaveChapter ? IniFile.Load(profile.Path) : null;
+            var ini = savedLogin || mayHaveChapter || profile.IsRetail ? IniFile.Load(profile.Path) : null;
             var chapter = mayHaveChapter && ChapterOnePatch.ConfigureLaunch(ashitaRoot, ClientInstall.GameFolder(gameRoot), ini,
                 ManagedClient.PayloadRoot(gameRoot));
             if (profile.IsVanadreams && !chapter)
                 throw new IOException("The managed Chapter I data did not pass launch preparation. Use Patch; no game was started.");
-            if (savedLogin || chapter)
+            if (savedLogin || chapter || profile.IsRetail)
             {
+                if (profile.IsRetail)
+                {
+                    ini.Set("ashita.boot", "file", Profile.EscapePath(Path.Combine(ClientInstall.ViewerFolder(gameRoot), "pol.exe")));
+                    ini.Set("ashita.polplugins", "pivot", "0");
+                    ini.Set("ashita.polplugins", "pivot_chapter_i", "0");
+                    ini.Set("ashita.boot", "command", profile.Command.Extra ?? "");
+                }
                 var launchCmd = new LoaderCommand
                 {
                     Server = profile.Command.Server, Hairpin = profile.Command.Hairpin, Extra = profile.Command.Extra,

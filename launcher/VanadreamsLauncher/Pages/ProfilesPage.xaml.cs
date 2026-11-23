@@ -122,6 +122,11 @@ namespace Vanadreams.Pages
                 return;
             }
             GameBox.Text = p.GameFolder;
+            if (p.IsRetail)
+            {
+                GameBox.ToolTip = UiText.T(RetailClientIsolation.PickCopy);
+                return;
+            }
             var fallback = GameRegistration.HasGame(state.Settings.OtherGameRoot) ? ClientInstall.GameFolder(state.Settings.OtherGameRoot) : null;
             GameBox.ToolTip = UiText.T("The copy of Final Fantasy XI that works with this server. Windows is pointed at it when you press Play.") +
                 (fallback != null ? UiText.T("\nLeft blank, this profile plays ") + fallback + UiText.T(", the copy Windows had before Vanadreams.")
@@ -131,7 +136,13 @@ namespace Vanadreams.Pages
         private void GameBrowse_Click(object sender, RoutedEventArgs e)
         {
             var d = new System.Windows.Forms.FolderBrowserDialog { Description = UiText.T("Pick this server's FINAL FANTASY XI folder, or the folder that holds it and PlayOnlineViewer"), SelectedPath = GameBox.Text };
-            if (d.ShowDialog() == System.Windows.Forms.DialogResult.OK) GameBox.Text = d.SelectedPath;
+            if (d.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+            GameBox.Text = d.SelectedPath;
+            if (Current?.IsRetail == true)
+            {
+                var root = GameRegistration.RootOf(d.SelectedPath);
+                BootBox.Text = Path.Combine(ClientInstall.ViewerFolder(root), "pol.exe");
+            }
         }
 
         private bool _filling;
@@ -177,6 +188,14 @@ namespace Vanadreams.Pages
             App.State.Settings.LastProfile = p.Id;
             App.State.Settings.Save();
             Reload(p.Id);
+            if (p.IsRetail)
+            {
+                Note.Text = RetailClientIsolation.TryResolve(p.GameFolder, p.BootFile,
+                    RetailClientIsolation.ProtectedRoots(App.State.Settings), out _, out var error)
+                    ? UiText.T("Saved.") : UiText.T(error);
+                App.State.Notify();
+                return;
+            }
             var picked = p.IsVanadreams ? App.State.Settings.FfxiFolderOverride : p.GameFolder;
             Note.Text = !string.IsNullOrWhiteSpace(picked) && !GameRegistration.HasGame(GameRegistration.RootOf(picked))
                 ? UiText.T("Saved, but there is no game in that folder: pick FINAL FANTASY XI, with PlayOnlineViewer beside it.")
@@ -215,23 +234,18 @@ namespace Vanadreams.Pages
             var copy = Profile.Load(sourcePath).DuplicateTo(store.PathFor(id), id);
             if (retail)
             {
-                // Retail runs through PlayOnline Viewer's own pol.exe with its quick-play command, as
-                // Ashita's example shows. The bootloader folder's pol.exe is for private servers only.
-                var viewer = ClientVersion.FindPlayOnlineViewer();
-                copy.BootFile = viewer ?? "";
+                // Never guess from Windows registration. It commonly points at the managed
+                // Vanadreams copy, and PlayOnline can update the files in that location.
+                copy.GameFolder = "";
+                copy.BootFile = "";
                 copy.Command = new LoaderCommand { Extra = "/game eAZcFcB" };
                 copy.Script = "vanadreams.txt";
                 copy.Save();
                 App.State.Settings.LastProfile = id;
                 App.State.Settings.Save();
                 App.State.Notify();
-                if (viewer == null)
-                {
-                    Reload(id);
-                    Note.Text = UiText.T("PlayOnline Viewer was not found. Install the retail client (Guide) and browse to its pol.exe here.");
-                    return;
-                }
-                _win.Navigate(new MenuPage(_win));   // it is the current profile now: Play is one press away
+                Reload(id);
+                Note.Text = UiText.T(RetailClientIsolation.PickCopy);
                 return;
             }
             else if (Path.GetFileName(sourcePath).StartsWith("example", StringComparison.OrdinalIgnoreCase))
