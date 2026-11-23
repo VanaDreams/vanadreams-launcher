@@ -268,7 +268,7 @@ namespace Vanadreams.Pages
                 if (ClientInstall.RunRegister(root, state.Settings.DownloadsFolder, lang))
                 {
                     Log.Info("registration pointed at " + ClientInstall.GameFolder(root));
-                    var after = GameRegistration.Read(lang);
+                    var after = GameRegistration.Read(lang, exactVendor: _profile.IsVanadreams);
                     if (!GameRegistration.PointsAt(after, root))
                     {
                         _registerDidNotTake.Add(root);
@@ -404,7 +404,7 @@ namespace Vanadreams.Pages
             // 26 Sept 2026: a player installed twice, to C: and then to D:, and the registration stayed on
             // the first. He spent an hour on it and nothing anywhere said why.
             var lang = _profile.Command.Lang;
-            var reg = GameRegistration.Read(lang);
+            var reg = GameRegistration.Read(lang, exactVendor: _profile.IsVanadreams);
             var root = GameRootFor(_profile, reg);
             if (_profile.IsVanadreams && (verifiedRoot == null || !GameRegistration.SameFolder(root, verifiedRoot))) return;
             var previousRoot = GameRegistration.CurrentRoot(reg);
@@ -413,13 +413,8 @@ namespace Vanadreams.Pages
             // Windows pointed. When no copy we know of is a whole game, the launch is all but sure to do the same.
             if (_profile.IsVanadreams && root == null) return;
 
+            // Managed Play already checked the exact package; do not select another client by the server's version hint.
             state.CheckVersion();
-            if (_profile.IsVanadreams && state.Version.BlocksPlay)   // the Vanadreams version rule has no say over other servers
-            {
-                MessageBox.Show(state.Version.Sentence + UiText.T("\n\nInstall game, on the menu, fetches the version the server runs."), UiText.T("Vanadreams Launcher"), MessageBoxButton.OK, MessageBoxImage.Warning);
-                _win.RefreshStrip();
-                return;
-            }
 
             // The launcher can sit in the tray for days, and the catalogue was only read at start, so an addon update
             // pushed after that never reached the game (16 Oct 2026). Read it again and bring installed addons up to date.
