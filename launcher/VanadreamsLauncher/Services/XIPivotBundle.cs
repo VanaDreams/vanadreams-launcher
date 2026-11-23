@@ -18,12 +18,15 @@ namespace Vanadreams.Services
         /// <summary>A side-by-side plugin used only by a generated VanaDreams Chapter I boot profile.</summary>
         internal static void EnsureChapter(string target)
         {
-            var res = Application.GetResourceStream(new Uri("pack://application:,,,/assets/xipivot/" + ChapterPlugin + ".dll"));
-            if (res == null) throw new IOException("The launcher's Chapter I compatibility plugin is missing.");
+            // Read the embedded data from this assembly, not the current process's WPF
+            // resource assembly (which is host-dependent in tests and alternate entry points).
+            var assembly = typeof(XIPivotBundle).Assembly;
+            var resources = new System.Resources.ResourceManager(assembly.GetName().Name + ".g", assembly);
             byte[] expected;
-            using (var stream = res.Stream)
+            using (var stream = resources.GetStream("assets/xipivot/" + ChapterPlugin + ".dll", System.Globalization.CultureInfo.InvariantCulture))
             using (var ms = new MemoryStream())
             {
+                if (stream == null) throw new IOException("The launcher's Chapter I compatibility plugin is missing.");
                 stream.CopyTo(ms);
                 expected = ms.ToArray();
             }
@@ -31,6 +34,7 @@ namespace Vanadreams.Services
                 throw new IOException("The bundled Chapter I compatibility plugin is invalid.");
             if (!File.Exists(target))
             {
+                Directory.CreateDirectory(Path.GetDirectoryName(target));
                 var temp = target + "." + Guid.NewGuid().ToString("N") + ".tmp";
                 try
                 {
