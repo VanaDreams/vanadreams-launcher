@@ -197,7 +197,7 @@ namespace Vanadreams
         /// </summary>
         public async Task<string> PatchClientAsync(IProgress<InstallProgress> progress, System.Threading.CancellationToken ct)
         {
-            var m = ClientManifest.Parse(await Downloader.GetStringAsync(ClientInstall.ManifestUrl(ManagedClient.Version)));
+            var m = ClientManifest.Parse(await Downloader.GetStringAsync(ClientInstall.ManifestUrl(ManagedClient.Version), ct));
             await InstallManagedClientAsync(m, GameInstallTarget, progress, ct);
             return null;
         }
@@ -206,10 +206,9 @@ namespace Vanadreams
             IProgress<InstallProgress> progress, System.Threading.CancellationToken ct)
         {
             var oldRoot = Settings.GameInstallRoot;
-            bool Own(string r) => ManagedClient.IsGeneration(r) || !string.IsNullOrWhiteSpace(r) &&
-                ClientInstall.Done(r, ManagedClient.Version).Count != 0;
-            var prior = new[] { oldRoot, GameInstallTarget, Settings.AshitaRoot }.FirstOrDefault(Own);
-            var root = await ManagedClient.InstallAsync(Downloader, manifest, target, prior, Settings.DownloadsFolder, progress, ct);
+            var prior = PriorClientRoot(target);
+            var reuse = prior ?? ExistingClientRoot(target);
+            var root = await ManagedClient.InstallAsync(Downloader, manifest, target, prior, Settings.DownloadsFolder, progress, ct, reuse);
             // Save the active pointer only after the entire new generation was verified and renamed.
             Settings.GameInstallRoot = root;
             try { Settings.Save(); }
@@ -218,6 +217,21 @@ namespace Vanadreams
             CheckVersion();
             Notify();
         }
+
+        internal string ExistingClientRoot(string target)
+        {
+            var prior = PriorClientRoot(target);
+            if (GameRegistration.HasGame(prior)) return prior;
+            var saved = new[] { target, Settings.GameInstallRoot, Settings.AshitaRoot, Settings.OtherGameRoot }
+                .FirstOrDefault(GameRegistration.HasGame);
+            if (saved != null) return saved;
+            var registered = GameRegistration.CurrentRoot(GameRegistration.Read());
+            return GameRegistration.HasGame(registered) ? registered : null;
+        }
+
+        private string PriorClientRoot(string target) =>
+            new[] { Settings.GameInstallRoot, target, GameInstallTarget, Settings.AshitaRoot }.FirstOrDefault(r =>
+                ManagedClient.IsGeneration(r) || !string.IsNullOrWhiteSpace(r) && ClientInstall.Done(r, ManagedClient.Version).Count != 0);
 
         public async Task CheckClientUpdateAsync()
         {

@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -35,47 +34,38 @@ namespace Vanadreams.Pages
 
         private static string Gb(long bytes) => (bytes / 1073741824.0).ToString("0.0") + " GB";
         private string Expected => ManagedClient.Version;
-        /// <summary>The update found at start, when it is for the folder this page installs to.</summary>
-        private ClientUpdate Pending
-        {
-            get
-            {
-                var u = App.State.PendingClientUpdate;
-                return u != null && !_asNewPlayer && GameRegistration.SameFolder(u.Root, _root) ? u : null;
-            }
-        }
-        private string AshitaFolder => App.State.HasAshita ? App.State.AshitaRoot : null;
-
         private void Refresh()
         {
-            var found = _asNewPlayer ? null : App.State.FfxiFolder;   // the copy Vanadreams plays, not whatever Windows has registered
+            var existing = _asNewPlayer ? null : App.State.ExistingClientRoot(_root);
+            var found = existing == null ? null : ClientInstall.GameFolder(existing);
             var have = ClientVersion.ReadInstalled(found);
             var want = Expected;
             FolderText.Text = ClientInstall.GameFolder(_root);
             VersionText.Text = want == null ? UiText.T("the server hasn't published its version yet") : want + UiText.T(" · the version the server runs");
             FoundText.Text = found == null ? UiText.T("none on this PC") : (have ?? UiText.T("version unknown")) + " · " + found.TrimEnd('\\');
-            var matches = found != null && have != null && want != null && string.CompareOrdinal(have.Substring(0, 6), want.Substring(0, 6)) >= 0;
-            State.Text = found == null ? UiText.T("Not installed yet.") : matches ? UiText.T("✓ Installed · matches the server") : UiText.T("Installed, but older than the server needs. Install game fetches the right one.");
-            State.Foreground = (Brush)FindResource(found == null ? "Warn" : matches ? "Ok" : "Warn");
-            if (Pending != null && _cancel == null)
-            {
-                State.Text = UiText.T("Update ready · ") + Pending.Words + UiText.T(". A separate VanaDreams copy will be prepared.");
-                State.Foreground = (Brush)FindResource("Warn");
-            }
-            InstallButton.Content = _cancel != null ? UiText.T("Stop") : Pending != null ? UiText.T("Update game") : found == null ? UiText.T("Install game") : UiText.T("Install a fresh copy");
-
+            var ready = existing != null && _manifest != null && ManagedClient.HasManifest(existing, _manifest);
+            State.Text = found == null ? UiText.T("Not installed yet.") : ready
+                ? UiText.T("✓ Installed · matches the server")
+                : UiText.T("The launcher will reuse matching files from this installation to prepare your VanaDreams copy.");
+            State.Foreground = (Brush)FindResource(ready ? "Ok" : "Warn");
+            InstallButton.Content = _cancel != null ? UiText.T("Stop") : found != null
+                ? UiText.T("Patch game") : UiText.T("Install game");
+            if (_manifest != null)
+                SizeText.Text = (found == null ? Gb(_manifest.TotalSize) + UiText.T(" download; ")
+                    : UiText.T("Download size depends on your existing files. ")) +
+                    Gb(_manifest.TotalUnpacked) + UiText.T(" in a separate game folder.");
         }
 
-        private async Task LoadManifestAsync()
+        private async Task LoadManifestAsync(CancellationToken ct = default(CancellationToken))
         {
             if (Expected == null) { SizeText.Text = UiText.T("known once the server's version is published"); return; }
             SizeText.Text = UiText.T("checking…");
             try
             {
-                _manifest = ClientManifest.Parse(await App.State.Downloader.GetStringAsync(ClientInstall.ManifestUrl(Expected)));
-                SizeText.Text = Gb(_manifest.TotalSize) + UiText.T(" download; ") + Gb(_manifest.TotalUnpacked) + UiText.T(" in a separate game folder.");
+                _manifest = ClientManifest.Parse(await App.State.Downloader.GetStringAsync(ClientInstall.ManifestUrl(Expected), ct));
+                Refresh();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!ct.IsCancellationRequested)
             {
                 Log.Warn("client manifest: " + ex.Message);
                 SizeText.Text = UiText.T("the download isn't available right now");
@@ -84,35 +74,46 @@ namespace Vanadreams.Pages
 
         private async void Install_Click(object sender, RoutedEventArgs e)
         {
-            if (_cancel != null) { _cancel.Cancel(); return; }
-            if (_manifest == null) { await LoadManifestAsync(); if (_manifest == null) { ProgressText.Text = UiText.T("The game download isn't available right now. Try again in a while."); return; } }
+            if (_cancel != null)
+            {
+                _cancel.Cancel();
+                ProgressText.Text = UiText.T("Stopping…");
+                return;
+            }
 
             var state = App.State;
-            _cancel = new CancellationTokenSource();
+            var attempt = _cancel = new CancellationTokenSource();
             FolderButton.IsEnabled = false; Refresh();
-            Progress.Visibility = Visibility.Visible; Progress.IsIndeterminate = false;
-            var started = DateTime.UtcNow; long startedAt = -1;
+            Progress.Visibility = Visibility.Visible;
+            Progress.IsIndeterminate = true;
+            ProgressText.Text = UiText.T("Checking for a game update…");
             var progress = new Progress<InstallProgress>(p =>
             {
+                if (_cancel != attempt || attempt.IsCancellationRequested) return;
+                Progress.IsIndeterminate = false;
                 Progress.Value = 100.0 * p.Done / Math.Max(1, p.Total);
-                if (startedAt < 0) startedAt = p.Done;
-                var secs = (DateTime.UtcNow - started).TotalSeconds;
-                var rate = secs > 5 ? (p.Done - startedAt) / secs : 0;
-                var left = rate > 0 ? UiText.T(" · about ") + Math.Max(1, (int)Math.Ceiling((p.Total - p.Done) / rate / 60)) + UiText.T(" min left") : "";
-                ProgressText.Text = UiText.F("{0} part {1} of {2} · {3} of {4}{5}", UiText.T(p.Stage), p.Part, p.Parts, Gb(p.Done), Gb(p.Total), left);
+                ProgressText.Text = p.StatusText;
             });
             try
             {
-                await state.InstallManagedClientAsync(_manifest, _root, progress, _cancel.Token);
+                if (_manifest == null) await LoadManifestAsync(attempt.Token);
+                if (_manifest == null)
+                {
+                    ProgressText.Text = UiText.T("The game download isn't available right now. Try again in a while.");
+                    return;
+                }
+                await state.InstallManagedClientAsync(_manifest, _root, progress, attempt.Token);
                 _root = state.Settings.GameInstallRoot;
                 ProgressText.Text = UiText.T("Verified VanaDreams copy ready. Press Play.");
 
             }
-            catch (OperationCanceledException) { ProgressText.Text = UiText.T("Stopped. Press Install game again; verified downloads are kept."); }
+            catch (OperationCanceledException) { ProgressText.Text = UiText.T("Stopped. Your download will resume when you try again."); }
             catch (Exception ex) { Log.Error("client install", ex); ProgressText.Text = ex.Message; }
             finally
             {
-                _cancel = null; FolderButton.IsEnabled = true; Progress.Visibility = Visibility.Collapsed;
+                _cancel = null;
+                attempt.Dispose();
+                FolderButton.IsEnabled = true; Progress.Visibility = Visibility.Collapsed;
                 Refresh();
                 Packs.Reload();   // an install brings the look and title packs
             }

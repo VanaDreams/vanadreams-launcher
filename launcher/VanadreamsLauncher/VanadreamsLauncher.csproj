@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Localization\launcher.json" LogicalName="Vanadreams.Localization.launcher.json" />
+    <EmbeddedResource Include="Services\client-reuse-index.tsv.gz" LogicalName="Vanadreams.ClientReuseIndex" />
     <Resource Include="assets\**\*" />
   </ItemGroup>
 </Project>

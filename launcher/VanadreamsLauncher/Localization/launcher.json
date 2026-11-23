@@ -2763,5 +2763,61 @@
   "ta5271ce4ccec": {
     "en": " new parts, ",
     "ja": " 個の新しいパート、"
+  },
+  "ta63f8bf07e81": {
+    "en": "Patch game",
+    "ja": "ゲームを更新"
+  },
+  "t3360e4a23bcf": {
+    "en": "The launcher will reuse matching files from this installation to prepare your VanaDreams copy.",
+    "ja": "このインストールから一致するファイルを再利用し、VanaDreams のゲームを準備します。"
+  },
+  "t8358120a8ade": {
+    "en": "Download size depends on your existing files. ",
+    "ja": "ダウンロード容量は既存のファイルによって異なります。"
+  },
+  "td8ded7b660b5": {
+    "en": " in a separate game folder.",
+    "ja": "（別のゲームフォルダー）"
+  },
+  "t2ba4fc7024dd": {
+    "en": "Press Patch to check your game files and download what is missing.",
+    "ja": "「更新」を押すと、ゲームファイルを確認して不足分をダウンロードします。"
+  },
+  "tc1e31391e522": {
+    "en": "Checking for a game update…",
+    "ja": "ゲームの更新を確認中…"
+  },
+  "tbbe8574175ab": {
+    "en": "Stopping…",
+    "ja": "停止中…"
+  },
+  "t31fc01241981": {
+    "en": "Stopped. Your download will resume when you try again.",
+    "ja": "停止しました。もう一度操作すると、ダウンロードを再開します。"
+  },
+  "tb88c90b382b5": {
+    "en": "Checking existing files",
+    "ja": "既存のファイルを確認中"
+  },
+  "t25fb1c1b97b4": {
+    "en": "Resuming download",
+    "ja": "ダウンロードを再開中"
+  },
+  "t7e9757e4ddfe": {
+    "en": "Checking and unpacking",
+    "ja": "確認および展開中"
+  },
+  "tc0a99c25eab9": {
+    "en": "Verifying game files",
+    "ja": "ゲームファイルを検証中"
+  },
+  "t0087974120ab": {
+    "en": "{0} part {1} of {2} · {3:0.0} of {4:0.0} MB",
+    "ja": "{0} · {1}/{2} パート · {3:0.0}/{4:0.0} MB"
+  },
+  "t5af7be403429": {
+    "en": "{0} · part {1} of {2}",
+    "ja": "{0} · {1}/{2} パート"
   }
 }

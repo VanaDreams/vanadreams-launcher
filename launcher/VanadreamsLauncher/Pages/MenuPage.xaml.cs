@@ -96,7 +96,6 @@ namespace Vanadreams.Pages
         private void ShowPatch()
         {
             if (_patching != null) return;   // the patch keeps its own words until it ends
-            var pending = App.State.PendingClientUpdate;
             if (PatchFirst)
             {
                 PlayButton.Content = UiText.T("⟳  Patch");
@@ -104,11 +103,7 @@ namespace Vanadreams.Pages
                 PatchBar.Visibility = Visibility.Visible;
                 PatchBar.Value = 0;
                 PatchText.Foreground = (Brush)FindResource("GoldSoft");
-                PatchText.Text = pending != null
-                    ? UiText.T("A game update is ready: ") + pending.Words + UiText.T(". Press Patch to install it.")
-                    : App.State.OverlayMigrationDue
-                    ? UiText.T("The look and title packs are moving into packs you can switch on and off (about 400 MB). Press Patch.")
-                    : UiText.T("The server runs ") + App.State.Version.Expected + UiText.T(" and this game is ") + (App.State.Version.Installed ?? "older") + UiText.T(". Press Patch to bring it up to date.");
+                PatchText.Text = UiText.T("Press Patch to check your game files and download what is missing.");
                 return;
             }
             PlayButton.Content = UiText.T("▶  Play");
@@ -128,30 +123,30 @@ namespace Vanadreams.Pages
 
         public bool CanLeave()
         {
-            if (_patching == null) return true;
-            PatchText.Text = UiText.T("Patch in progress, please wait.");
-            return false;
+            return _patching == null;
         }
 
         private async void Patch()
         {
             var state = App.State;
-            _patching = new System.Threading.CancellationTokenSource();
-            PlayButton.Content = UiText.T("Patching…");
-            PlayButton.IsEnabled = false;
+            var attempt = _patching = new System.Threading.CancellationTokenSource();
+            PlayButton.Content = UiText.T("Stop");
             PatchPanel.Visibility = Visibility.Visible;
             PatchBar.Visibility = Visibility.Visible;
             PatchBar.Value = 0;
+            PatchBar.IsIndeterminate = true;
             PatchText.Foreground = (Brush)FindResource("GoldSoft");
-            PatchText.Text = UiText.T("Patch in progress, please wait.");
+            PatchText.Text = UiText.T("Checking for a game update…");
             var progress = new Progress<InstallProgress>(p =>
             {
+                if (_patching != attempt || attempt.IsCancellationRequested) return;
+                PatchBar.IsIndeterminate = false;
                 PatchBar.Value = 100.0 * p.Done / Math.Max(1, p.Total);
-                PatchBar.ToolTip = UiText.F("{0} part {1} of {2} · {3:0.0} of {4:0.0} GB", UiText.T(p.Stage), p.Part, p.Parts, p.Done / 1073741824.0, p.Total / 1073741824.0);
+                PatchText.Text = p.StatusText;
             });
             try
             {
-                var said = await state.PatchClientAsync(progress, _patching.Token);
+                var said = await state.PatchClientAsync(progress, attempt.Token);
                 _patching = null;
                 if (said != null) { PatchText.Text = said; PatchText.Foreground = (Brush)FindResource("Warn"); return; }
                 _patchedNow = !state.PatchNeeded;
@@ -162,6 +157,10 @@ namespace Vanadreams.Pages
                 Log.Info("patch finished from the Play page");
                 Music.Jingle();
             }
+            catch (OperationCanceledException)
+            {
+                PatchText.Text = UiText.T("Stopped. Your download will resume when you try again.");
+            }
             catch (Exception ex)
             {
                 Log.Error("patch", ex);
@@ -171,6 +170,8 @@ namespace Vanadreams.Pages
             finally
             {
                 _patching = null;
+                attempt.Dispose();
+                PatchBar.IsIndeterminate = false;
                 PlayButton.IsEnabled = _profile != null;
                 PlayButton.Content = PatchFirst ? UiText.T("⟳  Patch") : UiText.T("▶  Play");   // the line under the news keeps what happened
                 _win.RefreshStrip();
@@ -203,7 +204,14 @@ namespace Vanadreams.Pages
         /// <summary>Patch while an update waits; Play once there is none.</summary>
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            if (_profile == null || _patching != null) return;
+            if (_patching != null)
+            {
+                _patching.Cancel();
+                PlayButton.IsEnabled = false;
+                PatchText.Text = UiText.T("Stopping…");
+                return;
+            }
+            if (_profile == null) return;
             if (PatchFirst) { Patch(); return; }
             Play();
         }

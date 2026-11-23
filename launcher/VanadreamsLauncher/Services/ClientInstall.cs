@@ -66,6 +66,13 @@ namespace Vanadreams.Services
         public long Done { get; set; }
         public long Total { get; set; }
         public string Stage { get; set; }
+        public long ArchiveDone { get; set; }
+        public long ArchiveSize { get; set; }
+
+        internal string StatusText => ArchiveSize > 0
+            ? UiText.F("{0} part {1} of {2} · {3:0.0} of {4:0.0} MB",
+                UiText.T(Stage), Part, Parts, ArchiveDone / 1048576.0, ArchiveSize / 1048576.0)
+            : UiText.F("{0} · part {1} of {2}", UiText.T(Stage), Part, Parts);
     }
 
     /// <summary>

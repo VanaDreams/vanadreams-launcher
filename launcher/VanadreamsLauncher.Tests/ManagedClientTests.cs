@@ -26,6 +26,37 @@ namespace Vanadreams.Tests
         }
 
         [TestMethod]
+        public void ReuseRequiresThePublishedArchiveAndExactLocalBytes()
+        {
+            var destination = ClientInstall.GameFolderName;
+            var source = Path.Combine(root, "source");
+            var stage = Path.Combine(root, "stage");
+            Directory.CreateDirectory(ClientInstall.GameFolder(source));
+            var relative = destination + "/example.DAT";
+            var sourceFile = ManagedClient.SafePath(source, relative);
+            File.WriteAllBytes(sourceFile, new byte[] { 1, 2, 3 });
+            var hash = ClientInstall.Sha256Of(sourceFile);
+            var archive = new ClientChunk { Name = "base.zip", Dest = destination, Sha256 = new string('a', 64) };
+            var index = new ClientReuseIndex(new StringReader(
+                $"base.zip\t{archive.Sha256}\t{destination}\nexample.DAT\t3\t{hash}\n\n"));
+            var expected = new Dictionary<string, string>();
+
+            Assert.IsTrue(index.TryCopy(archive, source, stage, expected, CancellationToken.None));
+            Assert.AreEqual(hash, expected[relative]);
+            Assert.AreEqual(hash, ClientInstall.Sha256Of(ManagedClient.SafePath(stage, relative)));
+
+            expected.Clear();
+            File.WriteAllBytes(sourceFile, new byte[] { 1, 2, 4 });
+            Assert.IsFalse(index.TryCopy(archive, source, stage, expected, CancellationToken.None));
+            Assert.AreEqual(0, expected.Count);
+
+            File.WriteAllBytes(sourceFile, new byte[] { 1, 2, 3 });
+            archive.Sha256 = new string('b', 64);
+            Assert.IsFalse(index.TryCopy(archive, source, stage, expected, CancellationToken.None));
+            Assert.AreEqual(0, expected.Count);
+        }
+
+        [TestMethod]
         public void LastVerifiedLayerWinsAndUserOnlyTransfer()
         {
             var expected = new Dictionary<string, string>();

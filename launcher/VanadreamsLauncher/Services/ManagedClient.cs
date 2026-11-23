@@ -35,7 +35,7 @@ namespace Vanadreams.Services
                 return Hex(sha.ComputeHash(Encoding.UTF8.GetBytes(m.Version + "\n" + string.Join("\n", entries))));
         }
 
-        private static string Hex(byte[] v) => BitConverter.ToString(v).Replace("-", "").ToLowerInvariant();
+        internal static string Hex(byte[] v) => BitConverter.ToString(v).Replace("-", "").ToLowerInvariant();
         public static string PayloadRoot(string root) => Path.Combine(root, Payload);
 
         internal static string SafePath(string root, string relative)
@@ -71,8 +71,8 @@ namespace Vanadreams.Services
             catch (Exception ex) when (ex is IOException || ex is ArgumentException || ex is UnauthorizedAccessException) { return false; }
         }
 
-        // The expected hashes come from decompressed bytes in verified archives (last published layer wins),
-        // not a scan of an existing install. Validate all bytes again before activation and managed Play.
+        // Expected hashes come from verified archives (last published layer wins).
+        // Validate all bytes again before activation and managed Play.
         internal static void Verify(string root, string key, CancellationToken ct)
         {
             if (!GameRegistration.HasGame(root)) throw new IOException("No complete managed VanaDreams game. Use Install game or Patch.");
@@ -198,9 +198,11 @@ namespace Vanadreams.Services
         }
 
         public static async Task<string> InstallAsync(Downloader downloader, ClientManifest manifest, string target, string prior,
-            string downloads, IProgress<InstallProgress> progress, CancellationToken ct)
+            string downloads, IProgress<InstallProgress> progress, CancellationToken ct, string reuseRoot = null)
         {
             var key = Key(manifest);
+            var total = manifest.TotalSize;
+            var parts = manifest.Chunks.Count;
             await Gate.WaitAsync(ct).ConfigureAwait(false);
             try
             {
@@ -210,7 +212,9 @@ namespace Vanadreams.Services
                     catch (IOException) { /* A drifted generation is replaced, never patched. */ }
                 }
                 target = Path.GetFullPath(target).TrimEnd('\\', '/');
-                if (ClientInstall.IsDriveTop(target) || string.IsNullOrEmpty(Path.GetDirectoryName(target)))
+                if (ClientInstall.IsDriveTop(target))
+                    target = Path.Combine(target + Path.DirectorySeparatorChar, Path.GetFileName(ClientInstall.DefaultRoot));
+                if (string.IsNullOrEmpty(Path.GetDirectoryName(target)))
                     throw new IOException("Choose a dedicated folder, not the top of a drive.");
                 var parent = Path.GetDirectoryName(target);
                 var stem = Path.GetFileName(target);
@@ -219,10 +223,17 @@ namespace Vanadreams.Services
                 var prefix = stem + ".vd-" + Version + "-" + key.Substring(0, 12) + "-";
                 // Do not let a folder choice place a managed installation inside a retail/game tree.
                 for (var a = new DirectoryInfo(parent); a != null; a = a.Parent)
-                    if (GameRegistration.HasGame(a.FullName) ||
-                        File.Exists(Path.Combine(a.FullName, "FFXiMain.dll")) ||
-                        File.Exists(Path.Combine(a.FullName, "polcore.dll")))
+                {
+                    // Older launchers allowed the two game folders to live directly at the drive root.
+                    // A separate directory on that drive is still a valid install location.
+                    var insideGameRoot = a.Parent != null ||
+                        new[] { ClientInstall.GameFolder(a.FullName), ClientInstall.ViewerFolder(a.FullName) }
+                            .Any(folder => GameRegistration.SameFolder(parent, folder) || GameRegistration.IsUnder(parent, folder));
+                    if ((insideGameRoot && GameRegistration.HasGame(a.FullName)) ||
+                         File.Exists(Path.Combine(a.FullName, "FFXiMain.dll")) ||
+                         File.Exists(Path.Combine(a.FullName, "polcore.dll")))
                         throw new IOException("Pick a folder outside every existing FFXI installation.");
+                }
                 Directory.CreateDirectory(parent);
 
                 // A commit of settings can be interrupted after the verified rename. Reuse that full generation,
@@ -247,6 +258,8 @@ namespace Vanadreams.Services
                 try
                 {
                     var expected = new Dictionary<string, string>(Names);
+                    var source = reuseRoot ?? prior;
+                    var reuse = string.IsNullOrWhiteSpace(source) ? null : ClientReuseIndex.Published;
                     var cache = Path.Combine(downloads, "managed-client", key);
                     Directory.CreateDirectory(cache);
                     long done = 0;
@@ -256,17 +269,33 @@ namespace Vanadreams.Services
                         ct.ThrowIfCancellationRequested();
                         ++index;
                         var zip = SafePath(cache, c.Name);
-                        if (File.Exists(zip) && new FileInfo(zip).Length == c.Size &&
-                            !Names.Equals(ClientInstall.Sha256Of(zip), c.Sha256)) File.Delete(zip);
-                        if (!File.Exists(zip) || new FileInfo(zip).Length != c.Size)
+                        var partial = SafePath(cache, c.Name + ".part");
+                        if (!File.Exists(zip) && !File.Exists(partial))
+                            AdoptLegacyDownload(downloads, manifest.Version, c, zip, partial);
+                        if (reuse != null && !File.Exists(zip) && !File.Exists(partial))
                         {
-                            var part = index;
-                            var before = done;
-                            var dl = new Progress<DownloadProgress>(p => progress?.Report(new InstallProgress
-                            { Part = part, Parts = manifest.Chunks.Count, Done = before + p.Done, Total = manifest.TotalSize, Stage = "Downloading" }));
-                            await downloader.DownloadFileAsync(ClientInstall.ChunkUrl(manifest.Version, c.Name), zip, dl, c.Name, c.Size, ct).ConfigureAwait(false);
+                            progress?.Report(new InstallProgress
+                            { Part = index, Parts = parts, Done = done, Total = total, Stage = "Checking existing files" });
+                            if (await Task.Run(() => reuse.TryCopy(c, source, stage, expected, ct), ct).ConfigureAwait(false))
+                            {
+                                done += c.Size;
+                                continue;
+                            }
                         }
-                        if (!Names.Equals(ClientInstall.Sha256Of(zip), c.Sha256)) throw new IOException("Damaged VanaDreams download: " + c.Name);
+                        var cached = File.Exists(zip) && new FileInfo(zip).Length == c.Size &&
+                            await Task.Run(() => Names.Equals(ClientInstall.Sha256Of(zip), c.Sha256), ct).ConfigureAwait(false);
+                        if (!cached)
+                        {
+                            var dl = new ArchiveProgress(progress, index, parts, done, total);
+                            await downloader.DownloadFileAsync(ClientInstall.ChunkUrl(manifest.Version, c.Name), zip, dl, c.Name, c.Size, ct).ConfigureAwait(false);
+                            if (!await Task.Run(() => Names.Equals(ClientInstall.Sha256Of(zip), c.Sha256), ct).ConfigureAwait(false))
+                            {
+                                File.Delete(zip);
+                                throw new IOException("Damaged VanaDreams download: " + c.Name + ". Press Patch to retry.");
+                            }
+                        }
+                        progress?.Report(new InstallProgress
+                        { Part = index, Parts = parts, Done = done + c.Size, Total = total, Stage = "Checking and unpacking" });
                         if (c.ChapterOne)
                         {
                             var payload = PayloadRoot(stage);
@@ -285,14 +314,15 @@ namespace Vanadreams.Services
                         }
                         else await Task.Run(() => ExtractVerified(zip, stage, Destination(c), expected, ct), ct).ConfigureAwait(false);
                         done += c.Size;
-                        progress?.Report(new InstallProgress { Part = index, Parts = manifest.Chunks.Count, Done = done, Total = manifest.TotalSize, Stage = "Checking and unpacking" });
                     }
                     foreach (var d in manifest.CreateDirs) Directory.CreateDirectory(SafePath(stage, ClientInstall.GameFolderName + "/" + d.TrimEnd('/', '\\')));
                     foreach (var d in manifest.ViewerCreateDirs) Directory.CreateDirectory(SafePath(stage, ClientInstall.ViewerFolderName + "/" + d.TrimEnd('/', '\\')));
-                    // Book names/settings are user-owned; no game, expansion, DLL or overlay tree is copied.
+                    // Carry over player-owned data from the previous VanaDreams install.
                     TransferUser(prior, stage);
                     var lines = new[] { key }.Concat(expected.OrderBy(x => x.Key, Names).Select(x => x.Value + "\t" + x.Key));
                     File.WriteAllLines(SafePath(stage, Inventory), lines, new UTF8Encoding(false));
+                    progress?.Report(new InstallProgress
+                    { Part = parts, Parts = parts, Done = total, Total = total, Stage = "Verifying game files" });
                     await Task.Run(() => Verify(stage, key, ct), ct).ConfigureAwait(false);
                     ct.ThrowIfCancellationRequested();
                     Directory.Move(stage, generation);
@@ -305,6 +335,38 @@ namespace Vanadreams.Services
                 }
             }
             finally { Gate.Release(); }
+        }
+
+        private static void AdoptLegacyDownload(string downloads, string version, ClientChunk chunk, string zip, string partial)
+        {
+            var oldCache = Path.Combine(downloads, "client", version);
+            var oldZip = SafePath(oldCache, chunk.Name);
+            var oldPart = SafePath(oldCache, chunk.Name + ".part");
+            if (File.Exists(oldZip) && new FileInfo(oldZip).Length == chunk.Size) File.Move(oldZip, zip);
+            else if (File.Exists(oldPart) && new FileInfo(oldPart).Length <= chunk.Size) File.Move(oldPart, partial);
+        }
+
+        private sealed class ArchiveProgress : IProgress<DownloadProgress>
+        {
+            private readonly IProgress<InstallProgress> progress;
+            private readonly int part, parts;
+            private readonly long done, total;
+
+            public ArchiveProgress(IProgress<InstallProgress> progress, int part, int parts, long done, long total)
+            {
+                this.progress = progress;
+                this.part = part;
+                this.parts = parts;
+                this.done = done;
+                this.total = total;
+            }
+
+            public void Report(DownloadProgress report) => progress?.Report(new InstallProgress
+            {
+                Part = part, Parts = parts, Done = done + report.Done, Total = total,
+                Stage = report.ResumedFrom > 0 ? "Resuming download" : "Downloading",
+                ArchiveDone = report.Done, ArchiveSize = report.Total,
+            });
         }
     }
 }

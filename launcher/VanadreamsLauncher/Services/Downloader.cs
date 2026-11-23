@@ -15,6 +15,7 @@ namespace Vanadreams.Services
     {
         public long Done { get; set; }
         public long Total { get; set; }
+        public long ResumedFrom { get; set; }
         public string Label { get; set; }
         public double Fraction => Total > 0 ? Math.Min(1.0, (double)Done / Total) : 0;
     }
@@ -45,16 +46,31 @@ namespace Vanadreams.Services
         /// <summary>Download to a file, resuming a partial file if the server allows it.</summary>
         public async Task DownloadFileAsync(string url, string destination, IProgress<DownloadProgress> progress = null, string label = null, long expectedSize = 0, CancellationToken ct = default(CancellationToken))
         {
+            ct.ThrowIfCancellationRequested();
             Directory.CreateDirectory(Path.GetDirectoryName(destination));
             var partial = destination + ".part";
             long already = File.Exists(partial) ? new FileInfo(partial).Length : 0;
+            if (expectedSize > 0 && already > expectedSize) already = 0;
+            if (expectedSize > 0 && already == expectedSize)
+            {
+                CompleteDownload(partial, destination);
+                progress?.Report(new DownloadProgress { Done = already, Total = expectedSize, ResumedFrom = already, Label = label });
+                return;
+            }
+            progress?.Report(new DownloadProgress { Done = already, Total = expectedSize, ResumedFrom = already, Label = label });
             using (var req = new HttpRequestMessage(HttpMethod.Get, url))
             {
                 if (already > 0) req.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(already, null);
                 using (var resp = await _http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false))
                 {
-                    if (already > 0 && resp.StatusCode != System.Net.HttpStatusCode.PartialContent) { already = 0; File.Delete(partial); }
                     resp.EnsureSuccessStatusCode();
+                    if (resp.StatusCode == System.Net.HttpStatusCode.PartialContent)
+                    {
+                        var range = resp.Content.Headers.ContentRange;
+                        if (range?.From != already || (expectedSize > 0 && range.Length != expectedSize))
+                            throw new IOException("The server returned the wrong download range for " + (label ?? Path.GetFileName(destination)) + ".");
+                    }
+                    else already = 0;
                     var total = (resp.Content.Headers.ContentLength ?? 0) + already;
                     if (total == 0) total = expectedSize;
                     using (var src = await resp.Content.ReadAsStreamAsync().ConfigureAwait(false))
@@ -70,19 +86,24 @@ namespace Vanadreams.Services
                             done += n;
                             if (progress != null && (DateTime.UtcNow - last).TotalMilliseconds > 100)
                             {
-                                progress.Report(new DownloadProgress { Done = done, Total = total, Label = label });
+                                progress.Report(new DownloadProgress { Done = done, Total = total, ResumedFrom = already, Label = label });
                                 last = DateTime.UtcNow;
                             }
                         }
-                        progress?.Report(new DownloadProgress { Done = done, Total = total, Label = label });
+                        progress?.Report(new DownloadProgress { Done = done, Total = total, ResumedFrom = already, Label = label });
                     }
                 }
             }
             if (expectedSize > 0 && new FileInfo(partial).Length != expectedSize)
             {
-                File.Delete(partial);
-                throw new IOException($"{label ?? Path.GetFileName(destination)} came down the wrong size; press the button again to retry.");
+                if (new FileInfo(partial).Length > expectedSize) File.Delete(partial);
+                throw new IOException($"{label ?? Path.GetFileName(destination)} came down the wrong size. Press the button again to retry.");
             }
+            CompleteDownload(partial, destination);
+        }
+
+        private static void CompleteDownload(string partial, string destination)
+        {
             if (File.Exists(destination)) File.Delete(destination);
             File.Move(partial, destination);
         }
