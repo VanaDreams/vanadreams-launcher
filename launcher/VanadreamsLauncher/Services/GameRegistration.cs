@@ -148,8 +148,8 @@ namespace Vanadreams.Services
                 guards += $"$key = [Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry32').OpenSubKey('SOFTWARE\\{key}\\InstallFolder')\r\n" +
                           $"if (!$key -or (([string]$key.GetValue('0001')).TrimEnd('\\') -ine '{game}') -or (([string]$key.GetValue('1000')).TrimEnd('\\') -ine '{viewer}')) {{ exit 0 }}\r\n";
             }
-            return "try {\r\n" + (ids.Length > 0 ? $"while (Get-Process -Id {ids} -ErrorAction SilentlyContinue) {{ Start-Sleep -Seconds 3 }}\r\n" : "") +
-                   guards + $"Start-Process -FilePath cmd.exe -ArgumentList '/c','\"{s}\"' -Verb RunAs -WindowStyle Hidden -Wait\r\n" +
+            return (ids.Length > 0 ? $"while (Get-Process -Id {ids} -ErrorAction SilentlyContinue) {{ Start-Sleep -Seconds 3 }}\r\n" : "") +
+                   "try {\r\n" + guards + $"Start-Process -FilePath cmd.exe -ArgumentList '/c','\"{s}\"' -Verb RunAs -WindowStyle Hidden -Wait\r\n" +
                    $"}} finally {{ Remove-Item -LiteralPath '{s}',$PSCommandPath -Force -ErrorAction SilentlyContinue }}\r\n";
         }
 
