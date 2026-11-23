@@ -19,6 +19,7 @@ namespace Vanadreams.Services
         internal const string Inventory = ".vanadreams-managed.json";
         internal const string Payload = ".managed-ashita";
         private static readonly SemaphoreSlim Gate = new SemaphoreSlim(1, 1);
+        private static readonly string[] DataExtensions = { ".DAT", ".DLL", ".EXE" };
         private static readonly StringComparer Names = StringComparer.OrdinalIgnoreCase;
 
         internal static string Key(ClientManifest m)
@@ -114,7 +115,7 @@ namespace Vanadreams.Services
                 var attrs = File.GetAttributes(child);
                 if ((attrs & FileAttributes.ReparsePoint) != 0) throw new IOException("A managed-client path uses a link.");
                 if ((attrs & FileAttributes.Directory) != 0) RejectExtraData(root, item, seen);
-                else if (new[] { ".DAT", ".DLL", ".EXE" }.Contains(Path.GetExtension(child), Names) && !seen.Contains(item))
+                else if (DataExtensions.Contains(Path.GetExtension(child), Names) && !seen.Contains(item))
                     throw new IOException("An extra game file was found. Press Patch for a clean VanaDreams copy.");
             }
         }
@@ -216,7 +217,12 @@ namespace Vanadreams.Services
                 foreach (var ready in Directory.GetDirectories(parent, prefix + "*"))
                 {
                     if (GameRegistration.SameFolder(prior, ready) || !HasManifest(ready, manifest)) continue;
-                    try { await Task.Run(() => Verify(ready, key, ct), ct).ConfigureAwait(false); return ready; }
+                    try
+                    {
+                        await Task.Run(() => Verify(ready, key, ct), ct).ConfigureAwait(false);
+                        TransferUser(prior, ready);
+                        return ready;
+                    }
                     catch (IOException) { }
                 }
 

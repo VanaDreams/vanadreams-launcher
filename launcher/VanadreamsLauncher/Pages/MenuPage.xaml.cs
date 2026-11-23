@@ -504,22 +504,8 @@ namespace Vanadreams.Pages
                 var lang = profile.Command.Lang;
                 if (!RetailClientIsolation.RegistrationMatches(GameRegistration.Read(lang, exactVendor: true), retailRoot))
                 {
-                    var prompt = UiText.T("Windows currently points to a different or incomplete FFXI copy. Switch Windows registration to this separate retail install before opening PlayOnline?") +
-                        "\n\n" + retailRoot + "\n\n" + UiText.T("This leaves the Vanadreams files untouched. Windows may ask for administrator permission.");
-                    if (MessageBox.Show(prompt, UiText.T("Vanadreams Launcher"), MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
-                        return;
-                    if (RetailClientIsolation.GameProcessActive()) { Say(RetailClientIsolation.CloseGames); return; }
-                    if (!RetailClientIsolation.TryResolve(profile.GameFolder, profile.BootFile, protectedRoots, out retailRoot, out var error))
-                    {
-                        Say(error);
-                        return;
-                    }
-                    if (!ClientInstall.RunRegister(retailRoot, state.Settings.DownloadsFolder, lang) ||
-                        !RetailClientIsolation.RegistrationMatches(GameRegistration.Read(lang, exactVendor: true), retailRoot))
-                    {
-                        Say(RetailClientIsolation.WrongRegistration);
-                        return;
-                    }
+                    Say("Windows is not configured for this separate retail installation. Set up or restore that retail installation first. Nothing was changed.");
+                    return;
                 }
                 if (RetailClientIsolation.GameProcessActive()) { Say(RetailClientIsolation.CloseGames); return; }
                 if (!RetailClientIsolation.TryResolve(profile.GameFolder, profile.BootFile, protectedRoots, out retailRoot, out var finalError))
