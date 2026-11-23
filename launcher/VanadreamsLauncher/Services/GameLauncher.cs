@@ -60,6 +60,12 @@ namespace Vanadreams.Services
                 iniName = Path.GetFileName(temp);
             }
 
+            if (profile.IsVanadreams && !GameRegistration.PointsAt(GameRegistration.Read(profile.Command.Lang), gameRoot))
+            {
+                Remove(temp);
+                throw new IOException("Windows no longer points at the verified VanaDreams folder. Nothing was started.");
+            }
+
             Process process;
             try { process = asAdmin ? StartElevated(cli, iniName, ashitaRoot) : StartAsPlayer(cli, iniName, ashitaRoot); }
             catch (Exception ex)

@@ -71,8 +71,6 @@ namespace Vanadreams.Tests
             if (string.IsNullOrWhiteSpace(fixture)) { Assert.Inconclusive("Set an isolated published client archive fixture to exercise this test."); return; }
             var manifest = ClientManifest.Parse(File.ReadAllText(Path.Combine(fixture, "manifest.json")));
             var key = ManagedClient.Key(manifest);
-            var cache = Path.Combine(root, "downloads", "managed-client", key);
-            Directory.CreateDirectory(cache);
             foreach (var c in manifest.Chunks)
             {
                 // The runner pre-populates this cache with hard links/safe copies from a separate read-only fixture.
@@ -88,6 +86,12 @@ namespace Vanadreams.Tests
             Assert.AreNotEqual(foreign, first);
             Assert.IsTrue(File.Exists(Path.Combine(foreign, "retail-sentinel.dat")));
             ManagedClient.Verify(first, key, CancellationToken.None);
+            var ashita = Path.Combine(root, "isolated-ashita");
+            Directory.CreateDirectory(ashita);
+            var boot = IniFile.FromText("[ashita.polplugins]\npivot = 1");
+            Assert.IsTrue(ChapterOnePatch.ConfigureLaunch(ashita, ClientInstall.GameFolder(first), boot, ManagedClient.PayloadRoot(first)));
+            Assert.AreEqual("1", boot.Get("ashita.polplugins", XIPivotBundle.ChapterPlugin));
+            Assert.IsFalse(Directory.Exists(Path.Combine(ashita, "polplugins", "DATs")));
             var managedDat = Path.Combine(ClientInstall.GameFolder(first), "FTABLE.DAT");
             var firstHash = ClientInstall.Sha256Of(managedDat);
             var user = Path.Combine(ClientInstall.GameFolder(first), "USER");
@@ -104,4 +108,3 @@ namespace Vanadreams.Tests
         }
     }
 }
-
