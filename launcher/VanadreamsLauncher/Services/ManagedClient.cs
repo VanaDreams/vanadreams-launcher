@@ -197,6 +197,14 @@ namespace Vanadreams.Services
             throw new InvalidDataException("Unsupported directory in the managed-client download list: " + raw);
         }
 
+        internal static string InstallTarget(string target)
+        {
+            if (ClientInstall.IsDriveTop(target))
+                return Path.Combine(target.Trim().TrimEnd('\\', '/') + Path.DirectorySeparatorChar,
+                    Path.GetFileName(ClientInstall.DefaultRoot));
+            return Path.GetFullPath(target).TrimEnd('\\', '/');
+        }
+
         public static async Task<string> InstallAsync(Downloader downloader, ClientManifest manifest, string target, string prior,
             string downloads, IProgress<InstallProgress> progress, CancellationToken ct, string reuseRoot = null)
         {
@@ -206,14 +214,13 @@ namespace Vanadreams.Services
             await Gate.WaitAsync(ct).ConfigureAwait(false);
             try
             {
+                using var operation = InstallCleanup.Lock(downloads);
                 if (GameRegistration.SameFolder(target, prior) && HasManifest(prior, manifest))
                 {
                     try { await Task.Run(() => Verify(prior, key, ct), ct).ConfigureAwait(false); return prior; }
                     catch (IOException) { /* A drifted generation is replaced, never patched. */ }
                 }
-                target = Path.GetFullPath(target).TrimEnd('\\', '/');
-                if (ClientInstall.IsDriveTop(target))
-                    target = Path.Combine(target + Path.DirectorySeparatorChar, Path.GetFileName(ClientInstall.DefaultRoot));
+                target = InstallTarget(target);
                 if (string.IsNullOrEmpty(Path.GetDirectoryName(target)))
                     throw new IOException("Choose a dedicated folder, not the top of a drive.");
                 var parent = Path.GetDirectoryName(target);
@@ -252,7 +259,7 @@ namespace Vanadreams.Services
 
                 var free = new DriveInfo(Path.GetPathRoot(target)).AvailableFreeSpace;
                 if (free < manifest.TotalUnpacked) throw new IOException("Not enough space for a separate VanaDreams copy. Choose another install location.");
-                var stage = SafePath(parent, ".vanadreams-stage-" + Guid.NewGuid().ToString("N"));
+                var stage = SafePath(parent, InstallCleanup.StagePrefix + Guid.NewGuid().ToString("N"));
                 var generation = SafePath(parent, prefix + Guid.NewGuid().ToString("N").Substring(0, 8));
                 Directory.CreateDirectory(stage);
                 try

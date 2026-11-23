@@ -41,7 +41,8 @@
                     <TextBlock x:Name="ProgressText" Style="{StaticResource Muted}" FontSize="13.5" TextWrapping="Wrap" Margin="0,0,0,6"/>
                     <WrapPanel>
                         <Button x:Name="InstallButton" Style="{StaticResource GoldButton}" Content="{lang:Text Key=t675299c2d945}" Click="Install_Click" Margin="0,0,7,0"/>
-                        <Button x:Name="FolderButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t0eb4a70f0097}" Click="Folder_Click"/>
+                        <Button x:Name="FolderButton" Style="{StaticResource GhostButton}" Content="{lang:Text Key=t0eb4a70f0097}" Click="Folder_Click" Margin="0,0,7,0"/>
+                        <Button x:Name="CleanupButton" Style="{StaticResource GhostButton}" Click="Cleanup_Click"/>
                     </WrapPanel>
                 </StackPanel>
             </Grid>

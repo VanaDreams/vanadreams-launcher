@@ -2819,5 +2819,69 @@
   "t5af7be403429": {
     "en": "{0} · part {1} of {2}",
     "ja": "{0} · {1}/{2} パート"
+  },
+  "t04b05de4b6fe": {
+    "en": "Clean up failed installs",
+    "ja": "失敗したインストールをクリーンアップ"
+  },
+  "t9941956a14df": {
+    "en": "Review the files to delete permanently. Your installed games and player data are kept.",
+    "ja": "完全に削除するファイルを確認してください。インストール済みのゲームとプレイヤーデータは保持されます。"
+  },
+  "t3c97f71f4784": {
+    "en": "Include saved game downloads ({0})",
+    "ja": "保存済みのゲームダウンロードを含める（{0}）"
+  },
+  "t095dc7183ca6": {
+    "en": "Removing saved downloads means Patch may need to download those parts again.",
+    "ja": "保存済みのダウンロードを削除すると、更新時に再ダウンロードが必要になる場合があります。"
+  },
+  "t614ec4648ce8": {
+    "en": "Delete selected files",
+    "ja": "選択したファイルを削除"
+  },
+  "t5ad0649b1d12": {
+    "en": "{0} bytes",
+    "ja": "{0} バイト"
+  },
+  "tedb0a9a4986a": {
+    "en": "{0} · unfinished install ({1})",
+    "ja": "{0} · 未完了のインストール（{1}）"
+  },
+  "t0922341f68f6": {
+    "en": "{0} · saved game downloads ({1})",
+    "ja": "{0} · 保存済みのゲームダウンロード（{1}）"
+  },
+  "t625b1145979b": {
+    "en": "No unfinished install folders were found. You can still choose to clear saved game downloads.",
+    "ja": "未完了のインストールフォルダーは見つかりませんでした。保存済みのゲームダウンロードは削除できます。"
+  },
+  "t0297d865849c": {
+    "en": "Selected size on disk: {0}",
+    "ja": "選択した項目の容量：{0}"
+  },
+  "t4fdaeeb77ddc": {
+    "en": "Looking for unfinished installs and saved downloads…",
+    "ja": "未完了のインストールと保存済みのダウンロードを確認中…"
+  },
+  "t84f623aabefc": {
+    "en": "No unfinished installs or saved game downloads were found. Use Change folder to check another location.",
+    "ja": "未完了のインストールや保存済みのゲームダウンロードは見つかりませんでした。「フォルダーを変更」で別の場所を確認できます。"
+  },
+  "ta60473ae1558": {
+    "en": "Cleaning up install files…",
+    "ja": "インストールファイルをクリーンアップ中…"
+  },
+  "t1d9e69bbb028": {
+    "en": "Removed {0} of install files.",
+    "ja": "{0} のインストールファイルを削除しました。"
+  },
+  "t8961f279b46b": {
+    "en": "Some files changed or were in use. Open cleanup again to review what remains.",
+    "ja": "一部のファイルが変更されたか使用中です。クリーンアップを開き直して残りを確認してください。"
+  },
+  "t7d12a12db6e8": {
+    "en": "Another launcher is installing the game or cleaning up. Try again when it is finished.",
+    "ja": "別のランチャーでゲームのインストールまたはクリーンアップを実行中です。完了後に再試行してください。"
   }
 }

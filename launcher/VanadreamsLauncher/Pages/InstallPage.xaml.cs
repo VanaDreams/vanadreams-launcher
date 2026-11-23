@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,6 +22,7 @@ namespace Vanadreams.Pages
             : App.State.Settings.GameInstallRoot;
         private ClientManifest _manifest;
         private CancellationTokenSource _cancel;
+        private bool _cleaning;
 
         private readonly bool _asNewPlayer;
 
@@ -29,6 +32,7 @@ namespace Vanadreams.Pages
             InitializeComponent();
             _win = win;
             _asNewPlayer = asNewPlayer;
+            CleanupButton.Content = UiText.T("Clean up failed installs");
             Loaded += async (s, e) => { Refresh(); await LoadManifestAsync(); };
         }
 
@@ -83,6 +87,7 @@ namespace Vanadreams.Pages
 
             var state = App.State;
             var attempt = _cancel = new CancellationTokenSource();
+            CleanupButton.IsEnabled = false;
             FolderButton.IsEnabled = false; Refresh();
             Progress.Visibility = Visibility.Visible;
             Progress.IsIndeterminate = true;
@@ -113,6 +118,7 @@ namespace Vanadreams.Pages
             {
                 _cancel = null;
                 attempt.Dispose();
+                CleanupButton.IsEnabled = true;
                 FolderButton.IsEnabled = true; Progress.Visibility = Visibility.Collapsed;
                 Refresh();
                 Packs.Reload();   // an install brings the look and title packs
@@ -121,6 +127,69 @@ namespace Vanadreams.Pages
 
 
 
+
+        private async void Cleanup_Click(object sender, RoutedEventArgs e)
+        {
+            if (_cancel != null || _cleaning) return;
+            _cleaning = true;
+            InstallButton.IsEnabled = FolderButton.IsEnabled = CleanupButton.IsEnabled = false;
+            ProgressText.Text = UiText.T("Looking for unfinished installs and saved downloads…");
+            try
+            {
+                var state = App.State;
+                var targets = new[] { _root, state.Settings.GameInstallRoot, ClientInstall.DefaultRoot };
+                var downloads = state.Settings.DownloadsFolder;
+                var entries = await Task.Run(() => InstallCleanup.Find(targets, ProtectedInstallPaths(state), downloads));
+                if (entries.Count == 0)
+                {
+                    ProgressText.Text = UiText.T("No unfinished installs or saved game downloads were found. Use Change folder to check another location.");
+                    return;
+                }
+
+                var review = new InstallCleanupWindow(entries) { Owner = _win };
+                if (review.ShowDialog() != true)
+                {
+                    ProgressText.Text = "";
+                    return;
+                }
+
+                ProgressText.Text = UiText.T("Cleaning up install files…");
+                var result = await Task.Run(() => InstallCleanup.Remove(review.Selected, targets, ProtectedInstallPaths(state), downloads));
+                ProgressText.Text = UiText.F("Removed {0} of install files.", InstallCleanupWindow.FormatSize(result.Bytes));
+                if (result.Skipped != 0)
+                    ProgressText.Text += " " + UiText.T("Some files changed or were in use. Open cleanup again to review what remains.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("install cleanup", ex);
+                ProgressText.Text = ex.Message;
+            }
+            finally
+            {
+                _cleaning = false;
+                InstallButton.IsEnabled = FolderButton.IsEnabled = CleanupButton.IsEnabled = true;
+            }
+        }
+
+        private static IEnumerable<string> ProtectedInstallPaths(AppState state)
+        {
+            var settings = state.Settings;
+            var paths = new List<string> { settings.AshitaRoot, settings.FfxiFolderOverride };
+            foreach (var root in new[] { settings.GameInstallRoot, settings.OtherGameRoot }.Where(p => !string.IsNullOrWhiteSpace(p)))
+            {
+                paths.Add(ClientInstall.GameFolder(root));
+                paths.Add(ClientInstall.ViewerFolder(root));
+            }
+            foreach (var lang in new[] { 0, 1, 2 })
+            {
+                var registered = GameRegistration.Read(lang, exactVendor: true);
+                paths.Add(registered.GameFolder);
+                paths.Add(registered.ViewerFolder);
+                paths.AddRange(registered.ComServers);
+            }
+            paths.AddRange(state.Profiles.LoadAll().Select(profile => profile.GameFolder));
+            return paths;
+        }
 
         private void Folder_Click(object sender, RoutedEventArgs e)
         {
@@ -132,6 +201,7 @@ namespace Vanadreams.Pages
 
         public bool CanLeave()
         {
+            if (_cleaning) return false;
             if (_cancel == null) return true;
             ProgressText.Text = UiText.T("Stop the install first.");
             return false;
