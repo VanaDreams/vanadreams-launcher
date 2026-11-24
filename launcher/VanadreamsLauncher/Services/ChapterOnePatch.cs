@@ -201,6 +201,55 @@ namespace Vanadreams.Services
 
 
         // The launcher loads these only in a transient VanaDreams boot profile, not global pivot.ini.
+        // The active DATs are already in the game. Do not let saved Chapter I overlays
+        // shadow them, and never alter a shared Pivot config used by retail/other profiles.
+        public static bool ConfigureIntegratedLaunch(string ashitaRoot, IniFile boot)
+        {
+            var legacy = boot.Get("ashita.polplugins", XIPivotBundle.ChapterPlugin) == "1";
+            var stock = boot.Get("ashita.polplugins", "pivot") == "1";
+            if (!stock && !legacy) return false;
+            var plugin = stock ? "pivot" : XIPivotBundle.ChapterPlugin;
+            var settingsName = boot.Get("ashita.polplugins.args", plugin, "pivot").Trim();
+            if (settingsName.Length == 0 || settingsName.Any(c => !char.IsLetterOrDigit(c) && c != '-' && c != '_'))
+                throw new IOException("The current Ashita profile has an invalid XIPivot config name.");
+            var configDir = Under(ashitaRoot, "config/pivot");
+            var sourcePath = Under(configDir, settingsName + ".ini");
+            var original = File.Exists(sourcePath) ? IniFile.Load(sourcePath) : IniFile.FromText("[settings]");
+            var lines = new List<string>();
+            var overlays = new List<string>();
+            var inOverlays = false;
+            var chapter = false;
+            var removed = false;
+            foreach (var line in original.Lines)
+            {
+                var trimmed = line.Trim();
+                if (trimmed.StartsWith("[") && trimmed.EndsWith("]"))
+                {
+                    inOverlays = trimmed.Equals("[overlays]", StringComparison.OrdinalIgnoreCase);
+                    chapter = trimmed.Equals("[chapter_i]", StringComparison.OrdinalIgnoreCase);
+                    removed |= chapter;
+                    if (inOverlays || chapter) continue;
+                }
+                if (chapter) continue;
+                if (!inOverlays) { lines.Add(line); continue; }
+                var eq = trimmed.IndexOf('=');
+                if (eq < 0 || !int.TryParse(trimmed.Substring(0, eq).Trim(), out var _)) continue;
+                var name = trimmed.Substring(eq + 1).Trim();
+                if (IsManagedOverlay(name)) removed = true;
+                else if (name != "") overlays.Add(name);
+            }
+            if (!legacy && !removed) return false;
+            lines.Add("[overlays]");
+            for (var i = 0; i < overlays.Count; i++)
+                lines.Add(i.ToString(System.Globalization.CultureInfo.InvariantCulture) + " = " + overlays[i]);
+            var text = string.Join("\r\n", lines) + "\r\n";
+            var privateName = WritePrivatePivotConfig(configDir, text, "vd-integrated-");
+            boot.Set("ashita.polplugins", XIPivotBundle.ChapterPlugin, "0");
+            boot.Set("ashita.polplugins", "pivot", "1");
+            boot.Set("ashita.polplugins.args", "pivot", privateName);
+            return true;
+        }
+
         public static bool ConfigureLaunch(string ashitaRoot, string gameFolder, IniFile boot)
         {
             if (string.IsNullOrWhiteSpace(gameFolder)) return false;
@@ -268,8 +317,17 @@ namespace Vanadreams.Services
             lines.Add("[overlays]");
             for (var i = 0; i < overlays.Count; i++) lines.Add(i.ToString(System.Globalization.CultureInfo.InvariantCulture) + " = " + overlays[i]);
             var text = string.Join("\r\n", lines) + "\r\n";
+            var privateName = WritePrivatePivotConfig(configDir, text, "vd-chapter-i-");
+            boot.Set("ashita.polplugins", "pivot", "0");
+            boot.Set("ashita.polplugins", XIPivotBundle.ChapterPlugin, "1");
+            boot.Set("ashita.polplugins.args", XIPivotBundle.ChapterPlugin, privateName);
+            return true;
+        }
+
+        private static string WritePrivatePivotConfig(string configDir, string text, string prefix)
+        {
             var utf8 = new System.Text.UTF8Encoding(false);
-            var privateName = "vd-chapter-i-" + Hash(utf8.GetBytes(text)).Substring(0, 24);
+            var privateName = prefix + Hash(utf8.GetBytes(text)).Substring(0, 24);
             var privatePath = Path.Combine(configDir, privateName + ".ini");
             Directory.CreateDirectory(configDir);
             // XIPivot may normalize or edit its private config. Never overwrite even that file while another launch uses it.
@@ -290,11 +348,8 @@ namespace Vanadreams.Services
                 finally { if (File.Exists(staging)) File.Delete(staging); }
             }
             // No unrelated configuration file is overwritten or repointed.
-            if (File.ReadAllText(privatePath) != text) throw new IOException("A generated Chapter I config differs; it was left unchanged.");
-            boot.Set("ashita.polplugins", "pivot", "0");
-            boot.Set("ashita.polplugins", XIPivotBundle.ChapterPlugin, "1");
-            boot.Set("ashita.polplugins.args", XIPivotBundle.ChapterPlugin, privateName);
-            return true;
+            if (File.ReadAllText(privatePath) != text) throw new IOException("A generated XIPivot config differs; it was left unchanged.");
+            return privateName;
         }
 
         private static byte[] Decode(Dictionary<string, ZipArchiveEntry> entries, string name, byte[] basis, int length, string expected)

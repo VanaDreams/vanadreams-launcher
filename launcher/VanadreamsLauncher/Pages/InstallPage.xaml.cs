@@ -72,8 +72,8 @@ namespace Vanadreams.Pages
             SizeText.Text = UiText.T("checking…");
             try
             {
-                _manifest = ClientManifest.Parse(await App.State.Downloader.GetStringAsync(ClientInstall.ManifestUrl(Expected)));
-                var left = ClientInstall.Remaining(_manifest, ClientInstall.Done(_root, _manifest.Version, AshitaFolder));
+                _manifest = ClientInstall.ParseManifest(Expected, await App.State.Downloader.GetStringAsync(ClientInstall.ManifestUrl(Expected)));
+                var left = ClientInstall.Planned(_manifest, _root, AshitaFolder);
                 SizeText.Text = left.Count > 0 && left.Count < _manifest.Chunks.Count
                     ? Gb(left.Sum(c => c.Size)) + UiText.T(" still to fetch, of ") + Gb(_manifest.TotalSize)
                     : Gb(_manifest.TotalSize) + " · " + Gb(_manifest.TotalUnpacked) + UiText.T(" on disk");
@@ -91,7 +91,7 @@ namespace Vanadreams.Pages
             if (_manifest == null) { await LoadManifestAsync(); if (_manifest == null) { ProgressText.Text = UiText.T("The game download isn't available right now. Try again in a while."); return; } }
 
             var drive = new DriveInfo(Path.GetPathRoot(_root));
-            var todo = ClientInstall.Remaining(_manifest, ClientInstall.Done(_root, _manifest.Version, AshitaFolder));
+            var todo = ClientInstall.Planned(_manifest, _root, AshitaFolder);
             var needed = todo.Sum(c => c.Size + c.Unpacked);
             // only new parts for a copy that is already registered: no permission prompt at the end
             var updateOnly = todo.Count < _manifest.Chunks.Count && ClientInstall.IsRegistered(_root);

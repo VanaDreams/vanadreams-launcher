@@ -84,7 +84,86 @@ namespace Vanadreams.Services
         public const string AshitaDest = "{ashita}";
 
         public static string DefaultRoot => @"C:\Games\Vanadreams";
-        public static string ManifestUrl(string version) => BaseUrl + version + "/manifest.json";
+        public const string IntegratedVersion = "30260904_1";
+        public const string IntegratedChunk = "vanadreams-client-integrated-20261124-01.zip";
+        public static string ManifestUrl(string version) => BaseUrl + version +
+            (version == IntegratedVersion ? "/manifest-integrated-20261124.json" : "/manifest.json");
+
+        public static ClientManifest ParseManifest(string version, string json)
+        {
+            var m = ClientManifest.Parse(json);
+            if (m.Version != version)
+                throw new InvalidDataException("The game's download list is for a different version.");
+            if (version == IntegratedVersion &&
+                (m.Chunks.Last().Name != IntegratedChunk || m.Chunks.Last().Dest != GameFolderName ||
+                m.Chunks.Last().Size <= 0 || m.Chunks.Last().Sha256?.Length != 64 ||
+                m.Chunks.Any(c => c.ChapterOne) || m.Chunks.Count(c => c.Name == IntegratedChunk) != 1))
+                throw new InvalidDataException("The current VanaDreams download list is missing the integrated game files.");
+            return m;
+        }
+
+        public static bool HasIntegratedTables(string game)
+        {
+            var f = Path.Combine(game, "FTABLE.DAT");
+            var v = Path.Combine(game, "VTABLE.DAT");
+            return File.Exists(f) && File.Exists(v) &&
+                Sha256Of(f) == "b91708ca463949bdc54b4022959e3cc276a5c4eb7ccdc246023abf69055aea2a" &&
+                Sha256Of(v) == "d3ad650741089596460d52f53be5905179bf296b9070155c93fccf080866fba8";
+        }
+
+        private static string IncompletePath(string root) => RecordPath(root) + ".integrated-incomplete";
+        public static bool IntegratedInstallIncomplete(string root) => File.Exists(IncompletePath(root));
+
+        public static string ResolveUpdateDestination(string root, string version, bool allowSibling)
+        {
+            if (version != IntegratedVersion) return root;
+            GuardManagedPath(root);
+            var game = GameFolder(root);
+            var viewer = ViewerFolder(root);
+            GuardManagedPath(game);
+            GuardManagedPath(viewer);
+            if (!Directory.Exists(game) && !Directory.Exists(viewer)) return root;
+            // Install state is set before downloading and remains durable across interruption.
+            if (IntegratedInstallIncomplete(root)) return root;
+            var installed = ClientVersion.ReadInstalled(game);
+            var owned = Done(root, version).Count > 0;
+            if (owned && installed == version) return root;
+            if (!allowSibling || !owned)
+                throw new InvalidOperationException("This folder is not a matching VanaDreams-managed copy. Use Install game and choose an empty folder; this existing copy was not changed.");
+            var cleanRoot = IsDriveTop(root) ? Path.Combine(root, "VanaDreams-" + version) :
+                Path.GetFullPath(root).TrimEnd('\\', '/') + "-VanaDreams-" + version;
+            return ResolveUpdateDestination(cleanRoot, version, false);
+        }
+
+        internal static void GuardManagedPath(string path)
+        {
+            for (var p = Path.GetFullPath(path); p != null; p = Path.GetDirectoryName(p))
+                if ((Directory.Exists(p) || File.Exists(p)) && (File.GetAttributes(p) & FileAttributes.ReparsePoint) != 0)
+                    throw new IOException("This VanaDreams install contains a linked path. A linked game or retail folder was not changed.");
+        }
+
+        public static void CheckGameNotRunning(string version)
+        {
+            if (version != IntegratedVersion) return;
+            // XI runs inside PlayOnline for a private launch too. Do not replace loaded DATs.
+            foreach (var name in new[] { "pol", "xiloader", "ffxi", "Ashita-cli" })
+            {
+                var matches = Process.GetProcessesByName(name);
+                foreach (var process in matches) process.Dispose();
+                if (matches.Length != 0)
+                    throw new InvalidOperationException("Close Final Fantasy XI before updating the game files.");
+            }
+        }
+        public static List<ClientChunk> Planned(ClientManifest m, string root, string ashitaRoot)
+        {
+            var todo = Remaining(m, Done(root, m.Version, ashitaRoot));
+            if (m.Version != IntegratedVersion) return todo;
+            var integrated = m.Chunks.FirstOrDefault(c => c.Name == IntegratedChunk);
+            if (integrated != null && !todo.Contains(integrated) &&
+                (IntegratedInstallIncomplete(root) || todo.Any(c => !c.ToAshita && c.Dest == GameFolderName) || !HasIntegratedTables(GameFolder(root))))
+                todo.Add(integrated); // always restore the final tables after base game chunks
+            return todo;
+        }
         public static string ChunkUrl(string version, string name) => BaseUrl + version + "/" + name;
         public static string GameFolder(string root) => Path.Combine(root, GameFolderName);
         public static string ViewerFolder(string root) => Path.Combine(root, ViewerFolderName);
@@ -156,9 +235,12 @@ namespace Vanadreams.Services
         public static List<ClientChunk> Updates(ClientManifest m, string root, string ashitaRoot)
         {
             var mine = Done(root, m.Version);
-            if (mine.Count == 0) return new List<ClientChunk>();
+            if (mine.Count == 0 && (m.Version != IntegratedVersion || !IntegratedInstallIncomplete(root))) return new List<ClientChunk>();
+            if (m.Version == IntegratedVersion && mine.Count > 0 && !IntegratedInstallIncomplete(root) &&
+                ClientVersion.ReadInstalled(GameFolder(root)) != m.Version)
+                return Planned(m, ResolveUpdateDestination(root, m.Version, true), ashitaRoot).Where(c => !c.ToAshita || Directory.Exists(ashitaRoot)).ToList();
             var hasAshita = !string.IsNullOrWhiteSpace(ashitaRoot) && Directory.Exists(ashitaRoot);
-            return Remaining(m, Done(root, m.Version, ashitaRoot)).Where(c => !c.ToAshita || hasAshita).ToList();
+            return Planned(m, root, ashitaRoot).Where(c => !c.ToAshita || hasAshita).ToList();
         }
 
         public static string Sha256Of(string path)
@@ -173,9 +255,18 @@ namespace Vanadreams.Services
         public static async Task InstallFilesAsync(Downloader downloader, ClientManifest m, string root, string downloads,
             IProgress<InstallProgress> progress, CancellationToken ct, string ashitaRoot = null, bool lowSpec = false, bool chapterOnly = false)
         {
+            ResolveUpdateDestination(root, m.Version, false);
+            CheckGameNotRunning(m.Version);
             Directory.CreateDirectory(root);
             var hasAshita = !string.IsNullOrWhiteSpace(ashitaRoot) && Directory.Exists(ashitaRoot);
-            var todo = Remaining(m, Done(root, m.Version, ashitaRoot)).Where(c => (!c.ToAshita || hasAshita) && (!chapterOnly || c.ChapterOne)).ToList();
+            var todo = Planned(m, root, ashitaRoot).Where(c => (!c.ToAshita || hasAshita) && (!chapterOnly || c.ChapterOne)).ToList();
+            var integratedWrite = m.Version == IntegratedVersion && (IntegratedInstallIncomplete(root) || todo.Any(c => !c.ToAshita));
+            if (integratedWrite)
+            {
+                var marker = IncompletePath(root);
+                Directory.CreateDirectory(Path.GetDirectoryName(marker));
+                File.WriteAllText(marker, m.Version);
+            }
             var touchedAshita = false;
             var total = m.TotalSize;
             var before = total - todo.Sum(c => c.Size);
@@ -199,7 +290,9 @@ namespace Vanadreams.Services
                 if (c.ChapterOne)
                     await Task.Run(() => ChapterOnePatch.Install(zip, GameFolder(root), ashitaRoot, ct), ct).ConfigureAwait(false);
                 else
-                    await Task.Run(() => Downloader.ExtractZipOverwrite(zip, dest), ct).ConfigureAwait(false);
+                    await Task.Run(() => Downloader.ExtractZipOverwrite(zip, dest, preserveUser: m.Version == IntegratedVersion && c.Dest == GameFolderName), ct).ConfigureAwait(false);
+                if (c.Name == IntegratedChunk && !HasIntegratedTables(GameFolder(root)))
+                    throw new InvalidDataException("The installed VanaDreams game tables did not match the release.");
                 var record = RecordPath(RecordFolder(c, root, ashitaRoot));
                 Directory.CreateDirectory(Path.GetDirectoryName(record));
                 File.AppendAllText(record, $"{m.Version} {c.Name} {c.Sha256}{Environment.NewLine}");
@@ -211,6 +304,7 @@ namespace Vanadreams.Services
             if (chapterOnly) return;
             foreach (var d in m.CreateDirs) Directory.CreateDirectory(Path.Combine(GameFolder(root), d));
             foreach (var d in m.ViewerCreateDirs) Directory.CreateDirectory(Path.Combine(ViewerFolder(root), d.Replace('/', '\\')));
+            if (integratedWrite) File.Delete(IncompletePath(root));
         }
 
         public static int RegisterSteps => 7 + RetailDefaults.Length + ComServers.Length;

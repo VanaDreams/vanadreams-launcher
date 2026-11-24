@@ -196,7 +196,7 @@ namespace Vanadreams.Services
         /// Unzip over an existing tree, replacing files that are already there. stripTopFolder drops the one folder
         /// a GitHub source zip wraps everything in (Owner-Repo-1a2b3c4/), so its contents land in destinationRoot.
         /// </summary>
-        public static List<string> ExtractZipOverwrite(string zipPath, string destinationRoot, bool stripTopFolder = false)
+        public static List<string> ExtractZipOverwrite(string zipPath, string destinationRoot, bool stripTopFolder = false, bool preserveUser = false)
         {
             var written = new List<string>();
             var root = Path.GetFullPath(destinationRoot).TrimEnd('\\') + "\\";
@@ -212,6 +212,8 @@ namespace Vanadreams.Services
                         if (slash < 0) continue; // a file beside the top folder: GitHub never makes one
                         name = name.Substring(slash + 1);
                     }
+                    if (preserveUser && name.Split(new[] { '/', '\\' })[0].Equals("USER", StringComparison.OrdinalIgnoreCase))
+                        continue;
                     var target = Path.GetFullPath(Path.Combine(root, name.Replace('/', '\\')));
                     if (!target.StartsWith(root, StringComparison.OrdinalIgnoreCase)) continue; // never write outside the folder
                     Directory.CreateDirectory(Path.GetDirectoryName(target));

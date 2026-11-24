@@ -30,7 +30,17 @@ namespace Vanadreams.Services
             var savedLogin = credential != null && (!string.IsNullOrEmpty(credential.User) || !string.IsNullOrEmpty(credential.Password));
             var mayHaveChapter = profile.IsVanadreams && !string.IsNullOrWhiteSpace(gameRoot);
             var ini = savedLogin || mayHaveChapter ? IniFile.Load(profile.Path) : null;
-            var chapter = mayHaveChapter && ChapterOnePatch.ConfigureLaunch(ashitaRoot, ClientInstall.GameFolder(gameRoot), ini);
+            var chapter = false;
+            if (mayHaveChapter)
+            {
+                if (ClientInstall.IntegratedInstallIncomplete(gameRoot))
+                    throw new InvalidOperationException("A VanaDreams file update was interrupted. Finish Update Files before starting this copy.");
+                var game = ClientInstall.GameFolder(gameRoot);
+                if (ClientInstall.HasIntegratedTables(game))
+                    chapter = ChapterOnePatch.ConfigureIntegratedLaunch(ashitaRoot, ini);
+                else
+                    chapter = ChapterOnePatch.ConfigureLaunch(ashitaRoot, game, ini);
+            }
             if (savedLogin || chapter)
             {
                 var launchCmd = new LoaderCommand
