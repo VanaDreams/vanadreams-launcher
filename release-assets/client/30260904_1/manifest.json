@@ -1,0 +1,567 @@
+{
+  "schema": 1,
+  "client_ver": "30260904_1",
+  "packed": "2026-11-24T00:00:00Z",
+  "create_dirs": [
+    "USER",
+    "SYS",
+    "TEMP"
+  ],
+  "viewer_create_dirs": [
+    "usr/all",
+    "tmp"
+  ],
+  "total_size": 8839216551,
+  "total_unpacked": 17069181300,
+  "chunks": [
+    {
+      "name": "base.zip",
+      "size": 57294174,
+      "sha256": "44ffc2e5174b46b7dc241b24f9adb083e32a0dc4c594b0b6e59f937cb499de0d",
+      "files": 544,
+      "unpacked": 102880865
+    },
+    {
+      "name": "mov-01.zip",
+      "size": 80839408,
+      "sha256": "ca0571ecd50dedca322dcbbd18c3e6edd98101bd2caee1a233291445583e2340",
+      "files": 1,
+      "unpacked": 315815512
+    },
+    {
+      "name": "mov-02.zip",
+      "size": 69882065,
+      "sha256": "a3d8cdba5d6ce60b75e77d6d82969559ba910462b55056f7e1f5d9ac9497369e",
+      "files": 1,
+      "unpacked": 80720684
+    },
+    {
+      "name": "ROM-01.zip",
+      "size": 151218066,
+      "sha256": "8181ab2d2918de2d7c8edb5bdbc29c95535c2ee5f36488076a3c245d219b48b5",
+      "files": 62,
+      "unpacked": 305604944
+    },
+    {
+      "name": "ROM-02.zip",
+      "size": 116200001,
+      "sha256": "a916cf875b9cc912b173ba8d13a99daea9372be05e7bbfdc48ff52e4aa45f55d",
+      "files": 39,
+      "unpacked": 306339376
+    },
+    {
+      "name": "ROM-03.zip",
+      "size": 169260841,
+      "sha256": "70ba6291604aee4c76c95443c45cf6f659e928d772b74196ee5872a939fbb967",
+      "files": 67,
+      "unpacked": 313457408
+    },
+    {
+      "name": "ROM-04.zip",
+      "size": 162450760,
+      "sha256": "1bb34eed7809f43aee4b72bf56d74a0b264b9fdbca68dc89aced356591968b66",
+      "files": 587,
+      "unpacked": 314521872
+    },
+    {
+      "name": "ROM-05.zip",
+      "size": 113466594,
+      "sha256": "c600d4091b5972a72d65c7fa668cba136cef272efeb55c5b9d292f2c25aaaf8a",
+      "files": 3709,
+      "unpacked": 314546699
+    },
+    {
+      "name": "ROM-06.zip",
+      "size": 155274083,
+      "sha256": "74eeca360975c69b23c5bbd1527a6bf81ba1cd65258cb2080200879929b96558",
+      "files": 4317,
+      "unpacked": 314341606
+    },
+    {
+      "name": "ROM-07.zip",
+      "size": 101760165,
+      "sha256": "14d8435a13a845b6c15b8715c105805f498a807a898ded4363b7ea9b1aedb706",
+      "files": 2072,
+      "unpacked": 312516831
+    },
+    {
+      "name": "ROM-08.zip",
+      "size": 43728196,
+      "sha256": "02951008fca9ab811615259b561eb9721ae2a3b8113809b2e4b09e42dd6ae0a9",
+      "files": 391,
+      "unpacked": 309330596
+    },
+    {
+      "name": "ROM-09.zip",
+      "size": 56611585,
+      "sha256": "7fa6f5fe023e44f9231b2ae2bf347aac3d06a656779feddd368a0d284dfc3935",
+      "files": 385,
+      "unpacked": 313128968
+    },
+    {
+      "name": "ROM-10.zip",
+      "size": 147848756,
+      "sha256": "3c31bf9623d6f4e593dfc23200e8bec1a07699c2edeb464d6630652fb72e3fa2",
+      "files": 2494,
+      "unpacked": 314518771
+    },
+    {
+      "name": "ROM-11.zip",
+      "size": 135285898,
+      "sha256": "8c9707dfce6bc83f64812b7e273e85a475a3a46f5b2132ff8f433046fc30d055",
+      "files": 1733,
+      "unpacked": 314335940
+    },
+    {
+      "name": "ROM-12.zip",
+      "size": 119891537,
+      "sha256": "755a54d8920f1dd9e1d46a67867be767a27b96abcb32a00d4f218d7d3dfe5737",
+      "files": 1875,
+      "unpacked": 314141856
+    },
+    {
+      "name": "ROM-13.zip",
+      "size": 112947908,
+      "sha256": "0f13123049e192cdda654a9922f7fcf7042f89fcc37d440b4ab0649226c35cda",
+      "files": 2365,
+      "unpacked": 312872432
+    },
+    {
+      "name": "ROM-14.zip",
+      "size": 133965943,
+      "sha256": "e1a5abbe7740c7d97ea339c9d4d63b9addba56d910426cdf26ccd67272d80fa2",
+      "files": 2435,
+      "unpacked": 308187696
+    },
+    {
+      "name": "ROM-15.zip",
+      "size": 157647615,
+      "sha256": "dcf3835d8ea74b5a7ac9d25b2449ce2a106861c260df1fbdc5767a52e5bb7a2e",
+      "files": 2035,
+      "unpacked": 313080649
+    },
+    {
+      "name": "ROM-16.zip",
+      "size": 120181328,
+      "sha256": "a6e99d432d19e5e8e6b95c01baee739a1592e5b41c3eaeeb2e609b4c251b8553",
+      "files": 2044,
+      "unpacked": 314563982
+    },
+    {
+      "name": "ROM-17.zip",
+      "size": 106304717,
+      "sha256": "9ea057d473b451bf61ccaf4d5051fa9da8779dacbce1629e1bb2e455800e37b5",
+      "files": 2373,
+      "unpacked": 314517092
+    },
+    {
+      "name": "ROM-18.zip",
+      "size": 126080205,
+      "sha256": "0928a1f3bf993b086a226e1e13b5b88583bd942dcd9900ab4e463035ac9d4636",
+      "files": 1177,
+      "unpacked": 314272112
+    },
+    {
+      "name": "ROM-19.zip",
+      "size": 172362741,
+      "sha256": "f72a34f2060a5b26b0140ee79a729e047d2cb393b24c9064101e80f254bb77f3",
+      "files": 2393,
+      "unpacked": 314462212
+    },
+    {
+      "name": "ROM-20.zip",
+      "size": 154212231,
+      "sha256": "087dec40ef9cb55bbeb3900e0469dea2e00ba276edaea84edd8f29ab605895c4",
+      "files": 1778,
+      "unpacked": 314567592
+    },
+    {
+      "name": "ROM-21.zip",
+      "size": 121608295,
+      "sha256": "f17e30ce89df429989ae208734a92cfc36d7cebe597718d443ab88e5184a1dc4",
+      "files": 907,
+      "unpacked": 314082877
+    },
+    {
+      "name": "ROM-22.zip",
+      "size": 131166851,
+      "sha256": "25542792be34cb970e70b5df841c3f1f8ea01f29ea6471e33f99b31b94751a31",
+      "files": 2303,
+      "unpacked": 314482568
+    },
+    {
+      "name": "ROM-23.zip",
+      "size": 151056490,
+      "sha256": "166115faaec522442002c34b2ea21b9fa612ee5974c0454fd7856531583afa25",
+      "files": 3741,
+      "unpacked": 314563452
+    },
+    {
+      "name": "ROM-24.zip",
+      "size": 164027910,
+      "sha256": "b525f76a11c581d38dc763e48e10e4c0dc0571c00e9ffa05d3098435bf2fdde5",
+      "files": 2987,
+      "unpacked": 313210396
+    },
+    {
+      "name": "ROM-25.zip",
+      "size": 132765833,
+      "sha256": "ec10fe043134a0742298fefaf2e4c627eb390a62bbdb7786bcdac5f946bb70d3",
+      "files": 1010,
+      "unpacked": 314319260
+    },
+    {
+      "name": "ROM-26.zip",
+      "size": 165269740,
+      "sha256": "a2930bc36964370267f8d5d401b695de73d2eeede4e24793bb159b4beaf0f157",
+      "files": 3100,
+      "unpacked": 314391629
+    },
+    {
+      "name": "ROM-27.zip",
+      "size": 57218054,
+      "sha256": "f848ae5efb1c75a1f6f27408e7eab166ad549fc5172c73a1588fa2d43da35b07",
+      "files": 945,
+      "unpacked": 109201881
+    },
+    {
+      "name": "ROM2-01.zip",
+      "size": 177650280,
+      "sha256": "446b507f814c7475b095bf9c7aaf84a4eda246123908215b39026c473dc62258",
+      "files": 85,
+      "unpacked": 309959760
+    },
+    {
+      "name": "ROM2-02.zip",
+      "size": 132303775,
+      "sha256": "6773b8898eedfce90db7d463c0da3a82e30b5329f0315b9e89b0b1fc9d38be0c",
+      "files": 440,
+      "unpacked": 314318892
+    },
+    {
+      "name": "ROM2-03.zip",
+      "size": 13184942,
+      "sha256": "30ffcab7ddb02836e3525db5be49ca17310a8e219b31e9d6f9705d38d7316d27",
+      "files": 128,
+      "unpacked": 24852241
+    },
+    {
+      "name": "ROM3-01.zip",
+      "size": 162409802,
+      "sha256": "5d4c2f93907c983465e93724b01c3f7bf68ed30c6a93584fac69a84a29852c9d",
+      "files": 52,
+      "unpacked": 313141212
+    },
+    {
+      "name": "ROM3-02.zip",
+      "size": 131918996,
+      "sha256": "2ed4006867b99dd6e917447cc139526c76b624f5cb0552f70b117a4876ab59b6",
+      "files": 433,
+      "unpacked": 313572548
+    },
+    {
+      "name": "ROM3-03.zip",
+      "size": 44005860,
+      "sha256": "78efe57044cae262365858e63e7c50279f198386728d142e490eb40adb54c125",
+      "files": 297,
+      "unpacked": 91711231
+    },
+    {
+      "name": "ROM4-01.zip",
+      "size": 147585987,
+      "sha256": "4679a816393bf92881a6f07d1ee14a5fde05ab98337395e322e4aacb84e4bb48",
+      "files": 112,
+      "unpacked": 313823328
+    },
+    {
+      "name": "ROM4-02.zip",
+      "size": 137595009,
+      "sha256": "87680b8ac265f787fe5b8bb7d7447d4acb9c082d69ef034de3eb49eeeaa30067",
+      "files": 781,
+      "unpacked": 278428079
+    },
+    {
+      "name": "ROM5-01.zip",
+      "size": 167991732,
+      "sha256": "3ceeefb768444f6881ea772339b729d600e12d425df6d202711f7b39f29e520f",
+      "files": 30,
+      "unpacked": 309454512
+    },
+    {
+      "name": "ROM5-02.zip",
+      "size": 84211192,
+      "sha256": "8e972fd82a2ffe8de586c3465efe86fd82fff729d2c5e91a2c7def79b8f14494",
+      "files": 254,
+      "unpacked": 165463391
+    },
+    {
+      "name": "ROM9-01.zip",
+      "size": 178898017,
+      "sha256": "23ca8593d48b68c17eff907de03a4791ed0fb637a82583ebdf4c02a80dbad1ae",
+      "files": 227,
+      "unpacked": 314518560
+    },
+    {
+      "name": "ROM9-02.zip",
+      "size": 72737208,
+      "sha256": "eabe4d34a43e2d30abe153d67c3c8aa64a83d362f9a5bebf007bdfcad7219865",
+      "files": 504,
+      "unpacked": 226661527
+    },
+    {
+      "name": "sound-01.zip",
+      "size": 264408812,
+      "sha256": "e1f77999a6129650eb16b831a5c0d4f8de0ff7b501143efdf4a42314891c23a1",
+      "files": 44,
+      "unpacked": 313134688
+    },
+    {
+      "name": "sound-02.zip",
+      "size": 265772005,
+      "sha256": "484dd8adcc136f8dd9276fe004a0f9db77030bba2e6bee270a0d427bdb498ff9",
+      "files": 33,
+      "unpacked": 313252902
+    },
+    {
+      "name": "sound-03.zip",
+      "size": 265133329,
+      "sha256": "1dfe5f3545590b03d601d77bed24436b7194493a448ebe79cbdbe7b823dc36d4",
+      "files": 217,
+      "unpacked": 314448513
+    },
+    {
+      "name": "sound-04.zip",
+      "size": 248937709,
+      "sha256": "c19a47c78b7b7f74fe3402026a305fe7c82786a2c523b92bb004c7d0e8b59245",
+      "files": 2185,
+      "unpacked": 314521663
+    },
+    {
+      "name": "sound-05.zip",
+      "size": 258286147,
+      "sha256": "b8b150a56f10c9a20ef5c7085a4388399fdc9aeccbc6ca1c1fce4fed0a645ba0",
+      "files": 2196,
+      "unpacked": 314343563
+    },
+    {
+      "name": "sound-06.zip",
+      "size": 229477862,
+      "sha256": "20452f99799103087952b5544907659d41e3f78cedc0f6545f87351a94b3a89d",
+      "files": 4564,
+      "unpacked": 314552401
+    },
+    {
+      "name": "sound-07.zip",
+      "size": 32034458,
+      "sha256": "9461a847bd947fa4ff3cdc26761874a12a55e08273cc2657b5683f74ccd3ae2c",
+      "files": 338,
+      "unpacked": 50893072
+    },
+    {
+      "name": "sound2-01.zip",
+      "size": 251772901,
+      "sha256": "74d9a55eb357bc631d49365c55955226cde2033056c3fffe0f578c8fcf443fde",
+      "files": 90,
+      "unpacked": 314361054
+    },
+    {
+      "name": "sound2-02.zip",
+      "size": 46027743,
+      "sha256": "5670dade0ddd943f307414e01bf41ac9a8bd29b750924a00dc3d0ba6ff7cfb1d",
+      "files": 232,
+      "unpacked": 55722575
+    },
+    {
+      "name": "sound3-01.zip",
+      "size": 258678289,
+      "sha256": "6e4b7f0b9b0741e9a0fe50bc0a99bd18b0e4a253c0f69ef59fc4d2d958c088fd",
+      "files": 269,
+      "unpacked": 314561221
+    },
+    {
+      "name": "sound3-02.zip",
+      "size": 83675820,
+      "sha256": "ced7b98ac977e5951b706f5b3d4b45dbfc9d644539d70e88eb0579e97c4d399c",
+      "files": 521,
+      "unpacked": 103493775
+    },
+    {
+      "name": "sound4.zip",
+      "size": 226347809,
+      "sha256": "15630339022da62a024f992aea13433885ed92503fd8dfa0436dcb06ea84bc82",
+      "files": 577,
+      "unpacked": 278608712
+    },
+    {
+      "name": "sound5.zip",
+      "size": 157620047,
+      "sha256": "bbad9c4f0dedb71d6e6c9f8104f56992055898cdcebe65bf0b0e6af981e96218",
+      "files": 406,
+      "unpacked": 185071527
+    },
+    {
+      "name": "sound9.zip",
+      "size": 122015811,
+      "sha256": "7e49210fdd6735296f388b9040bc906a770cd86c61cfdc0c5ba0d75b877543e7",
+      "files": 368,
+      "unpacked": 142513764
+    },
+    {
+      "name": "pol-base.zip",
+      "size": 13281185,
+      "sha256": "ecbe7d60d9a0762c33416d5324a09ce59b828d96bb013aa0cc42f8cc8c1dfb79",
+      "files": 334,
+      "unpacked": 17649526,
+      "dest": "PlayOnlineViewer"
+    },
+    {
+      "name": "pol-viewer.zip",
+      "size": 233696498,
+      "sha256": "7b575ea57de42db7c2e52c118d360209f04b4efa881e8513a2e4baf8fbc23869",
+      "files": 959,
+      "unpacked": 274697929,
+      "dest": "PlayOnlineViewer"
+    },
+    {
+      "name": "looks-01.zip",
+      "size": 8644196,
+      "sha256": "82f413a12dbdf8f7757d542ab0c68163f5ab8f0e0e22f6ccd23cf37dbac83587",
+      "files": 112,
+      "unpacked": 31622288,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-looks"
+    },
+    {
+      "name": "looks-02.zip",
+      "size": 117978848,
+      "sha256": "19e1162fcf0adeaed8d74db8700441f9577a49a1beb5f09d98ba15494accdb49",
+      "files": 17,
+      "unpacked": 250651584,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-looks"
+    },
+    {
+      "name": "looks-03.zip",
+      "size": 121425826,
+      "sha256": "7329659fe884904b82f821eeabe96cfbe6dbf65a55a4e5ed92afec7ef2d44de6",
+      "files": 15,
+      "unpacked": 258305184,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-looks"
+    },
+    {
+      "name": "looks-04.zip",
+      "size": 99781945,
+      "sha256": "c5d1b95618f45e42e7df1d8742b7c1a8f02c3c70aba7720e4f1b7d6c77d66f42",
+      "files": 3148,
+      "unpacked": 261999648,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-looks"
+    },
+    {
+      "name": "looks-05.zip",
+      "size": 103004416,
+      "sha256": "ebae138a52d061ee8359c40dc53fedfeebc27e1c326cd1be5f93e995568b9800",
+      "files": 3702,
+      "unpacked": 261623392,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-looks"
+    },
+    {
+      "name": "looks-06.zip",
+      "size": 135880926,
+      "sha256": "cd1560cf8640d93f27721bb5dc188cbd3fb58be2abdc8ec34d65940518b7f31f",
+      "files": 281,
+      "unpacked": 261904784,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-looks"
+    },
+    {
+      "name": "looks-07.zip",
+      "size": 8204715,
+      "sha256": "b9b807cf8dd6bc12b7f818e9dddc0da9cc774516b7dcbf759a6390e8d15d6a06",
+      "files": 14,
+      "unpacked": 15810848,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-looks"
+    },
+    {
+      "name": "looks-14.zip",
+      "size": 2341198,
+      "sha256": "6d46b5a4e8157f7d99c9a0292646c2d80401b316b8c2706c1cbdb4e82f083e84",
+      "files": 2,
+      "unpacked": 8040208,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-looks"
+    },
+    {
+      "name": "looks-effects.zip",
+      "size": 2515667,
+      "sha256": "b6f98daa6daf72e34b2b8e04515e1073379faef47d75937280bdedba91343021",
+      "files": 20,
+      "unpacked": 4938713,
+      "dest": "{ashita}/bootloader"
+    },
+    {
+      "name": "vanadreams-title-01.zip",
+      "size": 9963060,
+      "sha256": "e501d503cdc2b8020f580f8f5c60bc81f84b08e9df5ed170728d52116c4ebef1",
+      "files": 2,
+      "unpacked": 12414420,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-title"
+    },
+    {
+      "name": "vanadreams-title-02.zip",
+      "size": 89200067,
+      "sha256": "3033a2c7fa93c4735aeaa52fbafc4e0e18e67c201fd02112c4c182577a4c74f6",
+      "files": 11,
+      "unpacked": 97188622,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-title"
+    },
+    {
+      "name": "vanadreams-hair-01.zip",
+      "size": 19361778,
+      "sha256": "daec3d8434bab1dd4411e089c03e80434747eed8369834a8218dc6a2d0883993",
+      "files": 261,
+      "unpacked": 75628686
+    },
+    {
+      "name": "vanadreams-client-patch-01.zip",
+      "size": 15698554,
+      "sha256": "710c78a28b1936f138b52d8ca99f82f266af6e09f5b176f221876379f93d7cac",
+      "files": 85,
+      "unpacked": 81801394
+    },
+    {
+      "name": "vanadreams-client-patch-02.zip",
+      "size": 412583,
+      "sha256": "ae328c28d71a5c8ef7168ad55918b9b9c4a39c4e877c1eb9daaeb611f8e8fc6a",
+      "files": 154,
+      "unpacked": 2915808
+    },
+    {
+      "name": "vanadreams-text-kupo-01.zip",
+      "size": 181410,
+      "sha256": "3534aed3a698442ff3cddf7793f1c18884358844565d47bffb12e17ceecef380",
+      "files": 2,
+      "unpacked": 26173440,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-text"
+    },
+    {
+      "name": "vanadreams-lambchop-01.zip",
+      "size": 814126,
+      "sha256": "7cd94b8ac14a884b39f30c61c6ef705db1914363fbc168e907d762f64b8165ba",
+      "files": 3,
+      "unpacked": 1444096,
+      "dest": "FINAL FANTASY XI"
+    },
+    {
+      "name": "vanadreams-vanadunna-01.zip",
+      "size": 7668910,
+      "sha256": "212426b61f6e4c70de0a7c3d87ef945db6a9c5e517f79eae68e9d9fdb200ae94",
+      "files": 2,
+      "unpacked": 68157440,
+      "dest": "{ashita}/polplugins/DATs/vanadreams-text"
+    },
+    {
+      "name": "vanadreams-client-integrated-20261124-01.zip",
+      "size": 651111,
+      "sha256": "eb6ed454039ebe9c433ac92932eea061ad46d149f88c5b902faaff0b15e85824",
+      "files": 30,
+      "unpacked": 3850821,
+      "dest": "FINAL FANTASY XI"
+    }
+  ]
+}
